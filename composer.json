@@ -1,0 +1,29 @@
+{
+  "name": "rtcamp/onedesign",
+  "description": "Sync patterns across multiple WordPress sites and manage them from a single dashboard.",
+  "type": "library",
+  "autoload": {
+    "classmap": [
+      "inc/"
+    ]
+  },
+  "authors": [
+    {
+      "name": "rtCamp",
+      "email": "marketing@rtcamp.com"
+    }
+  ],
+  "require-dev": {
+    "squizlabs/php_codesniffer": "^3.11.3",
+    "wp-coding-standards/wpcs": "^3.1"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  },
+  "scripts": {
+    "format": "phpcbf --standard=phpcs.xml.dist --report-summary --report-source",
+    "lint": "phpcs --standard=phpcs.xml.dist"
+  }
+}
