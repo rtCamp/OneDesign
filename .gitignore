@@ -1,0 +1,27 @@
+# Core
+/wordpress/
+
+# macOS/IDE
+.DS_Store
+.idea
+
+# Log files
+*.log
+/tests/logs
+
+# Packages
+/node_modules/
+/vendor/
+
+# Enviroment
+.env
+.wp-env.override.json
+
+# PHPCS
+phpcs.xml
+
+# Cache
+.phpunit.result.cache
+
+# Build
+/assets/build/
