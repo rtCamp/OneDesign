@@ -109,6 +109,7 @@ class Settings {
 	 * @return void
 	 */
 	public function handle_design_library_redirect(): void {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		// Only run on our specific admin page
 		if ( ! isset( $_GET['page'] ) || $_GET['page'] !== 'design-library' ) {
 			return;

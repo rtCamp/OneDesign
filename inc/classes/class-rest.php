@@ -317,7 +317,7 @@ class Rest {
 				'method'  => 'DELETE',
 				'headers' => array(
 					'X-OneDesign-API-Key' => 'Bearer ' . $remote_api_key,
-					'Content-Type'  => 'application/json',
+					'Content-Type'        => 'application/json',
 				),
 				'body'    => wp_json_encode(
 					array(
@@ -431,7 +431,7 @@ class Rest {
 				array(
 					'headers' => array(
 						'X-OneDesign-API-Key' => 'Bearer ' . $remote_api_key,
-						'Content-Type'  => 'application/json',
+						'Content-Type'        => 'application/json',
 					),
 					'timeout' => 45,
 				)

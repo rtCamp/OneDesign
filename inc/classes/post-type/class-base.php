@@ -60,6 +60,7 @@ abstract class Base {
 			$args['labels'] = $labels;
 		}
 
+		// phpcs:ignore WordPress.NamingConventions.ValidPostTypeSlug.NotStringLiteral
 		register_post_type( static::SLUG, $args );
 	}
 
