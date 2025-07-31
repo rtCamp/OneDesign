@@ -1,0 +1,6 @@
+/assets/build/*.css
+/tests
+/vendor
+*.*
+!*.css
+!*.scss

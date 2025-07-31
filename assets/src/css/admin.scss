@@ -1,0 +1,46 @@
+.wp-list-table input[type="text"],
+.wp-list-table input[type="url"] {
+	width: 100%;
+	max-width: 200px;
+}
+.wp-list-table td {
+	vertical-align: middle;
+}
+#child-sites-table input {
+	margin: 0;
+}
+.delete-site {
+	color: #a00;
+}
+.delete-site:hover {
+	color: #dc3232;
+}
+.logo-preview {
+	display: block;
+	max-width: 100px;
+	max-height: 100px;
+	margin-bottom: 10px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	padding: 5px;
+	background: #f7f7f7;
+}
+.logo-preview img {
+	max-width: 100%;
+	max-height: 90px;
+	display: block;
+}
+.logo-upload-button {
+	margin-right: 10px !important;
+}
+.logo-remove-button {
+	color: #a00;
+}
+.logo-container {
+	display: flex;
+	align-items: flex-start;
+	margin-bottom: 10px;
+}
+.hidden-logo-url {
+	display: none;
+}

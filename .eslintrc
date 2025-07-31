@@ -1,0 +1,32 @@
+{
+	"root": true,
+	"extends": [
+		"plugin:@wordpress/eslint-plugin/recommended-with-formatting",
+		"plugin:import/recommended",
+		"plugin:eslint-comments/recommended"
+	],
+	"plugins": [],
+	"env": {
+		"browser": true
+	},
+	"globals": {
+		"_": true,
+		"patternSyncData": true
+	},
+	"rules": {
+		"jsdoc/check-indentation": "error",
+		"no-shadow": "warn"
+	},
+	"overrides": [ {
+		"files": [
+			"**/__tests__/**/*.js",
+			"**/test/*.js",
+			"**/?(*.)test.js",
+			"tests/js/**/*.js"
+		],
+		"extends": ["plugin:jest/all"],
+		"rules": {
+			// Add Rules for Jest here
+		}
+	} ]
+}

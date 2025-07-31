@@ -1,0 +1,75 @@
+name: Publish Plugin to Github Releases
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  release:
+    runs-on: self-hosted
+    container:
+      image: ubuntu:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        shell: bash
+        run: |
+          apt-get update
+          apt-get install -y zip unzip composer
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          composer install --no-dev
+          npm i
+
+      - name: Build Library
+        shell: bash
+        run: npm run build:prod
+
+      - name: Create WordPress Plugin Zip
+        id: create-zip
+        shell: bash
+        run: |
+          # Create a temporary directory for the plugin
+          mkdir -p /tmp/onedesign/assets/build
+          
+          # Copy necessary files to the plugin directory
+          cp -r assets/build /tmp/onedesign/assets/
+          cp composer.json /tmp/onedesign/
+          cp -r inc/ /tmp/onedesign/
+          cp onedesign.php /tmp/onedesign/
+          cp README.md /tmp/onedesign/
+          cp -r vendor/ /tmp/onedesign/
+          
+          # Create the zip file
+          cd /tmp
+          zip -r onedesign.zip onedesign/ -x "*.git*" "*.DS_Store*" "*node_modules*" "*tests*" "*test*"
+          
+          # Move zip to workspace
+          mv onedesign.zip $GITHUB_WORKSPACE/
+          
+          # Set output for the zip path
+          echo "zip-path=$GITHUB_WORKSPACE/onedesign.zip" >> $GITHUB_OUTPUT
+          
+          # Display zip contents for verification
+          echo "=== Plugin zip contents ==="
+          unzip -l $GITHUB_WORKSPACE/onedesign.zip
+
+      - name: Upload Release Artifact
+        if: startsWith(github.ref, 'refs/tags/dry') == false && github.ref != 'refs/heads/develop'
+        uses: softprops/action-gh-release@v2.3.2
+        with:
+          files: |
+            ${{ steps.create-zip.outputs.zip-path }}
+          token: '${{ github.token }}'
+          tag_name: ${{ github.ref_name }}
+          draft: true
+          generate_release_notes: true
+          name: OneDesign ${{ github.ref_name }}
