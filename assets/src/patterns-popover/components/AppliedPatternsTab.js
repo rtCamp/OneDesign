@@ -129,128 +129,128 @@ const AppliedPatternsTab = memo( ( {
 	if ( isLoadingApplied ) {
 		return (
 			<div className="od-pattern-loading od-applied-patterns">
-				<p>{__("Loading applied patterns…", "onedesign")}</p>
+				<p>{ __( 'Loading applied patterns…', 'onedesign' ) }</p>
 			</div>
 		);
 	}
 
 	return (
 		<div>
-			{feedbackMessage && (
+			{ feedbackMessage && (
 				<Notice
-					status={feedbackMessage.type}
-					isDismissible={feedbackMessage.type !== "info"}
-					onRemove={() => {
-						setFeedbackMessage(null);
-					}}
+					status={ feedbackMessage.type }
+					isDismissible={ feedbackMessage.type !== 'info' }
+					onRemove={ () => {
+						setFeedbackMessage( null );
+					} }
 					className="od-pattern-feedback-message"
 				>
-					{feedbackMessage.message}
+					{ feedbackMessage.message }
 				</Notice>
-			)}
+			) }
 
 			<div className="od-pattern-modal od-applied-patterns">
-				{appliedPatterns === null ||
+				{ appliedPatterns === null ||
 				appliedPatterns?.length === 0 ||
-				uniquePatternsArray?.length === 0 ? (
-					<div className="od-no-patterns">
-						<p>{__("No patterns found", "onedesign")}</p>
+				uniquePatternsArray?.length === 0
+					? ( <div className="od-no-patterns">
+						<p>{ __( 'No patterns found', 'onedesign' ) }</p>
 						<p className="od-no-patterns-subtitle">
-							{__(
-								"Try adjusting your search criteria or add patterns to this site.",
-								"onedesign",
-							)}
+							{ __(
+								'Try adjusting your search criteria or add patterns to this site.',
+								'onedesign',
+							) }
 						</p>
 					</div>
-				) : (
-					uniquePatternsArray
-						?.slice(0, visibleAppliedCount)
-						.map((pattern) => (
-							<MemoizedPatternPreview
-								key={pattern?.name}
-								pattern={pattern}
-								isCheckBoxRequired={true}
-								providerSite={pattern?.providerSite}
-								isSelected={selectedPatternsToRemove.includes(pattern?.name)}
-								onSelect={() => handlePatternRemoval(pattern?.name)}
-							/>
-						))
-				)}
+					) : (
+						uniquePatternsArray
+							?.slice( 0, visibleAppliedCount )
+							.map( ( pattern ) => (
+								<MemoizedPatternPreview
+									key={ pattern?.name }
+									pattern={ pattern }
+									isCheckBoxRequired={ true }
+									providerSite={ pattern?.providerSite }
+									isSelected={ selectedPatternsToRemove.includes( pattern?.name ) }
+									onSelect={ () => handlePatternRemoval( pattern?.name ) }
+								/>
+							) )
+					) }
 			</div>
 
 			<div className="od-pattern-footer">
 				<div className="od-selection-info">
-					{selectedPatternsToRemove.length > 0 && (
+					{ selectedPatternsToRemove.length > 0 && (
 						<div className="od-selected-count">
 							<span className="od-count-badge">
-								{selectedPatternsToRemove.length}
+								{ selectedPatternsToRemove.length }
 							</span>
 							<span className="od-count-text">
-								{selectedPatternsToRemove.length === 1
-									? __("pattern selected", "onedesign")
-									: __("patterns selected", "onedesign")}
+								{ selectedPatternsToRemove.length === 1
+									? __( 'pattern selected', 'onedesign' )
+									: __( 'patterns selected', 'onedesign' ) }
 							</span>
 						</div>
-					)}
+					) }
 				</div>
 
 				<div>
-					{uniquePatternsArray &&
+					{ uniquePatternsArray &&
 						uniquePatternsArray.length > visibleAppliedCount && (
-							<Button
-								variant="secondary"
-								onClick={loadMoreUniquePatterns}
-								style={{ marginRight: "10px" }}
-							>
-								{__("Show More Patterns", "onedesign")} ({visibleAppliedCount}/
-								{uniquePatternsArray.length})
-							</Button>
-						)}
+						<Button
+							variant="secondary"
+							onClick={ loadMoreUniquePatterns }
+							style={ { marginRight: '10px' } }
+						>
+							{ __( 'Show More Patterns', 'onedesign' ) } ({ visibleAppliedCount }/
+							{ uniquePatternsArray.length })
+						</Button>
+					) }
 
 					<Button
-						onClick={removeSelectedPatterns}
+						onClick={ removeSelectedPatterns }
 						variant="secondary"
 						isDestructive
-						disabled={selectedPatternsToRemove.length === 0 || isRemoving}
+						disabled={ selectedPatternsToRemove.length === 0 || isRemoving }
 					>
-						{isRemoving
-							? __("Removing…", "onedesign")
-							: __("Remove Selected Patterns", "onedesign")}
+						{ isRemoving
+							? __( 'Removing…', 'onedesign' )
+							: __( 'Remove Selected Patterns', 'onedesign' ) }
 					</Button>
 				</div>
 			</div>
 
-			{isRemovalModalOpen && (
+			{ isRemovalModalOpen && (
 				<Modal
-					title={__("Confirm Pattern Removal", "onedesign")}
-					onRequestClose={() => setIsRemovalModalOpen(false)}
+					title={ __( 'Confirm Pattern Removal', 'onedesign' ) }
+					onRequestClose={ () => setIsRemovalModalOpen( false ) }
 					className="od-pattern-removal-modal"
 				>
 					<div className="od-pattern-removal-modal-content">
 						<p>
-							{__(
-								"Are you sure you want to remove the selected patterns? This action cannot be undone.",
-								"onedesign",
-							)}
+							{ __(
+								'Are you sure you want to remove the selected patterns? This action cannot be undone.',
+								'onedesign',
+							) }
 						</p>
 						<div className="od-pattern-removal-modal-actions">
 							<Button
 								variant="secondary"
-								onClick={() => setIsRemovalModalOpen(false)}
+								onClick={ () => setIsRemovalModalOpen( false ) }
 							>
-								{__("Cancel", "onedesign")}
+								{ __( 'Cancel', 'onedesign' ) }
 							</Button>
 							<Button
 								variant="primary"
 								isDestructive
-								onClick={confirmAndRemovePatterns}
+								onClick={ confirmAndRemovePatterns }
 							>
-								{__("Yes, Remove Patterns", "onedesign")}
+								{ __( 'Yes, Remove Patterns', 'onedesign' ) }
 							</Button>
 						</div>
 					</div>
 				</Modal>
-			)}
+			) }
 		</div>
 	);
 } );

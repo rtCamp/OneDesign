@@ -7,7 +7,6 @@
 
 namespace OneDesign;
 
-use OneDesign\Post_Types\Design_Library;
 use OneDesign\Traits\Singleton;
 
 /**
@@ -118,6 +117,15 @@ class Hooks {
 				'keywords'    => $pattern_data['keywords'] ?? array(),
 				'description' => $pattern_data['description'] ?? '',
 			);
+
+			// Register categories if they are not registered.
+			if ( ! empty( $pattern_args['categories'] ) ) {
+				foreach ( $pattern_args['categories'] as $category ) {
+					if ( ! term_exists( $category, 'wp_pattern_category' ) ) {
+						wp_insert_term( $category, 'wp_pattern_category' );
+					}
+				}
+			}
 
 			// Add optional properties if they exist.
 			if ( isset( $pattern_data['viewportWidth'] ) ) {

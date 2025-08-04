@@ -557,6 +557,37 @@ class Rest {
 
 		$categories = \WP_Block_Pattern_Categories_Registry::get_instance()->get_all_registered();
 
+		$user_created_categories = get_terms(
+			array(
+				'taxonomy'   => 'wp_pattern_category',
+				'hide_empty' => false,
+			)
+		);
+
+		if ( ! is_wp_error( $user_created_categories ) && ! empty( $user_created_categories ) && is_array( $user_created_categories ) ) {
+			foreach ( $user_created_categories as $category ) {
+				// Ensure the category has a name and label.
+				if ( ! empty( $category->name ) && ! empty( $category->slug ) ) {
+					// Check if category already exists to avoid duplicates.
+					$exists = false;
+					foreach ( $categories as $existing_category ) {
+						if ( $existing_category['name'] === $category->slug ) {
+							$exists = true;
+							break;
+						}
+					}
+					if ( $exists ) {
+						continue; // Skip if the category already exists.
+					}
+					// Add user-created category to the list.
+					$categories[] = array(
+						'name'  => $category->slug,
+						'label' => $category->name,
+					);
+				}
+			}
+		}
+
 		return rest_ensure_response(
 			array(
 				'success'    => true,
@@ -724,6 +755,26 @@ class Rest {
 		$patterns_map = array();
 
 		$pattern_categories             = \WP_Block_Pattern_Categories_Registry::get_instance()->get_all_registered();
+
+		$user_created_categories = get_terms(
+			array(
+				'taxonomy'   => 'wp_pattern_category',
+				'hide_empty' => false,
+			)
+		);
+
+		if ( ! is_wp_error( $user_created_categories ) && ! empty( $user_created_categories ) && is_array( $user_created_categories ) ) {
+			foreach ( $user_created_categories as $category ) {
+				// Ensure the category has a name and label.
+				if ( ! empty( $category->name ) && ! empty( $category->slug ) ) {
+					$pattern_categories[] = array(
+						'name'  => $category->slug,
+						'label' => $category->name,
+					);
+				}
+			}
+		}
+
 		$pattern_category_name_to_label = array();
 		if ( ! empty( $pattern_categories ) && is_array( $pattern_categories ) ) {
 			foreach ( $pattern_categories as $category ) {
@@ -787,8 +838,8 @@ class Rest {
 
 			// Map pattern category name to labels.
 			$pattern['category_labels'] = array();
-			if ( ! empty( $pattern['categories'] ) && is_array( $pattern['categories'] ) ) {
-				foreach ( $pattern['categories'] as $category_name ) {
+			if ( ! empty( $categories ) && is_array( $categories ) ) {
+				foreach ( $categories as $category_name ) {
 					$pattern['category_labels'][ $category_name ] = $pattern_category_name_to_label[ $category_name ] ?? $category_name;
 				}
 			} else {

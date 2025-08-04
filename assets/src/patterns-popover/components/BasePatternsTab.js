@@ -59,7 +59,7 @@ const BasePatternsTab = memo(
 					<div className="od-loading-content">
 						<Spinner />
 						<p className="od-loading-text">
-							{__("Loading patterns…", "onedesign")}
+							{ __( 'Loading patterns…', 'onedesign' ) }
 						</p>
 					</div>
 				</div>
@@ -183,85 +183,85 @@ const BasePatternsTab = memo(
 				<div className="od-consumer-site-modal-content">
 					<div className="od-site-selection-wrapper">
 						<RenderConsumerSiteMeta
-							setIsSiteSelected={setIsSiteSelected}
-							selectedPatterns={selectedPatterns}
-							basePatterns={basePatterns}
-							sitePatterns={sitePatterns}
+							setIsSiteSelected={ setIsSiteSelected }
+							selectedPatterns={ selectedPatterns }
+							basePatterns={ basePatterns }
+							sitePatterns={ sitePatterns }
 						/>
 					</div>
 
-					{applicationStatus && (
+					{ applicationStatus && (
 						<Notice
-							status={applicationStatus.type}
-							isDismissible={false}
+							status={ applicationStatus.type }
+							isDismissible={ false }
 							className="od-application-notice od-error-notice"
 						>
 							<div className="od-error-notice-summary">
 								<div className="od-notice-message">
-									{applicationStatus.message}
+									{ applicationStatus.message }
 								</div>
 
-								{applicationStatus.hasDetails && (
+								{ applicationStatus.hasDetails && (
 									<button
 										type="button"
 										className="od-error-notice-toggle"
-										onClick={() => setShowDetailedErrors((prev) => !prev)}
+										onClick={ () => setShowDetailedErrors( ( prev ) => ! prev ) }
 									>
-										{showDetailedErrors
-											? __("Hide Details", "onedesign")
-											: __("Show Details", "onedesign")}
+										{ showDetailedErrors
+											? __( 'Hide Details', 'onedesign' )
+											: __( 'Show Details', 'onedesign' ) }
 										<span className="od-toggle-icon">
-											{showDetailedErrors ? "▲" : "▼"}
+											{ showDetailedErrors ? '▲' : '▼' }
 										</span>
 									</button>
-								)}
+								) }
 							</div>
 
-							{showDetailedErrors && applicationStatus.hasDetails && (
+							{ showDetailedErrors && applicationStatus.hasDetails && (
 								<div className="od-error-details">
-									{detailedErrors.map((error, index) => (
-										<div key={index} className="od-error-site">
-											<div className="od-error-site-name">{error.site}</div>
+									{ detailedErrors.map( ( error, index ) => (
+										<div key={ index } className="od-error-site">
+											<div className="od-error-site-name">{ error.site }</div>
 											<div className="od-error-site-message">
-												{error.message}
+												{ error.message }
 											</div>
 										</div>
-									))}
+									) ) }
 								</div>
-							)}
+							) }
 						</Notice>
-					)}
+					) }
 
 					<div className="od-modal-actions">
 						<Button
 							variant="secondary"
-							onClick={closeConsumerSiteModal}
-							disabled={isApplying && !showCloseConfirmation}
+							onClick={ closeConsumerSiteModal }
+							disabled={ isApplying && ! showCloseConfirmation }
 						>
-							{showCloseConfirmation
-								? __("Yes, Cancel", "onedesign")
-								: __("Cancel", "onedesign")}
+							{ showCloseConfirmation
+								? __( 'Yes, Cancel', 'onedesign' )
+								: __( 'Cancel', 'onedesign' ) }
 						</Button>
-						{showCloseConfirmation ? (
+						{ showCloseConfirmation ? (
 							<Button
 								variant="secondary"
-								onClick={() => setShowCloseConfirmation(false)}
+								onClick={ () => setShowCloseConfirmation( false ) }
 							>
-								{__("Continue Applying", "onedesign")}
+								{ __( 'Continue Applying', 'onedesign' ) }
 							</Button>
 						) : (
 							<Button
 								variant="primary"
-								onClick={handleApplyPatterns}
-								disabled={isApplying || !isSiteSelected}
+								onClick={ handleApplyPatterns }
+								disabled={ isApplying || ! isSiteSelected }
 								className="od-apply-button"
 							>
-								{isApplying && <Spinner />}
-								{isApplying
-									? __("Applying…", "onedesign")
-									: __("Apply Patterns", "onedesign")}
+								{ isApplying && <Spinner /> }
+								{ isApplying
+									? __( 'Applying…', 'onedesign' )
+									: __( 'Apply Patterns', 'onedesign' ) }
 							</Button>
-						)}
+						) }
 					</div>
 				</div>
 			);
@@ -270,85 +270,85 @@ const BasePatternsTab = memo(
 		return (
 			<div className="od-patterns-container">
 				<div className="od-pattern-modal">
-					{basePatterns && basePatterns.length === 0 ? (
+					{ basePatterns && basePatterns.length === 0 ? (
 						<div className="od-no-patterns">
-							<p>{__("No patterns found", "onedesign")}</p>
+							<p>{ __( 'No patterns found', 'onedesign' ) }</p>
 							<p className="od-no-patterns-subtitle">
-								{__(
-									"Try adjusting your search criteria or check back later.",
-									"onedesign",
-								)}
+								{ __(
+									'Try adjusting your search criteria or check back later.',
+									'onedesign',
+								) }
 							</p>
 						</div>
 					) : (
 						basePatterns
-							?.slice(0, visibleCount)
-							.map((pattern) => (
+							?.slice( 0, visibleCount )
+							.map( ( pattern ) => (
 								<MemoizedPatternPreview
-									key={pattern?.name}
-									pattern={pattern}
-									isSelected={selectedPatterns.includes(pattern?.name)}
-									onSelect={() => handlePatternSelection(pattern?.name)}
+									key={ pattern?.name }
+									pattern={ pattern }
+									isSelected={ selectedPatterns.includes( pattern?.name ) }
+									onSelect={ () => handlePatternSelection( pattern?.name ) }
 								/>
-							))
-					)}
+							) )
+					) }
 				</div>
 
 				<div className="od-pattern-footer">
 					<div className="od-selection-info">
-						{selectedPatterns.length > 0 && (
+						{ selectedPatterns.length > 0 && (
 							<div className="od-selected-count">
 								<span className="od-count-badge">
-									{selectedPatterns.length}
+									{ selectedPatterns.length }
 								</span>
 								<span className="od-count-text">
-									{selectedPatterns.length === 1
-										? __("pattern selected", "onedesign")
-										: __("patterns selected", "onedesign")}
+									{ selectedPatterns.length === 1
+										? __( 'pattern selected', 'onedesign' )
+										: __( 'patterns selected', 'onedesign' ) }
 								</span>
 							</div>
-						)}
+						) }
 					</div>
 
 					<div className="od-footer-actions">
-						{hasMorePatterns && (
+						{ hasMorePatterns && (
 							<Button
 								variant="secondary"
-								onClick={loadMorePatterns}
+								onClick={ loadMorePatterns }
 								className="od-load-more-button"
 							>
-								{__("Show More", "onedesign")}
+								{ __( 'Show More', 'onedesign' ) }
 								<span className="od-pattern-count">
-									({visibleCount}/{basePatterns.length})
+									({ visibleCount }/{ basePatterns.length })
 								</span>
 							</Button>
-						)}
+						) }
 
 						<Button
-							onClick={openConsumerSiteModal}
+							onClick={ openConsumerSiteModal }
 							variant="primary"
 							className="od-apply-to-sites-button"
-							disabled={selectedPatterns.length === 0}
+							disabled={ selectedPatterns.length === 0 }
 						>
-							{selectedPatterns.length === 0
-								? __("Select Patterns First", "onedesign")
-								: __("Apply to Sites", "onedesign")}
+							{ selectedPatterns.length === 0
+								? __( 'Select Patterns First', 'onedesign' )
+								: __( 'Apply to Sites', 'onedesign' ) }
 						</Button>
 					</div>
 				</div>
 
-				{isModalOpen && (
+				{ isModalOpen && (
 					<Modal
 						title=""
-						onRequestClose={closeConsumerSiteModal}
+						onRequestClose={ closeConsumerSiteModal }
 						className="od-consumer-site-modal"
-						shouldCloseOnClickOutside={!isApplying}
-						shouldCloseOnEsc={!isApplying}
-						isFullScreen={true}
+						shouldCloseOnClickOutside={ ! isApplying }
+						shouldCloseOnEsc={ ! isApplying }
+						isFullScreen={ true }
 					>
-						{consumerSiteSelection()}
+						{ consumerSiteSelection() }
 					</Modal>
-				)}
+				) }
 			</div>
 		);
 	},

@@ -198,32 +198,32 @@ const LibraryModal = () => {
 		setSearchTerm( '' );
 	}, [] );
 
-	const [tabs, setTabs] = useState([
+	const [ tabs, setTabs ] = useState( [
 		{
-			name: "basePatterns",
-			title: __("Current Site Patterns", "onedesign"),
-			className: "od-base-patterns-tab",
+			name: 'basePatterns',
+			title: __( 'Current Site Patterns', 'onedesign' ),
+			className: 'od-base-patterns-tab',
 		},
-	]);
+	] );
 
 	useEffect( () => {
 		if ( siteOptions ) {
 			const newTabs = [
 				{
-					name: "basePatterns",
-					title: __("Current Site Patterns", "onedesign"),
-					className: "od-base-patterns-tab",
+					name: 'basePatterns',
+					title: __( 'Current Site Patterns', 'onedesign' ),
+					className: 'od-base-patterns-tab',
 				},
 			];
 
 			// add all sites except base site
 			Object.values( siteOptions ).forEach( ( site ) => {
-				newTabs.push({
+				newTabs.push( {
 					name: site.id,
 					title: site.name,
-					className: "od-applied-patterns-tab",
+					className: 'od-applied-patterns-tab',
 					value: site.id,
-				});
+				} );
 			} );
 
 			setTabs( newTabs );

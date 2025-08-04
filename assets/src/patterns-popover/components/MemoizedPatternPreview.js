@@ -11,7 +11,7 @@ import { BlockPreview } from '@wordpress/block-editor';
 const PatternPreviewContent = memo( ( { parsedBlocks } ) => {
 	return (
 		<div className="od-pattern-preview">
-			<BlockPreview blocks={parsedBlocks} viewportWidth={1200} />
+			<BlockPreview blocks={ parsedBlocks } viewportWidth={ 1200 } />
 		</div>
 	);
 } );
@@ -30,12 +30,12 @@ const PatternCategories = memo( ( { categories } ) => {
 
 	return (
 		<div className="od-pattern-categories">
-			<p>{__("Categories:", "onedesign")}</p>
-			{categoryValues.map((category, i) => (
-				<span key={`${category}-${i}`} className="od-pattern-category">
-					{category}
+			<p>{ __( 'Categories:', 'onedesign' ) }</p>
+			{ categoryValues.map( ( category, i ) => (
+				<span key={ `${ category }-${ i }` } className="od-pattern-category">
+					{ category }
 				</span>
-			))}
+			) ) }
 		</div>
 	);
 } );
@@ -49,8 +49,8 @@ const ProviderSiteInfo = memo( ( { providerSite } ) => {
 	return (
 		<div className="od-pattern-provider-site-name">
 			<p>
-				{__("Provider Site: ", "onedesign")}
-				<span className="od-provider-site-name">{providerSite}</span>
+				{ __( 'Provider Site: ', 'onedesign' ) }
+				<span className="od-provider-site-name">{ providerSite }</span>
 			</p>
 		</div>
 	);
@@ -77,26 +77,26 @@ const MemoizedPatternPreview = memo(
 		return (
 			<div
 				className="od-pattern-wrapper"
-				onClick={() => onSelect(pattern)}
+				onClick={ () => onSelect( pattern ) }
 				role="button"
-				tabIndex={0}
-				onKeyDown={(e) => {
-					if (e.key === "Enter" || e.key === " ") {
-						onSelect(pattern);
+				tabIndex={ 0 }
+				onKeyDown={ ( e ) => {
+					if ( e.key === 'Enter' || e.key === ' ' ) {
+						onSelect( pattern );
 					}
-				}}
+				} }
 			>
 				<div className="od-pattern-title-wrapper">
-					{isCheckBoxRequired && <CheckboxControl checked={isSelected} />}
-					<span className="od-pattern-title">{patternTitle}</span>
+					{ isCheckBoxRequired && <CheckboxControl checked={ isSelected } /> }
+					<span className="od-pattern-title">{ patternTitle }</span>
 				</div>
 
-				{/* The preview that shouldn't re-render */}
-				<PatternPreviewContent parsedBlocks={parsedBlocks} />
+				{ /* The preview that shouldn't re-render */ }
+				<PatternPreviewContent parsedBlocks={ parsedBlocks } />
 
-				{/* Other info that can re-render if needed */}
-				<ProviderSiteInfo providerSite={providerSite} />
-				<PatternCategories categories={pattern?.category_labels} />
+				{ /* Other info that can re-render if needed */ }
+				<ProviderSiteInfo providerSite={ providerSite } />
+				<PatternCategories categories={ pattern?.category_labels } />
 			</div>
 		);
 	},

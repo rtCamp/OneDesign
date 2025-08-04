@@ -126,4 +126,4 @@ Yes. You are able to do that from the dashboard itself.
    - Try clearing your browser cache and refreshing
 
 ## Get Involved
-You can join the development and discussions on [GitHub](https://github.com/rtCamp/pattern-distributor). Feel free to report issues, suggest features, or contribute code.
+You can join the development and discussions on [GitHub](https://github.com/rtCamp/OneDesign). Feel free to report issues, suggest features, or contribute code.

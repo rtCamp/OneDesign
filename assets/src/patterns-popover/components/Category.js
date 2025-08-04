@@ -25,7 +25,7 @@ const Category = ( {
 	const fetchPatternCategories = useCallback( async () => {
 		try {
 			if ( ! basePatterns || basePatterns.length === 0 ) {
-				setCategoryError( __( 'No patterns available', 'onedesign' ) );
+				setCategoryError( __( 'No categories found', 'onedesign' ) );
 				setCategories( [] );
 				return;
 			}
@@ -47,6 +47,11 @@ const Category = ( {
 			);
 
 			setCategories( categoriesWithPatterns );
+			if ( categoriesWithPatterns.length === 0 ) {
+				setCategoryError( __( 'No categories found', 'onedesign' ) );
+			} else {
+				setCategoryError( '' );
+			}
 		} catch ( error ) {
 			setCategoryError( __( 'Error fetching pattern categories', 'onedesign' ) );
 		}
@@ -57,6 +62,16 @@ const Category = ( {
 			fetchPatternCategories();
 		}
 	}, [ isOpen, fetchPatternCategories ] );
+
+	if ( categoryError ) {
+		return (
+			<div className="library-sidebar">
+				<div className="category-list">
+					<div className="category-item">{ categoryError }</div>
+				</div>
+			</div>
+		);
+	}
 
 	return (
 		<div className="library-sidebar">
@@ -70,7 +85,7 @@ const Category = ( {
 				>
 					{ __( 'All', 'onedesign' ) }
 				</Button>
-				{ categories && categories.length > 0 ? (
+				{ categories && categories.length > 0 && (
 					categories.map( ( category ) => (
 						<Button
 							key={ category.name }
@@ -80,8 +95,6 @@ const Category = ( {
 							{ category.label }
 						</Button>
 					) )
-				) : (
-					<div className="category-item">{ categoryError }</div>
 				) }
 			</div>
 		</div>
