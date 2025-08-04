@@ -9,8 +9,8 @@ jobs:
     steps:
     - name: Install Dependencies
       run: |
-        apt-get update
-        apt-get install -y git sudo
+        sudo apt-get update
+        sudo apt-get install -y git sudo
 
     - uses: actions/checkout@v4
       with:
