@@ -754,7 +754,7 @@ class Rest {
 	private function get_all_local_patterns_map(): array {
 		$patterns_map = array();
 
-		$pattern_categories             = \WP_Block_Pattern_Categories_Registry::get_instance()->get_all_registered();
+		$pattern_categories = \WP_Block_Pattern_Categories_Registry::get_instance()->get_all_registered();
 
 		$user_created_categories = get_terms(
 			array(
