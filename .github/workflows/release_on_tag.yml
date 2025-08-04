@@ -13,8 +13,8 @@ jobs:
       - name: Install system dependencies
         shell: bash
         run: |
-          apt-get update
-          apt-get install -y zip unzip composer
+          sudo apt-get update
+          sudo apt-get install -y zip unzip composer
 
       - name: Set up Node
         uses: actions/setup-node@v4
