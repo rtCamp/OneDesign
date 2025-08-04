@@ -4,9 +4,7 @@ on: pull_request
 jobs:
   runPHPCSInspection:
     name: Run PHPCS inspection
-    runs-on: self-hosted
-    container:
-      image: ubuntu:latest
+    runs-on: ubuntu-latest
 
     steps:
     - name: Install Dependencies
