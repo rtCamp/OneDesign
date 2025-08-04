@@ -6,17 +6,15 @@ on:
 
 jobs:
   release:
-    runs-on: self-hosted
-    container:
-      image: ubuntu:latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - name: Install system dependencies
         shell: bash
         run: |
-          apt-get update
-          apt-get install -y zip unzip composer
+          sudo apt-get update
+          sudo apt-get install -y zip unzip composer
 
       - name: Set up Node
         uses: actions/setup-node@v4
