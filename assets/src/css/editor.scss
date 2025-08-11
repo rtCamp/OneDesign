@@ -114,6 +114,19 @@
 		animation: fadeIn 0.3s ease;
 	}
 
+	.onedesign-modal-tabs {
+		position: relative;
+
+		.onedesign-settings-button {
+			position: absolute;
+			top: 0;
+			right: 0;
+			background-color: #fff;
+			height: 45px;
+			width: 55px;
+		}
+	}
+
 	.onedesign-tabs {
 
 		.components-tab-panel__tabs {
