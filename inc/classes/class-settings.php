@@ -23,7 +23,7 @@ class Settings {
 	 *
 	 * @var string
 	 */
-	const PAGE_SLUG = 'onedesign-settings';
+	const PAGE_SLUG = 'onedesign';
 
 	/**
 	 * Option name for site type.
@@ -81,7 +81,7 @@ class Settings {
 			__( 'OneDesign', 'onedesign' ),
 			'manage_options',
 			self::PAGE_SLUG,
-			array( $this, 'settings_page_content' ),
+			'__return_null',
 			'dashicons-admin-generic',
 			100
 		);
@@ -98,6 +98,17 @@ class Settings {
 				'__return_null'
 			);
 		}
+
+		add_submenu_page(
+			self::PAGE_SLUG,
+			__( 'Settings', 'onedesign' ),
+			__( 'Settings', 'onedesign' ),
+			'manage_options',
+			'onedesign-settings',
+			array( $this, 'settings_page_content' )
+		);
+
+		remove_submenu_page( 'onedesign', 'onedesign' );
 	}
 
 	/**
@@ -109,8 +120,10 @@ class Settings {
 	 * @return void
 	 */
 	public function handle_design_library_redirect(): void {
+		$pages = array( 'design-library', 'onedesign' );
+
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( ! isset( $_GET['page'] ) || 'design-library' !== $_GET['page'] ) {
+		if ( ! isset( $_GET['page'] ) || ! in_array( $_GET['page'], $pages, true ) ) {
 			return;
 		}
 
@@ -379,7 +392,7 @@ class Settings {
 	 * @return void
 	 */
 	public function enqueue_admin_scripts( string $hook ): void {
-		if ( ( 'toplevel_page_' . self::PAGE_SLUG ) !== $hook && 'onedesign_page_design-library' !== $hook ) {
+		if ( ! str_contains( $hook, self::PAGE_SLUG ) ) {
 			return;
 		}
 

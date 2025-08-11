@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { useState, useEffect, useCallback, useMemo } from '@wordpress/element';
-import { Modal, SearchControl, TabPanel, Spinner } from '@wordpress/components';
+import { Modal, SearchControl, TabPanel, Spinner, IconButton } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useSelect, useDispatch } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
@@ -453,47 +453,58 @@ const LibraryModal = () => {
 								{ renderSearchResults() }
 							</div>
 
-							<TabPanel
-								className="onedesign-tabs"
-								activeClass="active-tab"
-								tabs={ tabs }
-								onSelect={ handleTabSelect }
-							>
-								{ ( tab ) => {
-									if ( tab.name === 'basePatterns' ) {
+							<div className="onedesign-modal-tabs">
+								<TabPanel
+									className="onedesign-tabs"
+									activeClass="active-tab"
+									tabs={ tabs }
+									onSelect={ handleTabSelect }
+								>
+									{ ( tab ) => {
+										if ( tab.name === 'basePatterns' ) {
+											return (
+												<BasePatternsTab
+													isLoading={ isLoading }
+													basePatterns={ filteredBasePatterns }
+													visibleCount={ visibleCount }
+													handlePatternSelection={ handlePatternSelection }
+													hasMorePatterns={ hasMorePatterns }
+													loadMorePatterns={ loadMorePatterns }
+													searchTerm={ searchTerm }
+													setSelectedPatterns={ setSelectedPatterns }
+													selectedPatterns={ selectedPatterns }
+													applySelectedPatterns={ applySelectedPatterns }
+													consumerSites={ consumerSites }
+													sitePatterns={ allConsumerSitePatterns }
+												/>
+											);
+										}
+										// based on tab name show applied patterns
 										return (
-											<BasePatternsTab
-												isLoading={ isLoading }
-												basePatterns={ filteredBasePatterns }
-												visibleCount={ visibleCount }
-												handlePatternSelection={ handlePatternSelection }
-												hasMorePatterns={ hasMorePatterns }
-												loadMorePatterns={ loadMorePatterns }
-												searchTerm={ searchTerm }
-												setSelectedPatterns={ setSelectedPatterns }
+											<AppliedPatternsTab
+												isLoadingApplied={ isLoadingApplied }
+												appliedPatterns={ getFilteredPatterns( tab ) }
+												visibleAppliedCount={ visibleAppliedCount }
 												selectedPatterns={ selectedPatterns }
-												applySelectedPatterns={ applySelectedPatterns }
-												consumerSites={ consumerSites }
-												sitePatterns={ allConsumerSitePatterns }
+												hasMoreAppliedPatterns={ hasMoreAppliedPatterns }
+												loadMoreAppliedPatterns={ loadMoreAppliedPatterns }
+												applySelectedPatterns={ removeSelectedPatterns }
+												setVisibleAppliedCount={ setVisibleAppliedCount }
+												siteInfo={ tab }
 											/>
 										);
-									}
-									// based on tab name show applied patterns
-									return (
-										<AppliedPatternsTab
-											isLoadingApplied={ isLoadingApplied }
-											appliedPatterns={ getFilteredPatterns( tab ) }
-											visibleAppliedCount={ visibleAppliedCount }
-											selectedPatterns={ selectedPatterns }
-											hasMoreAppliedPatterns={ hasMoreAppliedPatterns }
-											loadMoreAppliedPatterns={ loadMoreAppliedPatterns }
-											applySelectedPatterns={ removeSelectedPatterns }
-											setVisibleAppliedCount={ setVisibleAppliedCount }
-											siteInfo={ tab }
-										/>
-									);
-								} }
-							</TabPanel>
+									} }
+								</TabPanel>
+								{ /* Add icon button to redirect user to onedesign-settings page */ }
+								<IconButton
+									icon="admin-generic"
+									label={ __( 'Go to OneDesign Settings', 'onedesign' ) }
+									onClick={ () => {
+										window.location.href = '/wp-admin/admin.php?page=onedesign-settings';
+									} }
+									className="onedesign-settings-button"
+								/>
+							</div>
 						</div>
 					</div>
 				</Modal>
