@@ -120,7 +120,7 @@ class Settings {
 	 * @return void
 	 */
 	public function handle_design_library_redirect(): void {
-		$pages = [ 'design-library', 'onedesign' ];
+		$pages = array( 'design-library', 'onedesign' );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! isset( $_GET['page'] ) || ! in_array( $_GET['page'], $pages, true ) ) {
