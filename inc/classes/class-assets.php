@@ -32,7 +32,19 @@ class Assets {
 	 */
 	public function setup_hooks(): void {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_scripts' ), 20, 1 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'add_admin_scripts' ), 20, 1 );
 	}
+
+	/**
+	 * Add admin scripts.
+	 *
+	 * @return void
+	 */
+	public function add_admin_scripts(): void {
+		$this->register_style( 'onedesign-admin-style', 'css/admin.css' );
+		wp_enqueue_style( 'onedesign-admin-style' );
+	}
+
 
 	/**
 	 * Add scripts and styles to the page.

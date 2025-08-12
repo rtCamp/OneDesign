@@ -82,7 +82,7 @@ class Settings {
 			'manage_options',
 			self::PAGE_SLUG,
 			'__return_null',
-			'dashicons-admin-generic',
+			'',
 			100
 		);
 
