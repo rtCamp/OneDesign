@@ -370,7 +370,7 @@ class Rest {
 			return new WP_Error( 'invalid_params', __( 'Pattern names must be provided as an array.', 'onedesign' ), array( 'status' => 400 ) );
 		}
 
-		// Remove the patterns from the consumer site patterns option
+		// Remove the patterns from the consumer site patterns option.
 		$consumer_patterns = get_option( 'consumer_site_patterns', array() );
 		if ( empty( $consumer_patterns ) ) {
 			return new WP_Error( 'no_patterns_found', __( 'No patterns found for this consumer site.', 'onedesign' ), array( 'status' => 404 ) );
@@ -675,7 +675,7 @@ class Rest {
 				}
 			);
 
-			$target_site = reset( $target_site ); // Get the first match, should be unique by ID
+			$target_site = reset( $target_site ); // Get the first match, should be unique by ID.
 
 			if ( empty( $target_site ) ) {
 				$results[ $site_id ] = array(
@@ -782,7 +782,7 @@ class Rest {
 			}
 		}
 
-		// Get all registered patterns
+		// Get all registered patterns.
 		$registered_patterns = \WP_Block_Patterns_Registry::get_instance()->get_all_registered();
 
 		foreach ( $registered_patterns as $pattern ) {
@@ -790,7 +790,7 @@ class Rest {
 				continue; // Skip patterns not intended for inserter.
 			}
 
-			// Map pattern category name to labels
+			// Map pattern category name to labels.
 			$pattern['category_labels'] = array();
 			if ( ! empty( $pattern['categories'] ) && is_array( $pattern['categories'] ) ) {
 				foreach ( $pattern['categories'] as $category_name ) {

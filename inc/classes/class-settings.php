@@ -127,12 +127,12 @@ class Settings {
 			return;
 		}
 
-		// Only run for users with proper permissions
+		// Only run for users with proper permissions.
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 
-		// Your existing create/redirect logic here
+		// Your existing create/redirect logic here.
 		$this->create_and_open_design_library_post();
 	}
 
@@ -324,16 +324,16 @@ class Settings {
 
 		// Handle child sites update for dashboard sites.
 		if ( isset( $_POST['child_sites'] ) && get_option( self::OPTION_SITE_TYPE ) === 'dashboard' ) {
-			$child_sites = array();
-
-			foreach ( $_POST['child_sites'] as $site_data ) {
+			$child_sites      = array();
+			$post_child_sites = $_POST['child_sites'] ?? array(); // phpcs:ignore -- sites info is sanitized below.
+			foreach ( $post_child_sites as $site_data ) {
 				$site_id      = isset( $site_data['id'] ) ? sanitize_text_field( $site_data['id'] ) : '';
 				$site_name    = isset( $site_data['name'] ) ? sanitize_text_field( $site_data['name'] ) : '';
 				$site_url     = isset( $site_data['url'] ) ? esc_url_raw( $site_data['url'] ) : '';
 				$site_logo    = isset( $site_data['logo'] ) ? esc_url_raw( $site_data['logo'] ) : '';
 				$site_api_key = isset( $site_data['api_key'] ) ? sanitize_text_field( $site_data['api_key'] ) : '';
 
-				// Only save if all fields are filled
+				// Only save if all fields are filled.
 				if ( ! empty( $site_name ) && ! empty( $site_url ) && ! empty( $site_api_key ) ) {
 					$child_sites[] = array(
 						'id'      => $site_id,

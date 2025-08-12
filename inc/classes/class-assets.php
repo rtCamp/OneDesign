@@ -45,7 +45,6 @@ class Assets {
 		wp_enqueue_style( 'onedesign-admin-style' );
 	}
 
-
 	/**
 	 * Add scripts and styles to the page.
 	 *
