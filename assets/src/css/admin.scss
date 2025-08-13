@@ -54,3 +54,12 @@
 .hidden-logo-url {
 	display: none;
 }
+
+
+// add icon to the OneDesign admin menu
+[id="toplevel_page_onedesign"] {
+
+	.dashicons-admin-generic::before{
+		content: url("../../images/logo.svg") !important;
+	}
+}
