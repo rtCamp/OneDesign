@@ -95,6 +95,12 @@ Built for enterprise teams, OneDesign unifies your design, editorial, and develo
    - Select the patterns you want to remove
    - Click “Remove Selected Patterns”
    - Confirm the removal, and the patterns will be deleted from that site
+  
+### Video Demo
+
+https://github.com/user-attachments/assets/d2c4b94f-3720-422d-b996-a102156bb941
+
+
 
 ## Development & Contributing
 [OneDesign](https://github.com/rtCamp/onedesign) is under active development and maintained by [rtCamp](https://rtcamp.com/).
