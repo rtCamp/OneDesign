@@ -20,6 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // Define constants.
 define( 'ONEDESIGN_VERSION', '1.0.0' );
 define( 'ONEDESIGN_DIR_PATH', plugin_dir_path( __FILE__ ) );
+define( 'ONEDESIGN_RELATIVE_PATH', dirname( plugin_basename( __FILE__ ) ) );
 define( 'ONEDESIGN_DIR_URL', plugin_dir_url( __FILE__ ) );
 define( 'ONEDESIGN_BUILD_URI', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'assets/build/' );
 define( 'ONEDESIGN_BUILD_PATH', trailingslashit( plugin_dir_path( __FILE__ ) ) . 'assets/build/' );
@@ -86,7 +87,7 @@ function onedesign_plugin_loader() {
 	\OneDesign\Plugin::get_instance();
 
 	// load plugin text domain.
-	load_plugin_textdomain( 'onedesign', false, ONEDESIGN_DIR_PATH . '/languages/' );
+	load_plugin_textdomain( 'onedesign', false, ONEDESIGN_RELATIVE_PATH . '/languages/' );
 }
 
 add_action( 'plugins_loaded', 'onedesign_plugin_loader' );
