@@ -22,6 +22,13 @@ class Plugin {
 	 * Construct method.
 	 */
 	protected function __construct() {
+		$this->setup();
+	}
+
+	/**
+	 * Setup hooks for the plugin.
+	 */
+	private function setup(): void {
 		// Load plugin classes.
 		Assets::get_instance();
 		Rest::get_instance();
