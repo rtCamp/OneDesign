@@ -49,7 +49,7 @@ const ProviderSiteInfo = memo( ( { providerSite } ) => {
 	return (
 		<div className="od-pattern-provider-site-name">
 			<p>
-				{ __( 'Provider Site: ', 'onedesign' ) }
+				{ __( 'Provider Site:', 'onedesign' ) }
 				<span className="od-provider-site-name">{ providerSite }</span>
 			</p>
 		</div>
