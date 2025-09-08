@@ -1,13 +1,18 @@
 <?php
 /**
  * Plugin Name: OneDesign
+ * Plugin URI: https://github.com/rtCamp/OneDesign/
  * Description: Sync patterns across multiple WordPress sites and manage them from a single dashboard.
  * Version: 1.0.0
  * Author: rtCamp
  * Author URI: https://rtcamp.com
+ * Text Domain: onedesign
+ * Domain Path: /languages
+ * Requires at least: 6.5
+ * Requires PHP: 7.4
+ * Tested up to: 6.8
  * License: GPL2+
  * License URI: https://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain: onedesign
  *
  * @package OneDesign
  */
