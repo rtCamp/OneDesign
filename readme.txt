@@ -104,9 +104,8 @@ All blocks used in the patterns must be available on all target sites. Ensure co
 1. OneDesign Dashboard - Centralized pattern management interface
 2. Pattern Browser - Search and filter patterns with live previews
 3. Site Registration - Configure Dashboard and Consumer sites
-4. Pattern Application - Select and apply patterns to multiple sites
-5. Bulk Operations - Deploy multiple patterns simultaneously
-6. Pattern Status - Monitor synchronization across connected sites
+4. Bulk Operations - Select and apply patterns to multiple sites
+5. Disabled Sites - Which is already having currently selected patterns
 
 == Changelog ==
 
