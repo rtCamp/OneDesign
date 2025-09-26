@@ -8,6 +8,7 @@
 namespace OneDesign;
 
 use OneDesign\Traits\Singleton;
+use OneDesign\Post_Types\{ Design_Library, Template };
 
 /**
  * Class Hooks
@@ -35,11 +36,124 @@ class Hooks {
 	 */
 	public function setup_hooks(): void {
 		add_action( 'admin_footer', array( $this, 'print_design_library_button_in_editor_js_template' ) );
+		add_action( 'admin_footer', array( $this, 'add_templates_button_to_editor' ) );
 		add_action( 'wp_ajax_register_block_patterns', array( $this, 'ajax_register_block_patterns' ) );
 		add_action( 'wp_ajax_nopriv_register_block_patterns', array( $this, 'ajax_register_block_patterns' ) );
 		add_action( 'init', array( $this, 'register_block_patterns_if_not_exist' ) );
 		add_filter( 'should_load_remote_block_patterns', '__return_false' );
 		add_action( 'after_setup_theme', array( $this, 'remove_core_block_patterns' ) );
+		add_filter( 'allowed_block_types_all', array( $this, 'allowed_block_types' ), 10, 2 );
+
+		// on admin init create template.
+		add_action( 'admin_init', array( $this, 'create_template' ) );
+	}
+
+	public function create_template() {
+		$shared_templates = get_option( 'onedesign_shared_templates', array() );
+		foreach ( $shared_templates as $template ) {
+			$res = register_block_template(
+				$template['id'],
+				$template
+			);
+			error_log( print_r( $res, true ) );
+		}
+
+		$shared_patterns = get_option( 'onedesign_shared_patterns', array() );
+		foreach ( $shared_patterns as $pattern ) {
+			if ( ! class_exists( '\WP_Block_Patterns_Registry' ) ) {
+				require_once ABSPATH . 'wp-includes/class-wp-block-patterns-registry.php';
+			}
+			$res = register_block_pattern(
+				$pattern['slug'],
+				array(
+					'title'       => $pattern['title'] ?? '',
+					'content'     => $pattern['content'] ?? '',
+					'description' => $pattern['description'] ?? '',
+					'postTypes'   => $pattern['post_types'] ?? array(),
+				)
+			);
+			error_log( print_r( $res, true ) );
+		}
+
+		$shared_template_parts = get_option('onedesign_shared_template_parts', array());
+    foreach ($shared_template_parts as $template_part) {
+        // Check if template part already exists
+        $existing = get_posts(array(
+            'post_type' => 'wp_template_part',
+            'name' => $template_part['slug'],
+            'post_status' => 'any',
+            'numberposts' => 1
+        ));
+
+        if (!empty($existing)) {
+            error_log('Template part already exists: ' . $template_part['slug']);
+            continue;
+        }
+
+        // Create the template part post
+        $post_data = array(
+            'post_type'    => 'wp_template_part',
+            'post_title'   => $template_part['title'],
+            'post_name'    => $template_part['slug'],
+            'post_status'  => 'publish',
+            'post_content' => $template_part['content'],
+        );
+
+        $post_id = wp_insert_post($post_data);
+
+        if (is_wp_error($post_id)) {
+            error_log('Failed to create template part: ' . $post_id->get_error_message());
+            continue;
+        }
+
+        $current_theme = get_option('stylesheet');
+    $theme_slug = get_option('template');
+	// CRITICAL: Add all required meta fields
+    update_post_meta($post_id, '_wp_template_part_area', $template_part['area'] ?? 'uncategorized');
+    update_post_meta($post_id, '_wp_theme', $current_theme);
+    
+    // Add these additional meta fields that might be required
+    update_post_meta($post_id, '_wp_template_part_theme', $theme_slug);
+    
+    // Set the correct taxonomy terms
+    wp_set_object_terms($post_id, $template_part['area'] ?? 'uncategorized', 'wp_template_part_area');
+    wp_set_object_terms($post_id, $current_theme, 'wp_theme');
+
+        
+        // Store theme information
+        if (isset($template_part['theme'])) {
+            update_post_meta($post_id, 'theme', $template_part['theme']);
+        } else {
+            update_post_meta($post_id, 'theme', get_stylesheet());
+        }
+
+        // Store description if provided
+        if (isset($template_part['description'])) {
+            update_post_meta($post_id, 'description', $template_part['description']);
+        }
+
+        // Store post types if provided
+        if (isset($template_part['post_types']) && is_array($template_part['post_types'])) {
+            update_post_meta($post_id, 'post_types', $template_part['post_types']);
+        }
+
+        error_log('Template part created successfully: ' . $post_id);
+    }
+	}
+
+	/**
+	 * Allow only specific block types.
+	 *
+	 * @param bool|array               $allowed_block_types Array of allowed block types or boolean to allow all or disallow all.
+	 * @param \WP_Block_Editor_Context $editor_context               The post being edited, provided by the 'allowed_block_types_all' filter.
+	 * @return array
+	 */
+	public function allowed_block_types( $allowed_block_types, $editor_context ) {
+		// Allow all block types in the Design Library post type.
+		if ( isset( $editor_context->post->post_type ) && ( $editor_context->post->post_type === Template::SLUG ) ) {
+			return array();
+		}
+		return $allowed_block_types;
 	}
 
 	/**
@@ -57,12 +171,38 @@ class Hooks {
 	 * @return void
 	 */
 	public function print_design_library_button_in_editor_js_template(): void {
+		$current_screen = get_current_screen();
+		if ( ! $current_screen || $current_screen->post_type !== Design_Library::SLUG ) {
+			return;
+		}
 		?>
 		<script id="design-library-gutenberg-button" type="text/html">
 			<div id="design-library-button">
 				<button id="design-library-main-button" type="button" class="button button-primary button-large">
 					<span class="design-library-main-button-active">
 					<?php esc_html_e( 'Patterns Selection', 'onedesign' ); ?>
+				</button>
+			</div>
+		</script>
+		<?php
+	}
+
+	/**
+	 * Add templates button to editor.
+	 *
+	 * @return void
+	 */
+	public function add_templates_button_to_editor(): void {
+		$current_screen = get_current_screen();
+		if ( ! $current_screen || $current_screen->post_type !== Template::SLUG ) {
+			return;
+		}
+		?>
+		<script id="onedesign-template-button" type="text/html">
+			<div id="onedesign-template-render">
+				<button id="template-main-button" type="button" class="button button-primary button-large">
+					<span class="onedesign-template-main-button-active">
+					<?php esc_html_e( 'Templates', 'onedesign' ); ?>
 				</button>
 			</div>
 		</script>

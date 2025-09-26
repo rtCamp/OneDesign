@@ -2,13 +2,13 @@
 /**
  * Restrict CPTs creation for more than 1 site.
  *
- * @package PatternSync
+ * @package OneDesign
  */
 
 namespace OneDesign;
 
 use OneDesign\Traits\Singleton;
-use OneDesign\Post_Types\Design_Library;
+use OneDesign\Post_Types\{ Design_Library, Template };
 
 /**
  * Class CPT_Restriction
@@ -41,6 +41,7 @@ class CPT_Restriction {
 		add_filter( 'register_post_type_args', array( $this, 'restrict_cpt' ), 5, 2 );
 		add_action( 'init', array( $this, 'unregister_cpt' ), 20 );
 		add_action( 'current_screen', array( $this, 'limit_design_library_posts' ) );
+		add_action( 'current_screen', array( $this, 'limit_template_posts' ) );
 		add_filter( 'register_post_type_args', array( $this, 'modify_design_library_labels' ), 10, 2 );
 		add_action( 'admin_menu', array( $this, 'modify_design_library_admin_menu' ), 999 );
 		add_filter( 'default_content', array( $this, 'add_default_content_to_editor' ), 10, 2 );
@@ -64,7 +65,7 @@ class CPT_Restriction {
 	 * @return array Modified arguments.
 	 */
 	public function restrict_cpt( array $args, string $post_type ): array {
-		if ( ! in_array( $post_type, array( Design_Library::SLUG ), true ) ) {
+		if ( ! in_array( $post_type, array( Design_Library::SLUG, Template::SLUG ), true ) ) {
 			return $args;
 		}
 
@@ -80,7 +81,7 @@ class CPT_Restriction {
 			return $args;
 		}
 
-		if ( in_array( $post_type, array( Design_Library::SLUG ), true ) ) {
+		if ( in_array( $post_type, array( Design_Library::SLUG, Template::SLUG ), true ) ) {
 			$args['public']              = false;
 			$args['show_ui']             = false;
 			$args['show_in_menu']        = false;
@@ -114,6 +115,7 @@ class CPT_Restriction {
 		}
 
 		unregister_post_type( Design_Library::SLUG );
+		unregister_post_type( Template::SLUG );
 	}
 
 	/**
@@ -138,6 +140,41 @@ class CPT_Restriction {
 			$existing_post = get_posts(
 				array(
 					'post_type'        => Design_Library::SLUG,
+					'post_status'      => array( 'publish', 'draft', 'pending', 'private' ),
+					'numberposts'      => 1,
+					'suppress_filters' => false,
+				)
+			);
+
+			if ( ! empty( $existing_post ) ) {
+				// Redirect to edit screen of the existing post.
+				wp_safe_redirect( admin_url( 'post.php?post=' . $existing_post[0]->ID . '&action=edit' ) );
+				exit;
+			}
+		}
+	}
+
+	/**
+	 * Callback function to limit template posts.
+	 *
+	 * @return void
+	 */
+	public function limit_template_posts(): void {
+		$screen = get_current_screen();
+		if ( ! $screen || Template::SLUG !== $screen->post_type || 'add' !== $screen->action ) {
+			return;
+		}
+
+		// Count existing design library posts.
+		$existing_posts = wp_count_posts( Template::SLUG );
+		$post_count     = $existing_posts->publish + $existing_posts->draft + $existing_posts->pending + $existing_posts->private;
+
+		// If a post already exists, redirect to edit screen.
+		if ( $post_count > 0 ) {
+			// Get the existing post.
+			$existing_post = get_posts(
+				array(
+					'post_type'        => Template::SLUG,
 					'post_status'      => array( 'publish', 'draft', 'pending', 'private' ),
 					'numberposts'      => 1,
 					'suppress_filters' => false,

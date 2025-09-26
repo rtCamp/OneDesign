@@ -7,7 +7,7 @@
 
 namespace OneDesign;
 
-use OneDesign\Post_Types\Design_Library;
+use OneDesign\Post_Types\{ Design_Library, Template };
 use OneDesign\Traits\Singleton;
 
 /**
@@ -52,25 +52,49 @@ class Assets {
 	 */
 	public function enqueue_scripts(): void {
 
-		if ( Design_Library::SLUG !== get_current_screen()->id ) {
-			return;
+		$current_screen = get_current_screen();
+
+		if ( Design_Library::SLUG === $current_screen->id ) {
+
+			$this->register_script( 'onedesign-editor-script', 'js/editor.js' );
+			wp_localize_script(
+				'onedesign-editor-script',
+				'patternSyncData',
+				array(
+					'ajaxurl'  => admin_url( 'admin-ajax.php' ),
+					'nonce'    => wp_create_nonce( 'onedesign_nonce' ),
+					'siteUrl'  => home_url(),
+					'adminUrl' => admin_url(),
+				)
+			);
+			wp_enqueue_script( 'onedesign-editor-script' );
+
+			$this->register_style( 'onedesign-editor-style', 'css/editor.css' );
+			wp_enqueue_style( 'onedesign-editor-style' );
 		}
 
-		$this->register_script( 'onedesign-editor-script', 'js/editor.js' );
-		wp_localize_script(
-			'onedesign-editor-script',
-			'patternSyncData',
-			array(
-				'ajaxurl'  => admin_url( 'admin-ajax.php' ),
-				'nonce'    => wp_create_nonce( 'onedesign_nonce' ),
-				'siteUrl'  => home_url(),
-				'adminUrl' => admin_url(),
-			)
-		);
-		wp_enqueue_script( 'onedesign-editor-script' );
+		if ( Template::SLUG === $current_screen->id ) {
+			$this->register_script(
+				'onedesign-templates-library-script',
+				'js/templates-library.js'
+			);
+			wp_localize_script(
+				'onedesign-templates-library-script',
+				'TemplateLibraryData',
+				array(
+					'ajaxUrl'      => admin_url( 'admin-ajax.php' ),
+					'nonce'        => wp_create_nonce( 'wp_rest' ),
+					'siteUrl'      => home_url(),
+					'adminUrl'     => admin_url(),
+					'restUrl'      => esc_url( rest_url( 'onedesign/v1' ) ),
+					'settingsLink' => esc_url( admin_url( 'admin.php?page=onedesign-settings' ) ),
+				)
+			);
+			wp_enqueue_script( 'onedesign-templates-library-script' );
 
-		$this->register_style( 'onedesign-editor-style', 'css/editor.css' );
-		wp_enqueue_style( 'onedesign-editor-style' );
+			$this->register_style( 'onedesign-template-style', 'css/template.css' );
+			wp_enqueue_style( 'onedesign-template-style' );
+		}
 	}
 
 	/**

@@ -9,7 +9,7 @@
 namespace OneDesign;
 
 use OneDesign\Traits\Singleton;
-use OneDesign\Post_Types\Design_Library;
+use OneDesign\Post_Types\{ Design_Library, Template };
 
 /**
  * Class Settings
@@ -68,6 +68,7 @@ class Settings {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
 		add_action( 'admin_init', array( $this, 'handle_form_actions' ) );
 		add_action( 'admin_init', array( $this, 'handle_design_library_redirect' ) );
+		add_action( 'admin_init', array( $this, 'templates_page_redirection' ) );
 	}
 
 	/**
@@ -83,7 +84,7 @@ class Settings {
 			self::PAGE_SLUG,
 			'__return_null',
 			'',
-			100
+			2
 		);
 
 		// Add submenu for opening design library only for dashboard sites.
@@ -95,6 +96,14 @@ class Settings {
 				__( 'Design Library', 'onedesign' ),
 				'manage_options',
 				'design-library',
+				'__return_null'
+			);
+			add_submenu_page(
+				self::PAGE_SLUG,
+				__( 'Templates', 'onedesign' ),
+				__( 'Templates', 'onedesign' ),
+				'manage_options',
+				'onedesign-templates',
 				'__return_null'
 			);
 		}
@@ -109,6 +118,54 @@ class Settings {
 		);
 
 		remove_submenu_page( 'onedesign', 'onedesign' );
+	}
+
+	public function templates_page_redirection(): void {
+		$pages = array( 'onedesign-templates' );
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! isset( $_GET['page'] ) || ! in_array( $_GET['page'], $pages, true ) ) {
+			return;
+		}
+
+		// Only run for users with proper permissions.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		// Check if a Design Library post already exists.
+		$existing_posts = get_posts(
+			array(
+				'post_type'        => Template::SLUG,
+				'post_status'      => array( 'publish', 'draft', 'pending', 'private' ),
+				'numberposts'      => 1,
+				'suppress_filters' => false,
+			)
+		);
+
+		if ( ! empty( $existing_posts ) ) {
+			// Redirect to edit the existing post.
+			wp_safe_redirect( admin_url( 'post.php?post=' . $existing_posts[0]->ID . '&action=edit' ) );
+			exit;
+		}
+
+		// If no post exists, create a new one.
+		$new_post_id = wp_insert_post(
+			array(
+				'post_type'    => Template::SLUG,
+				'post_title'   => esc_html__( 'Templates', 'onedesign' ),
+				'post_content' => '',
+				'post_status'  => 'draft',
+			)
+		);
+
+		if ( is_wp_error( $new_post_id ) ) {
+			wp_die( esc_html__( 'Error creating template post.', 'onedesign' ) );
+		}
+
+		// Redirect to the newly created post for editing.
+		wp_safe_redirect( admin_url( 'post.php?post=' . $new_post_id . '&action=edit' ) );
+		exit;
 	}
 
 	/**

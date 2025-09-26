@@ -118,7 +118,7 @@ const LibraryModal = () => {
 			setIsLoadingApplied( false );
 		};
 		fetchPatterns();
-	}, [ sitePatterns, patternStore ] ); // Include patternStore in dependencies
+	}, [ patternStore ] ); // Include patternStore in dependencies
 
 	const { editPost } = useDispatch( 'core/editor' );
 
