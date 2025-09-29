@@ -1,6 +1,6 @@
 import { __, _n, sprintf } from '@wordpress/i18n';
 import MemoizedTemplatePreview from './MemoizedTemplatePreview';
-import { Button, Notice } from '@wordpress/components';
+import { Button, Modal, Notice } from '@wordpress/components';
 import { useCallback, useState } from '@wordpress/element';
 
 const REST_NAMESPACE = TemplateLibraryData?.restUrl;
@@ -9,6 +9,7 @@ const NONCE = TemplateLibraryData?.nonce;
 const BrandSiteTemplates = ( { filteredTemplates, currentPage, PER_PAGE, selectedTemplates, handleTemplateSelection, setCurrentPage, currentSiteId, fetchConnectedSitesTemplates, setSelectedTemplates } ) => {
 	const [ isProcessing, setIsProcessing ] = useState( false );
 	const [ notice, setNotice ] = useState( null );
+	const [ isRemoveModalOpen, setIsRemoveModalOpen ] = useState( false );
 
 	const handleRemoveTemplates = useCallback( async () => {
 		setIsProcessing( true );
@@ -83,13 +84,12 @@ const BrandSiteTemplates = ( { filteredTemplates, currentPage, PER_PAGE, selecte
 					<Button
 						variant="primary"
 						isDestructive
-						disabled={ selectedTemplates.length === 0 || isProcessing }
-						isBusy={ isProcessing }
+						disabled={ selectedTemplates.length === 0 }
 						onClick={ () => {
-							handleRemoveTemplates();
+							setIsRemoveModalOpen( true );
 						} }
 					>
-						{ selectedTemplates.length === 0 ? __( 'Select Template First', 'onedesign' ) : __( 'Remove Template', 'onedesign' ) }
+						{ __( 'Remove Template', 'onedesign' ) }
 					</Button>
 				</div>
 			</div>
@@ -132,6 +132,55 @@ const BrandSiteTemplates = ( { filteredTemplates, currentPage, PER_PAGE, selecte
 			) }
 			{ renderTemplates() }
 			{ renderPagination() }
+			{ isRemoveModalOpen && (
+				<Modal
+					title={ __( 'Remove Template' ) }
+					onRequestClose={ () => {
+						setIsRemoveModalOpen( false );
+					} }
+					size="medium"
+				>
+					<p>
+						{ __( 'Are you sure your want to remove selected templates?', 'onedesign' ) }
+						<br />
+						{ __( 'Once you removed template it might break things on brand site so please check and confirm template is not in active use.', 'onedesign' ) }
+					</p>
+
+					<div
+						style={ {
+							display: 'flex',
+							flexDirection: 'row',
+							gap: '12px',
+							justifyContent: 'flex-end',
+							alignItems: 'center',
+						} }
+					>
+						<Button
+							variant="secondary"
+							onClick={ () => {
+								setIsRemoveModalOpen( false );
+							} }
+							label={ __( 'Cancle', 'onedesign' ) }
+						>
+							{ __( 'Cancle', 'onedesign' ) }
+						</Button>
+						<Button
+							variant="primary"
+							onClick={ () => {
+								handleRemoveTemplates();
+								setIsRemoveModalOpen( false );
+							} }
+							isDestructive
+							isBusy={ isProcessing }
+							disabled={ isProcessing }
+							label={ __( 'Remove Template\'s', 'onedesign' ) }
+						>
+							{ __( 'Remove Template\'s', 'onedesign' ) }
+						</Button>
+					</div>
+
+				</Modal>
+			) }
 		</>
 	);
 };

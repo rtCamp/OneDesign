@@ -252,16 +252,37 @@ const TemplateModal = () => {
 					window.history.back();
 				} }
 				className="onedesign-template-modal"
-				headerActions={ SettingLink && (
-					<Button
-						icon={ cog }
-						variant="secondary"
-						onClick={ () => {
-							window.location.href = SettingLink;
+				headerActions={
+					<div
+						style={ {
+							display: 'flex',
+							gap: '8px',
+							flexDirection: 'row',
+							alignItems: 'center',
 						} }
-						label={ __( 'Go to OneDesign Settings', 'onedesign' ) }
-					/>
-				) }
+					>
+						<Button
+							variant="primary"
+							onClick={ () => {
+							// handle template sync.
+							} }
+							label={ __( 'Sync Shared Templates', 'onedesign' ) }
+						>
+							{ __( 'Sync Shared Templates', 'onedesign' ) }
+						</Button>
+
+						{ SettingLink && (
+							<Button
+								icon={ cog }
+								variant="secondary"
+								onClick={ () => {
+									window.location.href = SettingLink;
+								} }
+								label={ __( 'Go to OneDesign Settings', 'onedesign' ) }
+							/>
+						) }
+					</div>
+				}
 			>
 				{ isLoading && (
 					<div style={ { textAlign: 'center', padding: '20px' } }>
