@@ -92,11 +92,11 @@ class Templates {
 					'callback'            => array( $this, 'create_templates' ),
 					'permission_callback' => array( __CLASS__, 'permission_check' ),
 					'args'                => array(
-						'templates' => array(
+						'templates'      => array(
 							'required' => true,
 							'type'     => 'array',
 						),
-						'patterns'  => array(
+						'patterns'       => array(
 							'required' => false,
 							'type'     => 'array',
 						),
@@ -166,7 +166,34 @@ class Templates {
 				'callback'            => array( $this, 'remove_template_from_brand_site' ),
 				'permission_callback' => array( __CLASS__, 'permission_check' ),
 				'args'                => array(
-					'template_ids' => array(
+					'template_ids'  => array(
+						'required' => true,
+						'type'     => 'array',
+					),
+					'is_remove_all' => array(
+						'required' => false,
+						'type'     => 'boolean',
+					),
+				),
+			)
+		);
+
+		/**
+		 * Register a route to re-sync templates to connected sites.
+		 */
+		register_rest_route(
+			self::NAMESPACE,
+			'/resync',
+			array(
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'callback'            => array( $this, 'resync_applied_templates' ),
+				'permission_callback' => array( __CLASS__, 'permission_check' ),
+				'args'                => array(
+					'sites'     => array(
+						'required' => true,
+						'type'     => 'array',
+					),
+					'templates' => array(
 						'required' => true,
 						'type'     => 'array',
 					),
@@ -180,8 +207,48 @@ class Templates {
 		// return current_user_can( 'manage_options' );
 	}
 
+	public function resync_applied_templates(\WP_REST_Request $request):\WP_REST_Response {
+		$sites = $request->get_param( 'sites' );
+		$templates = $request->get_param( 'templates' );
+
+		if ( empty( $sites ) || empty( $templates ) ) {
+			return new \WP_REST_Response(
+				array(
+					'success' => false,
+					'message' => __('Sites and templates parameters are required.','ondesign'),
+				),
+				400
+			);
+		}
+
+		// Create request for remove_template
+    $remove_request = new \WP_REST_Request( 'DELETE', self::NAMESPACE . '/remove' );
+    $remove_request->set_param( 'template_ids', $templates );
+    $remove_request->set_param( 'site', $sites[0] );
+    $remove_request->set_param( 'is_remove_all', true );
+    $remove_template_response = $this->remove_template( $remove_request );
+
+    // Create request for apply templates.
+    $apply_request = new \WP_REST_Request( 'POST', self::NAMESPACE . '/apply' );
+    $apply_request->set_param( 'templates', $templates );
+    $apply_request->set_param( 'sites', $sites );
+    $apply_template_response = $this->apply_templates_to_sites( $apply_request );
+
+		return new \WP_REST_Response(
+			array(
+				'success' => true,
+				'message' => __('Templates re-synced successfully to the selected sites.','ondesign'),
+				'remove_response' => $remove_template_response->get_data(),
+				'apply_response' => $apply_template_response->get_data(),
+			),
+			200
+		);
+
+	}
+
 	public function remove_template_from_brand_site( \WP_REST_Request $request ): \WP_REST_Response {
-		$template_ids = $request->get_param( 'template_ids' );
+		$template_ids  = $request->get_param( 'template_ids' );
+		$is_remove_all = $request->get_param( 'is_remove_all' );
 
 		if ( empty( $template_ids ) ) {
 			return new \WP_REST_Response(
@@ -199,7 +266,26 @@ class Templates {
 		}
 
 		// Remove templates based on 'id'.
-		$updated_templates = array_filter( $existing_templates, fn( $t ) => ! in_array( $t['id'], $template_ids ) );
+		if ( $is_remove_all ) {
+			$updated_templates = array();
+
+			// get brand site post ids and remove them.
+			$brand_site_post_ids = get_option( 'onedesign_brand_site_post_ids', array() );
+			if ( is_array( $brand_site_post_ids ) ) {
+				foreach ( $brand_site_post_ids as $post_id ) {
+					$deleted = wp_delete_post( $post_id, true );
+					if ( is_wp_error( $deleted ) ) {
+						error_log( 'Failed to delete post ID ' . $post_id );
+					} else {
+						error_log( 'Deleted post ID ' . $post_id );
+					}
+				}
+			}
+			update_option( 'onedesign_brand_site_post_ids', array() );
+
+		} else {
+			$updated_templates = array_filter( $existing_templates, fn( $t ) => ! in_array( $t['id'], $template_ids ) );
+		}
 
 		update_option( 'onedesign_shared_templates', array_values( $updated_templates ) );
 
@@ -217,6 +303,7 @@ class Templates {
 	public function remove_template( \WP_REST_Request $request ): \WP_REST_Response {
 		$template_ids = $request->get_param( 'template_ids' );
 		$site         = $request->get_param( 'site' );
+		$is_remove_all = $request->get_param( 'is_remove_all' );
 
 		if ( empty( $template_ids ) || empty( $site ) ) {
 			return new \WP_REST_Response(
@@ -257,6 +344,7 @@ class Templates {
 				'body'    => wp_json_encode(
 					array(
 						'template_ids' => $template_ids,
+						'is_remove_all' => $is_remove_all,
 					)
 				),
 			)
@@ -293,15 +381,15 @@ class Templates {
 	}
 
 	public function create_templates( \WP_REST_Request $request ): \WP_REST_Response {
-		$templates = $request->get_param( 'templates' );
-		$patterns = $request->get_param( 'patterns' );
+		$templates      = $request->get_param( 'templates' );
+		$patterns       = $request->get_param( 'patterns' );
 		$template_parts = $request->get_param( 'template_parts' );
-		
-		if( empty( $templates ) || ! is_array( $templates ) ) {
+
+		if ( empty( $templates ) || ! is_array( $templates ) ) {
 			return new \WP_REST_Response(
 				array(
 					'success' => false,
-					'message' => __('Templates parameter is required and should be an array.', 'onedesign' ),
+					'message' => __( 'Templates parameter is required and should be an array.', 'onedesign' ),
 				),
 				400
 			);
@@ -321,7 +409,6 @@ class Templates {
 
 		update_option( 'onedesign_shared_templates', $existing_templates );
 
-
 		// get existing patterns.
 		$existing_patterns = get_option( 'onedesign_shared_patterns', array() );
 		if ( ! is_array( $existing_patterns ) ) {
@@ -329,7 +416,7 @@ class Templates {
 		}
 
 		// Merge new patterns with existing ones, avoiding duplicates based on 'id'.
-		if( is_array( $patterns ) ) {
+		if ( is_array( $patterns ) ) {
 			foreach ( $patterns as $pattern ) {
 				if ( isset( $pattern['name'] ) && ! array_filter( $existing_patterns, fn( $t ) => $t['name'] === $pattern['name'] ) ) {
 					$existing_patterns[] = $pattern;
@@ -346,7 +433,7 @@ class Templates {
 		}
 
 		// Merge new template parts with existing ones, avoiding duplicates based on 'id'.
-		if( is_array( $template_parts ) ) {
+		if ( is_array( $template_parts ) ) {
 			foreach ( $template_parts as $template_part ) {
 				if ( isset( $template_part['id'] ) && ! array_filter( $existing_template_parts, fn( $t ) => $t['id'] === $template_part['id'] ) ) {
 					$existing_template_parts[] = $template_part;
@@ -356,13 +443,12 @@ class Templates {
 
 		update_option( 'onedesign_shared_template_parts', $existing_template_parts );
 
-
 		return new \WP_REST_Response(
 			array(
-				'success'   => true,
-				'message'   => __( 'Templates saved successfully.', 'onedesign' ),
-				'templates' => $existing_templates,
-				'patterns'  => $existing_patterns,
+				'success'        => true,
+				'message'        => __( 'Templates saved successfully.', 'onedesign' ),
+				'templates'      => $existing_templates,
+				'patterns'       => $existing_patterns,
 				'template_parts' => $existing_template_parts,
 				// 'invalid_templates' => array_map(fn($t) => $t['id'], $invalid_templates),
 				// 'valid_templates' => array_map(fn($t) => $t['id'], $valid_templates),
@@ -379,7 +465,7 @@ class Templates {
 			return new \WP_REST_Response(
 				array(
 					'success' => false,
-					'message' => 'Sites and templates parameters are required.',
+					'message' => __('Sites and templates parameters are required.','ondesign'),
 				),
 				400
 			);
@@ -397,8 +483,8 @@ class Templates {
 		// process templates to have all info about its template parts/patterns.
 		$parsed_templates = array();
 		$already_tracked  = array();
-		foreach( $shared_templates as $template ) {
-			$parsed_templates = array_merge($parsed_templates, onedesign_parse_block_template( $template['content'], $already_tracked ));
+		foreach ( $shared_templates as $template ) {
+			$parsed_templates = array_merge( $parsed_templates, onedesign_parse_block_template( $template['content'], $already_tracked ) );
 		}
 
 		// print_r($parsed_templates);
@@ -421,11 +507,11 @@ class Templates {
 			$site_api_key = $site['api_key'];
 			$site_id      = $site['id'];
 			if ( in_array( $site_id, $sites, true ) ) {
-				$request_url = $site_url . 'wp-json/' . self::NAMESPACE . '/shared';
-				$new_templates = Utils::modify_template_template_part_pattern_slug($shared_templates, $site['name']);
-				$new_patterns = Utils::modify_template_template_part_pattern_slug($patterns, $site['name']);
-				$new_template_parts = Utils::modify_template_template_part_pattern_slug($template_parts, $site['name']);
-				$response    = wp_safe_remote_post(
+				$request_url        = $site_url . 'wp-json/' . self::NAMESPACE . '/shared';
+				$new_templates      = Utils::modify_template_template_part_pattern_slug( $shared_templates, $site['name'] );
+				$new_patterns       = Utils::modify_template_template_part_pattern_slug( $patterns, $site['name'] );
+				$new_template_parts = Utils::modify_template_template_part_pattern_slug( $template_parts, $site['name'] );
+				$response           = wp_safe_remote_post(
 					$request_url,
 					array(
 						'headers' => array(
@@ -434,8 +520,8 @@ class Templates {
 						),
 						'body'    => wp_json_encode(
 							array(
-								'templates' => $new_templates,
-								'patterns'  => $new_patterns,
+								'templates'      => $new_templates,
+								'patterns'       => $new_patterns,
 								'template_parts' => $new_template_parts,
 							)
 						),
@@ -470,8 +556,8 @@ class Templates {
 				'shared_templates' => $shared_templates,
 				'responses'        => $response_data,
 				'errors'           => $error_log,
-				'template_parts' => $new_template_parts,
-				'patterns' => $new_patterns,
+				'template_parts'   => $new_template_parts,
+				'patterns'         => $new_patterns,
 				// 'parsed_template' => $parsed_templates,
 			),
 			200

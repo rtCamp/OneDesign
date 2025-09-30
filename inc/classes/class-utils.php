@@ -95,148 +95,162 @@ class Utils {
 		return is_array( $sites_info ) ? $sites_info : array();
 	}
 
-    /**
- * Get current site name in lowercase.
- *
- * @return string Current site name in lowercase.
- */
-public static function get_current_site_name(): string {
-    $site_name = get_bloginfo('name');
-    // convert to lowercase letters.
-    return sanitize_title(strtolower($site_name));
-}
+	/**
+	 * Get current site name in lowercase.
+	 *
+	 * @return string Current site name in lowercase.
+	 */
+	public static function get_current_site_name(): string {
+		$site_name = get_bloginfo( 'name' );
+		// convert to lowercase letters.
+		return sanitize_title( strtolower( $site_name ) );
+	}
 
-/**
- * Generate a unique slug for template patterns and template parts.
- *
- * @param string $base_slug The base slug (e.g., 'header', 'footer').
- * @param string $sharing_site_name The name of the site to which template is going to be shared.
- * @param bool $is_slug Whether this is for slug (true) or id (false).
- *
- * @return string Unique slug combining current site name, sharing site name, and base slug.
- */
-public static function generate_unique_slug_for_template_patterns_template_parts($base_slug, $sharing_site_name, bool $is_slug = true) {
-    // Sanitize the base slug to ensure it's URL-friendly.
-    $sanitized_slug = sanitize_title($base_slug);
+	/**
+	 * Generate a unique slug for template patterns and template parts.
+	 *
+	 * @param string $base_slug The base slug (e.g., 'header', 'footer').
+	 * @param string $sharing_site_name The name of the site to which template is going to be shared.
+	 * @param bool   $is_slug Whether this is for slug (true) or id (false).
+	 *
+	 * @return string Unique slug combining current site name, sharing site name, and base slug.
+	 */
+	public static function generate_unique_slug_for_template_patterns_template_parts( $base_slug, $sharing_site_name, bool $is_slug = true ) {
+		// Sanitize the base slug to ensure it's URL-friendly.
+		$sanitized_slug = sanitize_title( $base_slug );
 
-    // Convert sharing site name to lowercase and sanitize it.
-    $sanitized_site_name = sanitize_title(strtolower($sharing_site_name));
+		// Convert sharing site name to lowercase and sanitize it.
+		$sanitized_site_name = sanitize_title( strtolower( $sharing_site_name ) );
 
-    // Combine the sanitized base slug with the sanitized site name.
-    $unique_slug = '';
-    if ($is_slug) {
-        $unique_slug = self::get_current_site_name() . '-' . $sanitized_site_name . '-' . $sanitized_slug;
-    } else {
-        $unique_slug = self::get_current_site_name() . '-' . $sanitized_site_name . '//' . $sanitized_slug;
-    }
+		// Combine the sanitized base slug with the sanitized site name.
+		$unique_slug = '';
+		if ( $is_slug ) {
+			$unique_slug = self::get_current_site_name() . '-' . $sanitized_site_name . '-' . $sanitized_slug;
+		} else {
+			$unique_slug = self::get_current_site_name() . '-' . $sanitized_site_name . '//' . $sanitized_slug;
+		}
 
-    return $unique_slug;
-}
+		return $unique_slug;
+	}
 
-/**
- * Modify template part and pattern references within block content.
- *
- * @param string $content The block content containing WordPress block markup.
- * @param string $shared_site_name The name of the site to which template is going to be shared.
- *
- * @return string Modified content with updated slugs and themes.
- */
-public static function modify_content_references($content, $shared_site_name) {
-    
-    $content_string = '';
-    
-    if (is_string($content)) {
-        $content_string = $content;
-    } elseif (is_object($content)) {
-        // Handle WP_Block_Template object
-        if (isset($content->content)) {
-            $content_string = $content->content;
-        } elseif (isset($content->post_content)) {
-            // Handle WP_Post object (for patterns/blocks)
-            $content_string = $content->post_content;
-        } else {
-            // Return empty string if we can't find content
-            return '';
-        }
-    } elseif (is_array($content)) {
-        // Handle array format
-        if (isset($content['content'])) {
-            $content_string = $content['content'];
-        } else {
-            return '';
-        }
-    } else {
-        // Unsupported content type
-        return '';
-    }
-    
-    // Pattern to match template-part and pattern blocks
-    $pattern = '/<!--\s*wp:(template-part|pattern)\s*(\{[^}]*\})\s*\/?-->/';
-    
-    return preg_replace_callback($pattern, function($matches) use ($shared_site_name) {
-        $block_type = $matches[1];
-        $attributes_json = $matches[2];
-        
-        // Decode the attributes
-        $attributes = json_decode($attributes_json, true);
-        
-        if (!$attributes) {
-            return $matches[0]; // Return original if JSON decode fails
-        }
-        
-        // Modify slug if present
-        if (isset($attributes['slug'])) {
-            $attributes['slug'] = self::generate_unique_slug_for_template_patterns_template_parts(
-                $attributes['slug'], 
-                $shared_site_name
-            );
-        }
-        
-        // Encode back to JSON
-        $new_attributes_json = json_encode($attributes, JSON_UNESCAPED_SLASHES);
-        
-        // Return the modified block
-        return "<!-- wp:{$block_type} {$new_attributes_json} /-->";
-        
-    }, $content_string);
-}
+	/**
+	 * Modify template part and pattern references within block content.
+	 *
+	 * @param string $content The block content containing WordPress block markup.
+	 * @param string $shared_site_name The name of the site to which template is going to be shared.
+	 *
+	 * @return string Modified content with updated slugs and themes.
+	 */
+	public static function modify_content_references( $content, $shared_site_name ) {
 
-/**
- * Modify the slug and id of templates, template parts, and patterns to ensure uniqueness across shared sites.
- * Also modifies references within the content.
- *
- * @param array $templates Array of template objects.
- * @param string $shared_site_name The name of the site to which template is going to be shared.
- *
- * @return array The modified template array with unique slugs, ids, and updated content references.
- */
-public static function modify_template_template_part_pattern_slug($templates, $shared_site_name) {
-    foreach ($templates as $index => $template) {
-        // Modify top-level slug and id
-        if (isset($template['slug'])) {
-            $templates[$index]['slug'] = self::generate_unique_slug_for_template_patterns_template_parts(
-                $template['slug'], 
-                $shared_site_name
-            );
-        }
-        
-        if (isset($template['id'])) {
-            $templates[$index]['id'] = self::generate_unique_slug_for_template_patterns_template_parts(
-                $template['id'], 
-                $shared_site_name, 
-                false
-            );
-        }
-        
-        // Modify content references
-        if (isset($template['content'])) {
-            $templates[$index]['content'] = self::modify_content_references(
-                $template['content'], 
-                $shared_site_name
-            );
-        }
-    }
-    
-    return $templates;
-}
+		$content_string = '';
+
+		if ( is_string( $content ) ) {
+			$content_string = $content;
+		} elseif ( is_object( $content ) ) {
+			// Handle WP_Block_Template object
+			if ( isset( $content->content ) ) {
+				$content_string = $content->content;
+			} elseif ( isset( $content->post_content ) ) {
+				// Handle WP_Post object (for patterns/blocks)
+				$content_string = $content->post_content;
+			} else {
+				// Return empty string if we can't find content
+				return '';
+			}
+		} elseif ( is_array( $content ) ) {
+			// Handle array format
+			if ( isset( $content['content'] ) ) {
+				$content_string = $content['content'];
+			} else {
+				return '';
+			}
+		} else {
+			// Unsupported content type
+			return '';
+		}
+
+		// Pattern to match template-part and pattern blocks
+		$pattern = '/<!--\s*wp:(template-part|pattern)\s*(\{[^}]*\})\s*\/?-->/';
+
+		return preg_replace_callback(
+			$pattern,
+			function ( $matches ) use ( $shared_site_name ) {
+				$block_type      = $matches[1];
+				$attributes_json = $matches[2];
+
+				// Decode the attributes
+				$attributes = json_decode( $attributes_json, true );
+
+				if ( ! $attributes ) {
+					return $matches[0]; // Return original if JSON decode fails
+				}
+
+				// Modify slug if present
+				if ( isset( $attributes['slug'] ) ) {
+					$attributes['slug'] = self::generate_unique_slug_for_template_patterns_template_parts(
+						$attributes['slug'],
+						$shared_site_name
+					);
+				}
+
+				// Encode back to JSON
+				$new_attributes_json = json_encode( $attributes, JSON_UNESCAPED_SLASHES );
+
+				// Return the modified block
+				return "<!-- wp:{$block_type} {$new_attributes_json} /-->";
+			},
+			$content_string
+		);
+	}
+
+	/**
+	 * Modify the slug and id of templates, template parts, and patterns to ensure uniqueness across shared sites.
+	 * Also modifies references within the content.
+	 *
+	 * @param array  $templates Array of template objects.
+	 * @param string $shared_site_name The name of the site to which template is going to be shared.
+	 *
+	 * @return array The modified template array with unique slugs, ids, and updated content references.
+	 */
+	public static function modify_template_template_part_pattern_slug( $templates, $shared_site_name ) {
+		foreach ( $templates as $index => $template ) {
+
+			// set original slug field to keep track of original slugs.
+			if ( isset( $template['slug'] ) && ! isset( $template['original_slug'] ) ) {
+				$templates[ $index ]['original_slug'] = $template['slug'];
+			}
+
+			// set original id field to keep track of original ids.
+			if ( isset( $template['id'] ) && ! isset( $template['original_id'] ) ) {
+				$templates[ $index ]['original_id'] = $template['id'];
+			}
+
+			// Modify top-level slug and id
+			if ( isset( $template['slug'] ) ) {
+				$templates[ $index ]['slug'] = self::generate_unique_slug_for_template_patterns_template_parts(
+					$template['slug'],
+					$shared_site_name
+				);
+			}
+
+			if ( isset( $template['id'] ) ) {
+				$templates[ $index ]['id'] = self::generate_unique_slug_for_template_patterns_template_parts(
+					$template['id'],
+					$shared_site_name,
+					false
+				);
+			}
+
+			// Modify content references
+			if ( isset( $template['content'] ) ) {
+				$templates[ $index ]['content'] = self::modify_content_references(
+					$template['content'],
+					$shared_site_name
+				);
+			}
+		}
+
+		return $templates;
+	}
 }

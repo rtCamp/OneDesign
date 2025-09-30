@@ -25,6 +25,7 @@ const BrandSiteTemplates = ( { filteredTemplates, currentPage, PER_PAGE, selecte
 					body: JSON.stringify( {
 						template_ids: selectedTemplates,
 						site: currentSiteId,
+						is_remove_all: false,
 					} ),
 				},
 			);

@@ -44,11 +44,14 @@ class Hooks {
 		add_action( 'after_setup_theme', array( $this, 'remove_core_block_patterns' ) );
 		add_filter( 'allowed_block_types_all', array( $this, 'allowed_block_types' ), 10, 2 );
 
-		// on admin init create template.
+		// on admin init create template, pattern and template part.
 		add_action( 'admin_init', array( $this, 'create_template' ) );
 	}
 
-	public function create_template() {
+	public function create_template(): void {
+
+		$brand_site_post_ids = get_option( 'onedesign_brand_site_post_ids', array() );
+
 		$shared_templates = get_option( 'onedesign_shared_templates', array() );
 		foreach ( $shared_templates as $template ) {
 			$res = register_block_template(
@@ -75,70 +78,74 @@ class Hooks {
 			error_log( print_r( $res, true ) );
 		}
 
-		$shared_template_parts = get_option('onedesign_shared_template_parts', array());
-    foreach ($shared_template_parts as $template_part) {
-        // Check if template part already exists
-        $existing = get_posts(array(
-            'post_type' => 'wp_template_part',
-            'name' => $template_part['slug'],
-            'post_status' => 'any',
-            'numberposts' => 1
-        ));
+		$shared_template_parts = get_option( 'onedesign_shared_template_parts', array() );
+		foreach ( $shared_template_parts as $template_part ) {
+			// Check if template part already exists
+			$existing = get_posts(
+				array(
+					'post_type'   => 'wp_template_part',
+					'name'        => $template_part['slug'],
+					'post_status' => 'any',
+					'numberposts' => 1,
+				)
+			);
 
-        if (!empty($existing)) {
-            error_log('Template part already exists: ' . $template_part['slug']);
-            continue;
-        }
+			if ( ! empty( $existing ) ) {
+				error_log( 'Template part already exists: ' . $template_part['slug'] );
+				continue;
+			}
 
-        // Create the template part post
-        $post_data = array(
-            'post_type'    => 'wp_template_part',
-            'post_title'   => $template_part['title'],
-            'post_name'    => $template_part['slug'],
-            'post_status'  => 'publish',
-            'post_content' => $template_part['content'],
-        );
+			// Create the template part post
+			$post_data = array(
+				'post_type'    => 'wp_template_part',
+				'post_title'   => $template_part['title'],
+				'post_name'    => $template_part['slug'],
+				'post_status'  => 'publish',
+				'post_content' => $template_part['content'],
+			);
 
-        $post_id = wp_insert_post($post_data);
+			$post_id = wp_insert_post( $post_data );
 
-        if (is_wp_error($post_id)) {
-            error_log('Failed to create template part: ' . $post_id->get_error_message());
-            continue;
-        }
+			if ( is_wp_error( $post_id ) ) {
+				error_log( 'Failed to create template part: ' . $post_id->get_error_message() );
+				continue;
+			} else {
+				$brand_site_post_ids[] = $post_id;
+			}
 
-        $current_theme = get_option('stylesheet');
-    $theme_slug = get_option('template');
-	// CRITICAL: Add all required meta fields
-    update_post_meta($post_id, '_wp_template_part_area', $template_part['area'] ?? 'uncategorized');
-    update_post_meta($post_id, '_wp_theme', $current_theme);
-    
-    // Add these additional meta fields that might be required
-    update_post_meta($post_id, '_wp_template_part_theme', $theme_slug);
-    
-    // Set the correct taxonomy terms
-    wp_set_object_terms($post_id, $template_part['area'] ?? 'uncategorized', 'wp_template_part_area');
-    wp_set_object_terms($post_id, $current_theme, 'wp_theme');
+			$current_theme = get_option( 'stylesheet' );
+			$theme_slug    = get_option( 'template' );
+			// CRITICAL: Add all required meta fields
+			update_post_meta( $post_id, '_wp_template_part_area', $template_part['area'] ?? 'uncategorized' );
+			update_post_meta( $post_id, '_wp_theme', $current_theme );
 
-        
-        // Store theme information
-        if (isset($template_part['theme'])) {
-            update_post_meta($post_id, 'theme', $template_part['theme']);
-        } else {
-            update_post_meta($post_id, 'theme', get_stylesheet());
-        }
+			// Add these additional meta fields that might be required
+			update_post_meta( $post_id, '_wp_template_part_theme', $theme_slug );
 
-        // Store description if provided
-        if (isset($template_part['description'])) {
-            update_post_meta($post_id, 'description', $template_part['description']);
-        }
+			// Set the correct taxonomy terms
+			wp_set_object_terms( $post_id, $template_part['area'] ?? 'uncategorized', 'wp_template_part_area' );
+			wp_set_object_terms( $post_id, $current_theme, 'wp_theme' );
 
-        // Store post types if provided
-        if (isset($template_part['post_types']) && is_array($template_part['post_types'])) {
-            update_post_meta($post_id, 'post_types', $template_part['post_types']);
-        }
+			// Store theme information
+			if ( isset( $template_part['theme'] ) ) {
+				update_post_meta( $post_id, 'theme', $template_part['theme'] );
+			} else {
+				update_post_meta( $post_id, 'theme', get_stylesheet() );
+			}
 
-        error_log('Template part created successfully: ' . $post_id);
-    }
+			// Store description if provided
+			if ( isset( $template_part['description'] ) ) {
+				update_post_meta( $post_id, 'description', $template_part['description'] );
+			}
+
+			// Store post types if provided
+			if ( isset( $template_part['post_types'] ) && is_array( $template_part['post_types'] ) ) {
+				update_post_meta( $post_id, 'post_types', $template_part['post_types'] );
+			}
+
+			error_log( 'Template part created successfully: ' . $post_id );
+		}
+		update_option( 'onedesign_brand_site_post_ids', array_unique( $brand_site_post_ids ) );
 	}
 
 	/**

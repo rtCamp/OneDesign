@@ -45,29 +45,29 @@ function onedesign_parse_block_template( string $content, array &$already_tracke
 			$tracking_key = '';
 
 			if ( 'template-part' === $block_type ) {
-				$template_id       = $result['attributes']['theme'] . '//' . $result['attributes']['slug'];
-				$result['content'] = get_block_template(
+				$template_id           = $result['attributes']['theme'] . '//' . $result['attributes']['slug'];
+				$result['content']     = get_block_template(
 					id: $template_id,
 					template_type: 'wp_template_part'
 				) ?? '';
-                $result['id'] = $result['content']->id ?? null;
-                $result['slug'] = $result['content']->slug ?? null;
-                $result['theme'] = $result['content']->theme ?? null;
-                $result['title'] = $result['content']->title ?? null;
-                $result['description'] = $result['content']->description ?? null;
-                $result['post_types'] = $result['content']->post_types ?? null;
-                $result['area'] = $result['content']->area ?? null;
-				$tracking_key      = 'template-part_' . $template_id;
+				$result['id']          = $result['content']->id ?? null;
+				$result['slug']        = $result['content']->slug ?? null;
+				$result['theme']       = $result['content']->theme ?? null;
+				$result['title']       = $result['content']->title ?? null;
+				$result['description'] = $result['content']->description ?? null;
+				$result['post_types']  = $result['content']->post_types ?? null;
+				$result['area']        = $result['content']->area ?? null;
+				$tracking_key          = 'template-part_' . $template_id;
 			}
 
 			if ( 'pattern' === $block_type ) {
-				$result['content'] = WP_Block_Patterns_Registry::get_instance()->get_registered( $result['attributes']['slug'] ) ?? '';
-                $result['title'] = $result['content']['title'] ?? null;
-                $result['slug'] = $result['content']['slug'] ?? null;
-                $result['description'] = $result['content']['description'] ?? null;
-                $result['name'] = $result['content']['name'] ?? null;
-                $result['post_types'] = $result['content']->post_types ?? null;
-                $tracking_key      = 'pattern_' . $result['attributes']['slug'];
+				$result['content']     = WP_Block_Patterns_Registry::get_instance()->get_registered( $result['attributes']['slug'] ) ?? '';
+				$result['title']       = $result['content']['title'] ?? null;
+				$result['slug']        = $result['content']['slug'] ?? null;
+				$result['description'] = $result['content']['description'] ?? null;
+				$result['name']        = $result['content']['name'] ?? null;
+				$result['post_types']  = $result['content']->post_types ?? null;
+				$tracking_key          = 'pattern_' . $result['attributes']['slug'];
 			}
 
 			// Check if this specific content has already been processed.

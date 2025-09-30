@@ -28,6 +28,7 @@ const TemplateModal = () => {
 	const [ selectedSites, setSelectedSites ] = useState( [] );
 	const [ connectedSitesTemplates, setConnectedSitesTemplates ] = useState( {} );
 	const [ notice, setNotice ] = useState( null );
+	const [ isReSyncing, setIsReSyncing ] = useState( false );
 	const [ tabs, setTabs ] = useState( [
 		{
 			name: 'baseTemplate',
@@ -103,6 +104,46 @@ const TemplateModal = () => {
 		}
 	}, [] );
 
+	const handleTemplateReSync = useCallback( async () => {
+		setIsReSyncing( true );
+		try {
+			const idArray = Object.values( connectedSitesTemplates ).flat().map( ( template ) => template.id );
+			const originalIdArray = Object.values( connectedSitesTemplates ).flat().map( ( template ) => template.original_id );
+			const response = await fetch(
+				`${ REST_NAMESPACE }/templates/resync`,
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-WP-Nonce': NONCE,
+					},
+					body: JSON.stringify(
+						{
+							sites: Array.of( activeTab ),
+							templates: [ ...idArray, ...originalIdArray ],
+						},
+					),
+				},
+			);
+			const data = await response.json();
+			if ( data.success ) {
+				fetchConnectedSitesTemplates();
+				setNotice( {
+					type: 'success',
+					message: __( 'Templates re-synced successfully.', 'onedesign' ),
+				} );
+			} else {
+				setNotice( {
+					type: 'error',
+					message: __( 'Failed to re-sync templates.', 'onedesign' ),
+				} );
+			}
+		} catch ( error ) {
+		} finally {
+			setIsReSyncing( false );
+		}
+	}, [ fetchConnectedSitesTemplates, activeTab, connectedSitesTemplates ] );
+
 	const handleApplyTemplates = useCallback( async () => {
 		setIsApplying( true );
 		try {
@@ -174,7 +215,7 @@ const TemplateModal = () => {
 				newTabs.push( {
 					name: site.name,
 					title: site.name,
-					className: `onedesign-templates-tab-brand-site`,
+					className: 'onedesign-templates-tab-brand-site',
 					value: site.id,
 				} );
 			}
@@ -237,7 +278,7 @@ const TemplateModal = () => {
 	};
 
 	const handleTabSelection = ( ( tab ) => {
-		setActiveTab( tab.value );
+		setActiveTab( tabs.find( ( t ) => t.name === tab )?.value || 'baseTemplate' );
 		setSearchQuery( '' );
 		setCurrentPage( 1 );
 		setSelectedTemplates( [] );
@@ -261,15 +302,19 @@ const TemplateModal = () => {
 							alignItems: 'center',
 						} }
 					>
-						<Button
-							variant="primary"
-							onClick={ () => {
-							// handle template sync.
-							} }
-							label={ __( 'Sync Shared Templates', 'onedesign' ) }
-						>
-							{ __( 'Sync Shared Templates', 'onedesign' ) }
-						</Button>
+						{ activeTab !== 'baseTemplate' && (
+							<Button
+								variant="primary"
+								onClick={ () => {
+									handleTemplateReSync();
+								} }
+								isBusy={ isReSyncing }
+								disabled={ isReSyncing }
+								label={ __( 'Sync Shared Templates', 'onedesign' ) }
+							>
+								{ __( 'Sync Shared Templates', 'onedesign' ) }
+							</Button>
+						) }
 
 						{ SettingLink && (
 							<Button
@@ -301,7 +346,7 @@ const TemplateModal = () => {
 						<TabPanel
 							className="onedesign-template-tabs"
 							activeClass="active-tab"
-							onSelect={ ( tab ) => handleTabSelection( tab ) }
+							onSelect={ handleTabSelection }
 							tabs={ tabs }
 						>
 							{ ( tab ) => {
