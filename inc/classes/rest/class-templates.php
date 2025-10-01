@@ -200,11 +200,108 @@ class Templates {
 				),
 			)
 		);
+
+		/**
+		 * Register a route to create synced patterns.
+		 */
+		register_rest_route(
+			self::NAMESPACE,
+			'/create-synced-patterns',
+			array(
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'callback'            => array( $this, 'create_synced_patterns' ),
+				'permission_callback' => array( __CLASS__, 'permission_check' ),
+				'args'                => array(
+					'synced_patterns' => array(
+						'required' => true,
+						'type'     => 'array',
+					),
+				),
+			)
+		);
 	}
 
 	public static function permission_check() {
 		return true;
 		// return current_user_can( 'manage_options' );
+	}
+
+	public function create_synced_patterns( \WP_REST_Request $request ): \WP_REST_Response {
+		$synced_patterns = $request->get_param( 'synced_patterns' );
+
+		if ( empty( $synced_patterns ) || ! is_array( $synced_patterns ) ) {
+			return new \WP_REST_Response(
+				array(
+					'success' => false,
+					'message' => __( 'Synced patterns parameter is required and should be an array.', 'onedesign' ),
+				),
+				400
+			);
+		}
+
+		$existing_synced_patterns = get_option( 'onedesign_shared_synced_patterns', array() );
+		if ( ! is_array( $existing_synced_patterns ) ) {
+			$existing_synced_patterns = array();
+		}
+
+		// Merge new synced patterns with existing ones, avoiding duplicates based on 'id'.
+		foreach ( $synced_patterns as $pattern ) {
+			if ( isset( $pattern['id'] ) && ! array_filter( $existing_synced_patterns, fn( $t ) => $t['id'] === $pattern['id'] ) ) {
+				$existing_synced_patterns[] = $pattern;
+			}
+		}
+
+		update_option( 'onedesign_shared_synced_patterns', $existing_synced_patterns );
+
+		// need to actual create posts so that in governing site I can map existing synced pattern.
+		$created_posts = array();
+		$error_logs = array();
+		$response_data = array();
+		foreach($existing_synced_patterns as $sync_pattern){
+			// check if same post_name don't exists.
+			$existing_post = get_posts(
+				array(
+					'post_type'   => 'wp_template_part',
+					'name'        => $sync_pattern['slug'],
+					'post_status' => 'any',
+					'numberposts' => 1,
+				),
+			);
+
+			if ( ! empty( $existing_post ) ) {
+				$created_posts[$sync_pattern['original_id']] = $existing_post[0]->ID;
+				continue;
+			}
+
+			$post_data = array(
+				'post_type'    => 'wp_block',
+				'post_title'   => $sync_pattern['title'],
+				'post_name'    => $sync_pattern['slug'],
+				'post_status'  => 'publish',
+				'post_content' => $sync_pattern['content'],
+			);
+
+			$post_id = wp_insert_post( $post_data );
+
+			if ( is_wp_error( $post_id ) ) {
+				$error_logs[$sync_pattern['original_id']] = 'Failed to create synced pattern: ' . $post_id->get_error_message();
+			} else {
+				$created_posts[$sync_pattern['original_id']] = $post_id;
+			}
+
+		}
+
+
+		return new \WP_REST_Response(
+			array(
+				'success'         => true,
+				'message'         => __( 'Synced patterns created successfully.', 'onedesign' ),
+				'synced_patterns' => $existing_synced_patterns,
+				'created_posts'   => $created_posts,
+				'error_logs'      => $error_logs,
+			),
+			200
+		);
 	}
 
 	public function resync_applied_templates(\WP_REST_Request $request):\WP_REST_Response {
@@ -282,6 +379,9 @@ class Templates {
 				}
 			}
 			update_option( 'onedesign_brand_site_post_ids', array() );
+			update_option( 'onedesign_shared_patterns', array() );
+			update_option('onedesign_shared_template_parts', array());
+			update_option('onedesign_shared_synced_patterns', array());
 
 		} else {
 			$updated_templates = array_filter( $existing_templates, fn( $t ) => ! in_array( $t['id'], $template_ids ) );
@@ -491,6 +591,7 @@ class Templates {
 
 		$template_parts = array_filter( $parsed_templates, fn( $t ) => $t['type'] === 'template-part' );
 		$patterns       = array_filter( $parsed_templates, fn( $t ) => $t['type'] === 'pattern' );
+		$synced_patterns = array_filter( $parsed_templates, fn( $t ) => $t['type'] === 'block' );
 
 		// print_r($shared_templates);
 		// print_r($template_parts);
@@ -511,6 +612,86 @@ class Templates {
 				$new_templates      = Utils::modify_template_template_part_pattern_slug( $shared_templates, $site['name'] );
 				$new_patterns       = Utils::modify_template_template_part_pattern_slug( $patterns, $site['name'] );
 				$new_template_parts = Utils::modify_template_template_part_pattern_slug( $template_parts, $site['name'] );
+				$new_synced_patterns = Utils::modify_template_template_part_pattern_slug( $synced_patterns, $site['name'] );
+
+				// first make a request to create synced patterns to brand site.
+				$synced_patterns_request_url = $site_url . 'wp-json/' . self::NAMESPACE . '/create-synced-patterns';
+				$synced_patterns_response    = wp_safe_remote_post(
+					$synced_patterns_request_url,
+					array(
+						'headers' => array(
+							'X-OneDesign-API-Key' => 'Bearer ' . $site_api_key,
+							'Content-Type'        => 'application/json',
+						),
+						'body'    => wp_json_encode(
+							array(
+								'synced_patterns' => $new_synced_patterns,
+							)
+						),
+					)
+				);
+				if ( is_wp_error( $synced_patterns_response ) ) {
+					$error_log[ $site_url ] = $synced_patterns_response->get_error_message();
+					continue;
+				} else {
+					$response_code = wp_remote_retrieve_response_code( $synced_patterns_response );
+					if ( $response_code === 200 ) {
+						$body = wp_remote_retrieve_body( $synced_patterns_response );
+						$data = json_decode( $body, true );
+						if ( isset( $data['success'] ) && $data['success'] ) {
+							$synced_patterns_response = $data;
+						} else {
+							$error_log[ $site_url ] = $synced_patterns_response;
+							continue;
+						}
+					} else {
+						$error_log[ $site_url ] = $synced_patterns_response;
+						continue;
+					}
+				}
+
+				// replace current site synced pattern ref with created post id.
+				if ( isset( $synced_patterns_response['created_posts'] ) && is_array( $synced_patterns_response['created_posts'] ) ) {
+	$created_posts = $synced_patterns_response['created_posts'];
+	
+	// Process templates
+	foreach ( $new_templates as &$template ) {
+		if ( isset( $template['content'] ) && !empty( $template['content'] ) ) {
+			foreach ( $created_posts as $old_id => $new_post_id ) {
+				// Match both wp:block {"ref":ID} and wp:block {\"ref\":ID}
+				$pattern = '/(wp:block\s*\{\s*\\\\?"ref\\\\?"\s*:\s*)' . preg_quote( (string) $old_id, '/' ) . '(\s*\})/';
+				$template['content'] = preg_replace( $pattern, '${1}' . $new_post_id . '${2}', $template['content'] );
+			}
+		}
+	}
+	
+	// Process template parts
+	foreach ( $new_template_parts as &$template_part ) {
+		if ( isset( $template_part['content'] ) && !empty( $template_part['content'] ) ) {
+			foreach ( $created_posts as $old_id => $new_post_id ) {
+				// Match both wp:block {"ref":ID} and wp:block {\"ref\":ID}
+				$pattern = '/(wp:block\s*\{\s*\\\\?"ref\\\\?"\s*:\s*)' . preg_quote( (string) $old_id, '/' ) . '(\s*\})/';
+				$template_part['content'] = preg_replace( $pattern, '${1}' . $new_post_id . '${2}', $template_part['content'] );
+			}
+		}
+	}
+	
+	// Process patterns
+	foreach ( $new_patterns as &$pattern_item ) {
+		if ( isset( $pattern_item['content'] ) && !empty( $pattern_item['content'] ) ) {
+			foreach ( $created_posts as $old_id => $new_post_id ) {
+				// Match both wp:block {"ref":ID} and wp:block {\"ref\":ID}
+				$pattern = '/(wp:block\s*\{\s*\\\\?"ref\\\\?"\s*:\s*)' . preg_quote( (string) $old_id, '/' ) . '(\s*\})/';
+				$pattern_item['content'] = preg_replace( $pattern, '${1}' . $new_post_id . '${2}', $pattern_item['content'] );
+			}
+		}
+	}
+}
+error_log(print_r($new_templates, true));
+error_log(print_r($new_template_parts, true));
+error_log(print_r($new_patterns, true));
+error_log(print_r($new_synced_patterns, true));
+error_log(print_r($created_posts, true));
 				$response           = wp_safe_remote_post(
 					$request_url,
 					array(
@@ -558,6 +739,7 @@ class Templates {
 				'errors'           => $error_log,
 				'template_parts'   => $new_template_parts,
 				'patterns'         => $new_patterns,
+				'synced_patterns'  => $synced_patterns,
 				// 'parsed_template' => $parsed_templates,
 			),
 			200
