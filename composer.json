@@ -27,6 +27,7 @@
   },
   "scripts": {
     "format": "phpcbf --standard=phpcs.xml.dist --report-summary --report-source",
-    "lint": "phpcs --standard=phpcs.xml.dist"
+    "lint": "phpcs --standard=phpcs.xml.dist",
+    "pot": "wp i18n make-pot . languages/onedesign.pot --exclude=node_modules,vendor,tests --ignore-domain=default"
   }
 }

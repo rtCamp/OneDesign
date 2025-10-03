@@ -120,6 +120,14 @@ class Settings {
 		remove_submenu_page( 'onedesign', 'onedesign' );
 	}
 
+	/**
+	 * Handle the redirect to create or open the Templates post.
+	 *
+	 * This function checks if the Templates post exists and redirects to it,
+	 * or creates a new one if it doesn't exist.
+	 *
+	 * @return void
+	 */
 	public function templates_page_redirection(): void {
 		$pages = array( 'onedesign-templates' );
 

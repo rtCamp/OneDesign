@@ -378,6 +378,7 @@ const TemplateModal = () => {
 										currentSiteId={ tab.value }
 										fetchConnectedSitesTemplates={ fetchConnectedSitesTemplates }
 										setSelectedTemplates={ setSelectedTemplates }
+										allTemplates={ templates }
 									/> );
 							} }
 						</TabPanel>

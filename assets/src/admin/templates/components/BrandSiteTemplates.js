@@ -6,7 +6,7 @@ import { useCallback, useState } from '@wordpress/element';
 const REST_NAMESPACE = TemplateLibraryData?.restUrl;
 const NONCE = TemplateLibraryData?.nonce;
 
-const BrandSiteTemplates = ( { filteredTemplates, currentPage, PER_PAGE, selectedTemplates, handleTemplateSelection, setCurrentPage, currentSiteId, fetchConnectedSitesTemplates, setSelectedTemplates } ) => {
+const BrandSiteTemplates = ( { filteredTemplates, currentPage, PER_PAGE, selectedTemplates, handleTemplateSelection, setCurrentPage, currentSiteId, fetchConnectedSitesTemplates, setSelectedTemplates, allTemplates } ) => {
 	const [ isProcessing, setIsProcessing ] = useState( false );
 	const [ notice, setNotice ] = useState( null );
 	const [ isRemoveModalOpen, setIsRemoveModalOpen ] = useState( false );
@@ -108,7 +108,7 @@ const BrandSiteTemplates = ( { filteredTemplates, currentPage, PER_PAGE, selecte
 					return (
 						<MemoizedTemplatePreview
 							key={ template?.name }
-							template={ template }
+							template={ allTemplates.find( ( t ) => t.id === template.original_id ) || template }
 							isCheckBoxRequired={ true }
 							onSelect={ () => handleTemplateSelection( template?.id ) }
 							isSelected={ selectedTemplates.includes( template?.id ) }

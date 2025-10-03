@@ -70,14 +70,14 @@ function onedesign_parse_block_template( string $content, array &$already_tracke
 				$tracking_key          = 'pattern_' . $result['attributes']['slug'];
 			}
 
-			if( 'block' === $block_type ){
-				$result['content'] = get_post($attributes['ref']);
-				$result['id']      = $result['content']->ID ?? null;
-				$result['slug']    = $result['content']->post_name ?? null;
-				$result['title']   = $result['content']->post_title ?? null;
+			if ( 'block' === $block_type ) {
+				$result['content']     = get_post( $attributes['ref'] );
+				$result['id']          = $result['content']->ID ?? null;
+				$result['slug']        = $result['content']->post_name ?? null;
+				$result['title']       = $result['content']->post_title ?? null;
 				$result['description'] = $result['content']->post_excerpt ?? null;
-				$result['content'] = $result['content']->post_content ?? null;
-				$tracking_key      = 'block_' . $attributes['ref'];
+				$result['content']     = $result['content']->post_content ?? null;
+				$tracking_key          = 'block_' . $attributes['ref'];
 			}
 
 			// Check if this specific content has already been processed.

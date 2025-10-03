@@ -48,17 +48,30 @@ class Hooks {
 		add_action( 'admin_init', array( $this, 'create_template' ) );
 	}
 
+	/**
+	 * Create templates, patterns and template parts from saved options.
+	 *
+	 * @return void
+	 */
 	public function create_template(): void {
 
 		$brand_site_post_ids = get_option( 'onedesign_brand_site_post_ids', array() );
 
 		$shared_templates = get_option( 'onedesign_shared_templates', array() );
+
+		$logs = array();
+
 		foreach ( $shared_templates as $template ) {
-			$res = register_block_template(
+			$res    = register_block_template(
 				$template['id'],
 				$template
 			);
-			error_log( print_r( $res, true ) );
+			$logs[] = sprintf(
+				/* translators: 1: Template slug. 2: Result. */
+				__( 'Template %1$s registration result: %2$s', 'onedesign' ),
+				$template['slug'] ?? '',
+				wp_json_encode( $res )
+			);
 		}
 
 		$shared_patterns = get_option( 'onedesign_shared_patterns', array() );
@@ -66,7 +79,7 @@ class Hooks {
 			if ( ! class_exists( '\WP_Block_Patterns_Registry' ) ) {
 				require_once ABSPATH . 'wp-includes/class-wp-block-patterns-registry.php';
 			}
-			$res = register_block_pattern(
+			$res    = register_block_pattern(
 				$pattern['slug'],
 				array(
 					'title'       => $pattern['title'] ?? '',
@@ -75,27 +88,37 @@ class Hooks {
 					'postTypes'   => $pattern['post_types'] ?? array(),
 				)
 			);
-			error_log( print_r( $res, true ) );
+			$logs[] = sprintf(
+				/* translators: 1: Pattern slug. 2: Result. */
+				__( 'Pattern %1$s registration result: %2$s', 'onedesign' ),
+				$pattern['slug'],
+				$res
+			);
 		}
 
 		$shared_template_parts = get_option( 'onedesign_shared_template_parts', array() );
 		foreach ( $shared_template_parts as $template_part ) {
-			// Check if template part already exists
+			// Check if template part already exists.
 			$existing = get_posts(
 				array(
 					'post_type'   => 'wp_template_part',
 					'name'        => $template_part['slug'],
 					'post_status' => 'any',
 					'numberposts' => 1,
+					'fields'      => 'ids',
 				)
 			);
 
 			if ( ! empty( $existing ) ) {
-				error_log( 'Template part already exists: ' . $template_part['slug'] );
+				$logs[] = sprintf(
+					/* translators: 1: Template part slug. */
+					__( 'Template part already exists: %s', 'onedesign' ),
+					$template_part['slug']
+				);
 				continue;
 			}
 
-			// Create the template part post
+			// Create the template part post.
 			$post_data = array(
 				'post_type'    => 'wp_template_part',
 				'post_title'   => $template_part['title'],
@@ -107,45 +130,67 @@ class Hooks {
 			$post_id = wp_insert_post( $post_data );
 
 			if ( is_wp_error( $post_id ) ) {
-				error_log( 'Failed to create template part: ' . $post_id->get_error_message() );
+				$logs[] = sprintf(
+					/* translators: 1: Error message. */
+					__( 'Error creating template part %1$s: %2$s', 'onedesign' ),
+					$template_part['slug'],
+					$post_id->get_error_message()
+				);
 				continue;
 			} else {
+				$logs[] = sprintf(
+					/* translators: 1: Template part slug. 2: Post ID. */
+					__( 'Template part created successfully: %1$s (ID: %2$d)', 'onedesign' ),
+					$template_part['slug'],
+					$post_id
+				);
 				$brand_site_post_ids[] = $post_id;
 			}
 
 			$current_theme = get_option( 'stylesheet' );
 			$theme_slug    = get_option( 'template' );
-			// CRITICAL: Add all required meta fields
+			// CRITICAL: Add all required meta fields.
 			update_post_meta( $post_id, '_wp_template_part_area', $template_part['area'] ?? 'uncategorized' );
 			update_post_meta( $post_id, '_wp_theme', $current_theme );
 
-			// Add these additional meta fields that might be required
+			// Add these additional meta fields that might be required.
 			update_post_meta( $post_id, '_wp_template_part_theme', $theme_slug );
 
-			// Set the correct taxonomy terms
+			// Set the correct taxonomy terms.
 			wp_set_object_terms( $post_id, $template_part['area'] ?? 'uncategorized', 'wp_template_part_area' );
 			wp_set_object_terms( $post_id, $current_theme, 'wp_theme' );
 
-			// Store theme information
+			// Store theme information.
 			if ( isset( $template_part['theme'] ) ) {
 				update_post_meta( $post_id, 'theme', $template_part['theme'] );
 			} else {
 				update_post_meta( $post_id, 'theme', get_stylesheet() );
 			}
 
-			// Store description if provided
+			// Store description if provided.
 			if ( isset( $template_part['description'] ) ) {
 				update_post_meta( $post_id, 'description', $template_part['description'] );
 			}
 
-			// Store post types if provided
+			// Store post types if provided.
 			if ( isset( $template_part['post_types'] ) && is_array( $template_part['post_types'] ) ) {
 				update_post_meta( $post_id, 'post_types', $template_part['post_types'] );
 			}
 
-			error_log( 'Template part created successfully: ' . $post_id );
+			$logs[] = sprintf(
+				/* translators: 1: Template part slug. 2: Post ID. */
+				__( 'Template part setup completed: %1$s (ID: %2$d)', 'onedesign' ),
+				$template_part['slug'],
+				$post_id
+			);
 		}
 		update_option( 'onedesign_brand_site_post_ids', array_unique( $brand_site_post_ids ) );
+
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			foreach ( $logs as $log_entry ) {
+				error_log( $log_entry ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- only adding logs in debug mode.
+			}
+		}
 	}
 
 	/**
@@ -157,7 +202,7 @@ class Hooks {
 	 */
 	public function allowed_block_types( $allowed_block_types, $editor_context ) {
 		// Allow all block types in the Design Library post type.
-		if ( isset( $editor_context->post->post_type ) && ( $editor_context->post->post_type === Template::SLUG ) ) {
+		if ( isset( $editor_context->post->post_type ) && ( Template::SLUG === $editor_context->post->post_type ) ) {
 			return array();
 		}
 		return $allowed_block_types;
@@ -179,7 +224,7 @@ class Hooks {
 	 */
 	public function print_design_library_button_in_editor_js_template(): void {
 		$current_screen = get_current_screen();
-		if ( ! $current_screen || $current_screen->post_type !== Design_Library::SLUG ) {
+		if ( ! $current_screen || Design_Library::SLUG !== $current_screen->post_type ) {
 			return;
 		}
 		?>
@@ -201,7 +246,7 @@ class Hooks {
 	 */
 	public function add_templates_button_to_editor(): void {
 		$current_screen = get_current_screen();
-		if ( ! $current_screen || $current_screen->post_type !== Template::SLUG ) {
+		if ( ! $current_screen || Template::SLUG !== $current_screen->post_type ) {
 			return;
 		}
 		?>

@@ -148,29 +148,29 @@ class Utils {
 		if ( is_string( $content ) ) {
 			$content_string = $content;
 		} elseif ( is_object( $content ) ) {
-			// Handle WP_Block_Template object
+			// Handle WP_Block_Template object.
 			if ( isset( $content->content ) ) {
 				$content_string = $content->content;
 			} elseif ( isset( $content->post_content ) ) {
-				// Handle WP_Post object (for patterns/blocks)
+				// Handle WP_Post object (for patterns/blocks).
 				$content_string = $content->post_content;
 			} else {
-				// Return empty string if we can't find content
+				// Return empty string if we can't find content.
 				return '';
 			}
 		} elseif ( is_array( $content ) ) {
-			// Handle array format
+			// Handle array format.
 			if ( isset( $content['content'] ) ) {
 				$content_string = $content['content'];
 			} else {
 				return '';
 			}
 		} else {
-			// Unsupported content type
+			// Unsupported content type.
 			return '';
 		}
 
-		// Pattern to match template-part and pattern blocks
+		// Pattern to match template-part and pattern blocks.
 		$pattern = '/<!--\s*wp:(template-part|pattern)\s*(\{[^}]*\})\s*\/?-->/';
 
 		return preg_replace_callback(
@@ -179,14 +179,14 @@ class Utils {
 				$block_type      = $matches[1];
 				$attributes_json = $matches[2];
 
-				// Decode the attributes
+				// Decode the attributes.
 				$attributes = json_decode( $attributes_json, true );
 
 				if ( ! $attributes ) {
-					return $matches[0]; // Return original if JSON decode fails
+					return $matches[0]; // Return original if JSON decode fails.
 				}
 
-				// Modify slug if present
+				// Modify slug if present.
 				if ( isset( $attributes['slug'] ) ) {
 					$attributes['slug'] = self::generate_unique_slug_for_template_patterns_template_parts(
 						$attributes['slug'],
@@ -194,10 +194,10 @@ class Utils {
 					);
 				}
 
-				// Encode back to JSON
-				$new_attributes_json = json_encode( $attributes, JSON_UNESCAPED_SLASHES );
+				// Encode back to JSON.
+				$new_attributes_json = wp_json_encode( $attributes, JSON_UNESCAPED_SLASHES );
 
-				// Return the modified block
+				// Return the modified block.
 				return "<!-- wp:{$block_type} {$new_attributes_json} /-->";
 			},
 			$content_string
@@ -226,7 +226,7 @@ class Utils {
 				$templates[ $index ]['original_id'] = $template['id'];
 			}
 
-			// Modify top-level slug and id
+			// Modify top-level slug and id.
 			if ( isset( $template['slug'] ) ) {
 				$templates[ $index ]['slug'] = self::generate_unique_slug_for_template_patterns_template_parts(
 					$template['slug'],
@@ -242,7 +242,7 @@ class Utils {
 				);
 			}
 
-			// Modify content references
+			// Modify content references.
 			if ( isset( $template['content'] ) ) {
 				$templates[ $index ]['content'] = self::modify_content_references(
 					$template['content'],

@@ -125,6 +125,7 @@
 	}
 
 	.onedesign-template-tabs {
+
 		.onedesign-base-templates-tab {
 			font-weight: 600;
 			padding: 0.5rem 1rem;
@@ -172,19 +173,23 @@
 }
 
 .onedesign-apply-templates-modal {
+
     div:has(.onedesign-site-selection) {
         height: -webkit-fill-available;
     }
+
 	.onedesign-site-selection {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         height: 100%;
+
         .onedesign-site-selection-actions {
             display: flex;
             justify-content: flex-end;
             gap: 12px;
         }
+
 		.onedesign-site-grid {
 			display: grid;
 			grid-template-columns: repeat(3, 1fr);
@@ -213,15 +218,18 @@
 					border-color: #2196f3;
 					box-shadow: 0 0 0 1px rgba(33, 150, 243, 0.2);
 					background-color: rgba(33, 150, 243, 0.05);
+
                     .onedesign-site-inner {
 
                         .onedesign-site-logo {
                             transform: scale(1.05);
+
                             .onedesign-site-initials {
                                 box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
                                 transform: scale(1.02);
                             }
                         }
+
                         .onedesign-site-name {
                             color: #2196f3;
                         }
