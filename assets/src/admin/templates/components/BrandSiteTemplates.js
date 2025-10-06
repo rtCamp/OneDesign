@@ -178,9 +178,9 @@ const BrandSiteTemplates = ( { filteredTemplates, currentPage, PER_PAGE, selecte
 							isDestructive
 							isBusy={ isProcessing }
 							disabled={ isProcessing }
-							label={ __( 'Remove Template\'s', 'onedesign' ) }
+							label={ __( 'Remove Templates', 'onedesign' ) }
 						>
-							{ __( 'Remove Template\'s', 'onedesign' ) }
+							{ __( 'Remove Templates', 'onedesign' ) }
 						</Button>
 					</div>
 

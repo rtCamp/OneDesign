@@ -100,7 +100,7 @@ function onedesign_parse_block_template( string $content, array &$already_tracke
 						$nested_blocks = onedesign_parse_block_template( $result['content']->post_content, $already_tracked );
 					}
 
-					// Use flatten the nested results into the main array.
+					// Flatten the nested results into the main array.
 					$results = array_merge( $results, $nested_blocks );
 				}
 			}
