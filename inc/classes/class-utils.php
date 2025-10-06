@@ -242,12 +242,75 @@ class Utils {
 				);
 			}
 
-			// Modify content references.
-			if ( isset( $template['content'] ) ) {
-				$templates[ $index ]['content'] = self::modify_content_references(
-					$template['content'],
+			/**
+			 * Removes the "theme" attribute from WordPress block comments in the content.
+			 *
+			 * For example, transforms:
+			 * <!-- wp:template-part {"slug":"onedesign-onepress-2-ut","theme":"rtcamp-2024","area":"uncategorized"} /-->
+			 * into:
+			 * <!-- wp:template-part {"slug":"onedesign-onepress-2-ut","area":"uncategorized"} /-->
+			 */
+			$content = '';
+			if ( $template instanceof \WP_Block_Template && isset( $template->content ) ) {
+				$content = $template->content;
+			} elseif ( is_array( $template ) && isset( $template['content'] ) ) {
+				$content = $template['content'];
+			}
+
+			if ( ! empty( $content ) && is_string( $content ) ) {
+				// Remove theme attribute from block comments.
+				$pattern = '/<!--\s*wp:(template-part|pattern)\s*(\{[^}]*\})\s*\/?-->/';
+
+				$content = preg_replace_callback(
+					$pattern,
+					function ( $matches ) {
+						$block_type      = $matches[1];
+						$attributes_json = $matches[2];
+
+						// Decode the attributes.
+						$attributes = json_decode( $attributes_json, true );
+						if ( ! $attributes ) {
+							return $matches[0]; // Return original if JSON decode fails.
+						}
+
+						// Remove theme attribute if present.
+						if ( isset( $attributes['theme'] ) ) {
+							unset( $attributes['theme'] );
+						}
+
+						// Re-encode and return.
+						return '<!-- wp:' . $block_type . ' ' . wp_json_encode( $attributes, JSON_UNESCAPED_SLASHES ) . ' /-->';
+					},
+					$content
+				);
+
+				// Assign cleaned content back.
+				if ( $template instanceof \WP_Block_Template ) {
+					$templates[ $index ]->content = $content;
+				} else {
+					$templates[ $index ]['content'] = $content;
+				}
+			}
+
+			// Modify content references (uses the cleaned content from above).
+			$current_content = '';
+			if ( $template instanceof \WP_Block_Template && isset( $templates[ $index ]->content ) ) {
+				$current_content = $templates[ $index ]->content;
+			} elseif ( is_array( $template ) && isset( $templates[ $index ]['content'] ) ) {
+				$current_content = $templates[ $index ]['content'];
+			}
+
+			if ( ! empty( $current_content ) ) {
+				$modified_content = self::modify_content_references(
+					$current_content,
 					$shared_site_name
 				);
+
+				if ( $template instanceof \WP_Block_Template ) {
+					$templates[ $index ]->content = $modified_content;
+				} else {
+					$templates[ $index ]['content'] = $modified_content;
+				}
 			}
 		}
 
