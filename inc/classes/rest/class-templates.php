@@ -380,7 +380,7 @@ class Templates {
 			return new \WP_REST_Response(
 				array(
 					'success' => false,
-					'message' => 'Template IDs parameter is required.',
+					'message' => __( 'Template IDs parameter is required.', 'onedesign' ),
 				),
 				400
 			);
@@ -460,7 +460,7 @@ class Templates {
 			return new \WP_REST_Response(
 				array(
 					'success' => false,
-					'message' => 'Template IDs and site parameters are required.',
+					'message' => __( 'Template IDs and site parameters are required.', 'onedesign' ),
 				),
 				400
 			);
@@ -834,7 +834,11 @@ class Templates {
 		if ( 200 !== $response_code ) {
 			return array(
 				'success' => false,
-				'error'   => 'Unexpected response code: ' . $response_code,
+				'error'   => sprintf(
+					/* translators: %s: response code */
+					__( 'Unexpected response code: %s', 'onedesign' ),
+					$response_code
+				),
 			);
 		}
 
@@ -844,7 +848,11 @@ class Templates {
 		if ( json_last_error() !== JSON_ERROR_NONE ) {
 			return array(
 				'success' => false,
-				'error'   => 'JSON decode error: ' . json_last_error_msg(),
+				'error'   => sprintf(
+					/* translators: %s: error message */
+					__( 'JSON decode error: %s', 'onedesign' ),
+					json_last_error_msg()
+				),
 			);
 		}
 

@@ -4,7 +4,11 @@ import MemoizedTemplatePreview from './MemoizedTemplatePreview';
 const BaseSiteTemplates = ( { filteredTemplates, currentPage, PER_PAGE, selectedTemplates, handleTemplateSelection } ) => {
 	const renderTemplates = () => {
 		if ( filteredTemplates.length === 0 ) {
-			return <p>{ __( 'No templates found.', 'onedesign' ) }</p>;
+			return (
+				<div className="onedesign-no-templates">
+					<p>{ __( 'No templates found.', 'onedesign' ) }</p>
+				</div>
+			);
 		}
 
 		return (
