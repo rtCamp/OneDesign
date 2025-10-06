@@ -7,6 +7,7 @@
 
 namespace OneDesign;
 
+use OneDesign\Plugin_Configs\Constants;
 use OneDesign\Traits\Singleton;
 use OneDesign\Post_Types\{ Design_Library, Template };
 
@@ -45,7 +46,7 @@ class Hooks {
 		add_filter( 'allowed_block_types_all', array( $this, 'allowed_block_types' ), 10, 2 );
 
 		// on admin init create template, pattern and template part.
-		add_action( 'admin_init', array( $this, 'create_template' ) );
+		add_action( 'admin_init', array( $this, 'create_template' ), 99 );
 	}
 
 	/**
@@ -55,9 +56,13 @@ class Hooks {
 	 */
 	public function create_template(): void {
 
-		$brand_site_post_ids = get_option( 'onedesign_brand_site_post_ids', array() );
+		if ( Utils::is_governing_site() ) {
+			return;
+		}
 
-		$shared_templates = get_option( 'onedesign_shared_templates', array() );
+		$brand_site_post_ids = get_option( Constants::ONEDESIGN_BRAND_SITE_POST_IDS, array() );
+
+		$shared_templates = get_option( Constants::ONEDESIGN_SHARED_TEMPLATES, array() );
 
 		$logs = array();
 
@@ -74,7 +79,7 @@ class Hooks {
 			);
 		}
 
-		$shared_patterns = get_option( 'onedesign_shared_patterns', array() );
+		$shared_patterns = get_option( Constants::ONEDESIGN_SHARED_PATTERNS, array() );
 		foreach ( $shared_patterns as $pattern ) {
 			if ( ! class_exists( '\WP_Block_Patterns_Registry' ) ) {
 				require_once ABSPATH . 'wp-includes/class-wp-block-patterns-registry.php';
@@ -96,7 +101,7 @@ class Hooks {
 			);
 		}
 
-		$shared_template_parts = get_option( 'onedesign_shared_template_parts', array() );
+		$shared_template_parts = get_option( Constants::ONEDESIGN_SHARED_TEMPLATE_PARTS, array() );
 		foreach ( $shared_template_parts as $template_part ) {
 			// Check if template part already exists.
 			$existing = get_posts(
@@ -184,7 +189,7 @@ class Hooks {
 				$post_id
 			);
 		}
-		update_option( 'onedesign_brand_site_post_ids', array_unique( $brand_site_post_ids ) );
+		update_option( Constants::ONEDESIGN_BRAND_SITE_POST_IDS, array_unique( $brand_site_post_ids ) );
 
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 			foreach ( $logs as $log_entry ) {
@@ -286,7 +291,7 @@ class Hooks {
 	 * @return void
 	 */
 	public function register_block_patterns_if_not_exist(): void {
-		$consumer_site_patterns = get_option( 'consumer_site_patterns' );
+		$consumer_site_patterns = get_option( Constants::CONSUMER_SITE_PATTERNS );
 		if ( ! is_array( $consumer_site_patterns ) ) {
 			return;
 		}

@@ -80,6 +80,34 @@ class Constants {
 	public const ONEDESIGN_CHILD_SITES = 'onedesign_child_sites';
 
 	/**
+	 * Brand site post id's.
+	 *
+	 * @var string
+	 */
+	public const ONEDESIGN_BRAND_SITE_POST_IDS = 'onedesign_brand_site_post_ids';
+
+	/**
+	 * Shared patterns.
+	 *
+	 * @var string
+	 */
+	public const ONEDESIGN_SHARED_PATTERNS = 'onedesign_shared_patterns';
+
+	/**
+	 * Shared template parts.
+	 *
+	 * @var string
+	 */
+	public const ONEDESIGN_SHARED_TEMPLATE_PARTS = 'onedesign_shared_template_parts';
+
+	/**
+	 * Shared synced patterns.
+	 *
+	 * @var string
+	 */
+	public const ONEDESIGN_SHARED_SYNCED_PATTERNS = 'onedesign_shared_synced_patterns';
+
+	/**
 	 * Use Singleton trait.
 	 */
 	use Singleton;

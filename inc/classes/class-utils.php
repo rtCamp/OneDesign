@@ -253,4 +253,33 @@ class Utils {
 
 		return $templates;
 	}
+
+	/**
+	 * Replace wp:block ref IDs - handles multiple WordPress block comment formats.
+	 *
+	 * @param array  $items        Array of items to process. Passed by reference.
+	 * @param array  $id_map       Map of old_id => new_id.
+	 * @param string $content_key  Key for the content field (default: 'content').
+	 * @return array Modified items with updated block refs.
+	 */
+	public static function replace_block_refs( $items, $id_map = array(), $content_key = 'content' ): array {
+		if ( empty( $id_map ) || ! is_array( $items ) ) {
+			return $items;
+		}
+
+		foreach ( $items as $key => $item ) {
+			if ( isset( $item[ $content_key ] ) && ! empty( $item[ $content_key ] ) ) {
+				$content = $item[ $content_key ];
+
+				foreach ( $id_map as $old_id => $new_id ) {
+					$pattern1 = '/(<!--\s*wp:block\s*\{\s*"ref"\s*:\s*)' . preg_quote( $old_id, '/' ) . '(\s*\}\s*\/-->)/';
+					$content  = preg_replace( $pattern1, '${1}' . $new_id . '${2}', $content );
+				}
+
+				$items[ $key ][ $content_key ] = $content;
+			}
+		}
+
+		return $items;
+	}
 }

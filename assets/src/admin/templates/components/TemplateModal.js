@@ -200,7 +200,13 @@ const TemplateModal = () => {
 		fetchTemplates();
 		fetchBrandSitesInfo();
 		fetchConnectedSitesTemplates();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
+
+	// clear notice on tab change
+	useEffect( () => {
+		setNotice( null );
+	}, [ activeTab ] );
 
 	// create tabs based on siteInfo
 	useEffect( () => {
@@ -309,7 +315,7 @@ const TemplateModal = () => {
 									handleTemplateReSync();
 								} }
 								isBusy={ isReSyncing }
-								disabled={ isReSyncing }
+								disabled={ isReSyncing || Object.keys( connectedSitesTemplates )?.length === 0 || ( connectedSitesTemplates?.[ activeTab ] || [] )?.length === 0 }
 								label={ __( 'Sync Shared Templates', 'onedesign' ) }
 							>
 								{ __( 'Sync Shared Templates', 'onedesign' ) }

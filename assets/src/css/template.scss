@@ -77,6 +77,26 @@
 		}
 	}
 
+	.onedesign-no-templates {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		padding: 60px 20px;
+		text-align: center;
+		background: #f9f9f9;
+		border-radius: 8px;
+		border: 2px dashed #ddd;
+		grid-column: 1 / 4;
+
+		p {
+			margin: 0;
+			font-size: 16px;
+			color: #666;
+		}
+
+	}
+
 	.onedesign-pagination {
 		align-items: center;
 		box-sizing: border-box;

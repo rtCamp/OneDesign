@@ -7,6 +7,7 @@
 
 namespace OneDesign\Rest;
 
+use OneDesign\Plugin_Configs\Constants;
 use OneDesign\Traits\Singleton;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -370,7 +371,7 @@ class Patterns {
 		}
 
 		// Remove the patterns from the consumer site patterns option.
-		$consumer_patterns = get_option( 'consumer_site_patterns', array() );
+		$consumer_patterns = get_option( Constants::CONSUMER_SITE_PATTERNS, array() );
 		if ( empty( $consumer_patterns ) ) {
 			return new WP_Error( 'no_patterns_found', __( 'No patterns found for this consumer site.', 'onedesign' ), array( 'status' => 404 ) );
 		}
@@ -386,7 +387,7 @@ class Patterns {
 			return new WP_Error( 'no_patterns_removed', __( 'No patterns were removed. Please check the pattern names provided.', 'onedesign' ), array( 'status' => 400 ) );
 		}
 
-		update_option( 'consumer_site_patterns', $updated_patterns );
+		update_option( Constants::CONSUMER_SITE_PATTERNS, $updated_patterns );
 
 		return new WP_REST_Response(
 			array(
@@ -499,7 +500,7 @@ class Patterns {
 	 */
 	public function get_consumer_site_patterns(): WP_REST_Response {
 		// Use the option name from your settings class.
-		$consumer_patterns = get_option( 'consumer_site_patterns', array() );
+		$consumer_patterns = get_option( Constants::CONSUMER_SITE_PATTERNS, array() );
 
 		if ( empty( $consumer_patterns ) ) {
 			return new WP_REST_Response(
@@ -893,7 +894,7 @@ class Patterns {
 		}
 
 		// Get existing patterns from option.
-		$existing_patterns = get_option( 'consumer_site_patterns', array() );
+		$existing_patterns = get_option( Constants::CONSUMER_SITE_PATTERNS, array() );
 
 		foreach ( $patterns_data as $pattern ) {
 			if ( empty( $pattern['name'] ) || empty( $pattern['title'] ) || ! isset( $pattern['content'] ) ) {
@@ -927,7 +928,7 @@ class Patterns {
 		}
 
 		// Save merged patterns back to the option.
-		update_option( 'consumer_site_patterns', $existing_patterns );
+		update_option( Constants::CONSUMER_SITE_PATTERNS, $existing_patterns );
 
 		return new WP_REST_Response(
 			array(

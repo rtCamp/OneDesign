@@ -99,7 +99,11 @@ const BrandSiteTemplates = ( { filteredTemplates, currentPage, PER_PAGE, selecte
 
 	const renderTemplates = () => {
 		if ( filteredTemplates.length === 0 ) {
-			return <p>{ __( 'No templates found.', 'onedesign' ) }</p>;
+			return (
+				<div className="onedesign-no-templates">
+					<p>{ __( 'No templates found.', 'onedesign' ) }</p>
+				</div>
+			);
 		}
 
 		return (
@@ -161,9 +165,9 @@ const BrandSiteTemplates = ( { filteredTemplates, currentPage, PER_PAGE, selecte
 							onClick={ () => {
 								setIsRemoveModalOpen( false );
 							} }
-							label={ __( 'Cancle', 'onedesign' ) }
+							label={ __( 'Cancel', 'onedesign' ) }
 						>
-							{ __( 'Cancle', 'onedesign' ) }
+							{ __( 'Cancel', 'onedesign' ) }
 						</Button>
 						<Button
 							variant="primary"

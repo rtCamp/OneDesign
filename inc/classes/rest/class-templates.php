@@ -38,7 +38,7 @@ class Templates {
 	 *
 	 * @return void
 	 */
-	protected function setup_hooks() {
+	protected function setup_hooks(): void {
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
 	}
 
@@ -47,7 +47,10 @@ class Templates {
 	 *
 	 * @return void
 	 */
-	public function register_routes() {
+	public function register_routes(): void {
+
+		$patterns_instance = Patterns::get_instance();
+
 		/**
 		 * Register route to get all templates.
 		 *
@@ -59,7 +62,7 @@ class Templates {
 			array(
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_all_templates' ),
-				'permission_callback' => array( __CLASS__, 'permission_check' ),
+				'permission_callback' => array( $patterns_instance, 'manage_options_permission_check' ),
 			)
 		);
 
@@ -72,7 +75,7 @@ class Templates {
 			array(
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_templates_from_connected_sites' ),
-				'permission_callback' => array( __CLASS__, 'permission_check' ),
+				'permission_callback' => array( $patterns_instance, 'manage_options_permission_check' ),
 			)
 		);
 
@@ -86,12 +89,12 @@ class Templates {
 				array(
 					'methods'             => \WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_shared_templates' ),
-					'permission_callback' => array( __CLASS__, 'permission_check' ),
+					'permission_callback' => array( $patterns_instance, 'api_token_permission_check' ),
 				),
 				array(
 					'methods'             => \WP_REST_Server::CREATABLE,
 					'callback'            => array( $this, 'create_templates' ),
-					'permission_callback' => array( __CLASS__, 'permission_check' ),
+					'permission_callback' => array( $patterns_instance, 'api_token_permission_check' ),
 					'args'                => array(
 						'templates'      => array(
 							'required' => true,
@@ -119,7 +122,7 @@ class Templates {
 			array(
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'apply_templates_to_sites' ),
-				'permission_callback' => array( __CLASS__, 'permission_check' ),
+				'permission_callback' => array( $patterns_instance, 'manage_options_permission_check' ),
 				'args'                => array(
 					'sites'     => array(
 						'required' => true,
@@ -142,7 +145,7 @@ class Templates {
 			array(
 				'methods'             => \WP_REST_Server::DELETABLE,
 				'callback'            => array( $this, 'remove_template' ),
-				'permission_callback' => array( __CLASS__, 'permission_check' ),
+				'permission_callback' => array( $patterns_instance, 'manage_options_permission_check' ),
 				'args'                => array(
 					'template_ids' => array(
 						'required' => true,
@@ -165,7 +168,7 @@ class Templates {
 			array(
 				'methods'             => \WP_REST_Server::DELETABLE,
 				'callback'            => array( $this, 'remove_template_from_brand_site' ),
-				'permission_callback' => array( __CLASS__, 'permission_check' ),
+				'permission_callback' => array( $patterns_instance, 'api_token_permission_check' ),
 				'args'                => array(
 					'template_ids'  => array(
 						'required' => true,
@@ -188,7 +191,7 @@ class Templates {
 			array(
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'resync_applied_templates' ),
-				'permission_callback' => array( __CLASS__, 'permission_check' ),
+				'permission_callback' => array( $patterns_instance, 'manage_options_permission_check' ),
 				'args'                => array(
 					'sites'     => array(
 						'required' => true,
@@ -211,7 +214,7 @@ class Templates {
 			array(
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'create_synced_patterns' ),
-				'permission_callback' => array( __CLASS__, 'permission_check' ),
+				'permission_callback' => array( $patterns_instance, 'api_token_permission_check' ),
 				'args'                => array(
 					'synced_patterns' => array(
 						'required' => true,
@@ -220,17 +223,6 @@ class Templates {
 				),
 			)
 		);
-	}
-
-	/**
-	 * Permission check for REST endpoints.
-	 *
-	 * @param \WP_REST_Request $request The REST request object.
-	 *
-	 * @return bool|\WP_Error
-	 */
-	public static function permission_check( $request ): bool|\WP_Error {
-		return true;
 	}
 
 	/**
@@ -253,7 +245,7 @@ class Templates {
 			);
 		}
 
-		$existing_synced_patterns = get_option( 'onedesign_shared_synced_patterns', array() );
+		$existing_synced_patterns = get_option( Constants::ONEDESIGN_SHARED_SYNCED_PATTERNS, array() );
 		if ( ! is_array( $existing_synced_patterns ) ) {
 			$existing_synced_patterns = array();
 		}
@@ -265,7 +257,7 @@ class Templates {
 			}
 		}
 
-		update_option( 'onedesign_shared_synced_patterns', $existing_synced_patterns );
+		update_option( Constants::ONEDESIGN_SHARED_SYNCED_PATTERNS, $existing_synced_patterns );
 
 		// need to actual create posts so that in governing site I can map existing synced pattern.
 		$created_posts = array();
@@ -274,11 +266,10 @@ class Templates {
 			// check if same post_name don't exists.
 			$existing_post = get_posts(
 				array(
-					'post_type'   => 'wp_template_part',
+					'post_type'   => 'wp_block',
 					'post_name'   => $sync_pattern['slug'],
-					'post_status' => 'any',
+					'post_status' => 'publish',
 					'numberposts' => 1,
-					'fields'      => 'ids',
 				),
 			);
 
@@ -298,11 +289,24 @@ class Templates {
 			$post_id = wp_insert_post( $post_data );
 
 			if ( is_wp_error( $post_id ) ) {
-				$error_logs[ $sync_pattern['original_id'] ] = 'Failed to create synced pattern: ' . $post_id->get_error_message();
+				$error_logs[ $sync_pattern['original_id'] ] = sprintf(
+					/* translators: %s: error message */
+					'Failed to create synced pattern: %s',
+					$post_id->get_error_message()
+				);
 			} else {
 				$created_posts[ $sync_pattern['original_id'] ] = $post_id;
 			}
 		}
+
+		// update brand site post ids option.
+		$brand_site_post_ids = get_option( Constants::ONEDESIGN_BRAND_SITE_POST_IDS, array() );
+		if ( ! is_array( $brand_site_post_ids ) ) {
+			$brand_site_post_ids = array();
+		}
+		$brand_site_post_ids = array_merge( $brand_site_post_ids, array_values( $created_posts ) );
+
+		update_option( Constants::ONEDESIGN_BRAND_SITE_POST_IDS, $brand_site_post_ids );
 
 		return new \WP_REST_Response(
 			array(
@@ -382,7 +386,7 @@ class Templates {
 			);
 		}
 
-		$existing_templates = get_option( 'onedesign_shared_templates', array() );
+		$existing_templates = get_option( Constants::ONEDESIGN_SHARED_TEMPLATES, array() );
 		if ( ! is_array( $existing_templates ) ) {
 			$existing_templates = array();
 		}
@@ -393,7 +397,7 @@ class Templates {
 			$updated_templates = array();
 
 			// get brand site post ids and remove them.
-			$brand_site_post_ids = get_option( 'onedesign_brand_site_post_ids', array() );
+			$brand_site_post_ids = get_option( Constants::ONEDESIGN_BRAND_SITE_POST_IDS, array() );
 			if ( is_array( $brand_site_post_ids ) ) {
 				foreach ( $brand_site_post_ids as $post_id ) {
 					$deleted = wp_delete_post( $post_id, true );
@@ -418,16 +422,16 @@ class Templates {
 					}
 				}
 			}
-			update_option( 'onedesign_brand_site_post_ids', array() );
-			update_option( 'onedesign_shared_patterns', array() );
-			update_option( 'onedesign_shared_template_parts', array() );
-			update_option( 'onedesign_shared_synced_patterns', array() );
+			update_option( Constants::ONEDESIGN_BRAND_SITE_POST_IDS, array() );
+			update_option( Constants::ONEDESIGN_SHARED_PATTERNS, array() );
+			update_option( Constants::ONEDESIGN_SHARED_TEMPLATE_PARTS, array() );
+			update_option( Constants::ONEDESIGN_SHARED_SYNCED_PATTERNS, array() );
 
 		} else {
 			$updated_templates = array_filter( $existing_templates, fn( $t ) => ! in_array( $t['id'], $template_ids, true ) );
 		}
 
-		update_option( 'onedesign_shared_templates', array_values( $updated_templates ) );
+		update_option( Constants::ONEDESIGN_SHARED_TEMPLATES, array_values( $updated_templates ) );
 
 		return new \WP_REST_Response(
 			array(
@@ -497,21 +501,11 @@ class Templates {
 			)
 		);
 
-		if ( is_wp_error( $response ) ) {
-			$error_log[ $request_url ] = $response->get_error_message();
+		$handle_response = $this->handle_remote_response( $response );
+		if ( $handle_response['success'] ) {
+			$response_data = $handle_response['data'];
 		} else {
-			$response_code = wp_remote_retrieve_response_code( $response );
-			if ( 200 === $response_code ) {
-				$body = wp_remote_retrieve_body( $response );
-				$data = json_decode( $body, true );
-				if ( isset( $data['success'] ) && $data['success'] ) {
-					$response_data = $data;
-				} else {
-					$error_log[ $request_url ] = $response;
-				}
-			} else {
-				$error_log[ $request_url ] = $response;
-			}
+			$error_log[ $request_url ] = $handle_response['error'];
 		}
 
 		return new \WP_REST_Response(
@@ -549,7 +543,7 @@ class Templates {
 			);
 		}
 
-		$existing_templates = get_option( 'onedesign_shared_templates', array() );
+		$existing_templates = get_option( Constants::ONEDESIGN_SHARED_TEMPLATES, array() );
 		if ( ! is_array( $existing_templates ) ) {
 			$existing_templates = array();
 		}
@@ -561,10 +555,10 @@ class Templates {
 			}
 		}
 
-		update_option( 'onedesign_shared_templates', $existing_templates );
+		update_option( Constants::ONEDESIGN_SHARED_TEMPLATES, $existing_templates );
 
 		// get existing patterns.
-		$existing_patterns = get_option( 'onedesign_shared_patterns', array() );
+		$existing_patterns = get_option( Constants::ONEDESIGN_SHARED_PATTERNS, array() );
 		if ( ! is_array( $existing_patterns ) ) {
 			$existing_patterns = array();
 		}
@@ -578,10 +572,10 @@ class Templates {
 			}
 		}
 
-		update_option( 'onedesign_shared_patterns', $existing_patterns );
+		update_option( Constants::ONEDESIGN_SHARED_PATTERNS, $existing_patterns );
 
 		// get existing template parts.
-		$existing_template_parts = get_option( 'onedesign_shared_template_parts', array() );
+		$existing_template_parts = get_option( Constants::ONEDESIGN_SHARED_TEMPLATE_PARTS, array() );
 		if ( ! is_array( $existing_template_parts ) ) {
 			$existing_template_parts = array();
 		}
@@ -595,7 +589,7 @@ class Templates {
 			}
 		}
 
-		update_option( 'onedesign_shared_template_parts', $existing_template_parts );
+		update_option( Constants::ONEDESIGN_SHARED_TEMPLATE_PARTS, $existing_template_parts );
 
 		return new \WP_REST_Response(
 			array(
@@ -683,62 +677,21 @@ class Templates {
 						),
 					)
 				);
-				if ( is_wp_error( $synced_patterns_response ) ) {
-					$error_log[ $site_url ] = $synced_patterns_response->get_error_message();
+
+				$handled_response = $this->handle_remote_response( $synced_patterns_response );
+				if ( ! $handled_response['success'] ) {
+					$error_log[ $site_url ] = $handled_response['error'];
 					continue;
-				} else {
-					$response_code = wp_remote_retrieve_response_code( $synced_patterns_response );
-					if ( 200 === $response_code ) {
-						$body = wp_remote_retrieve_body( $synced_patterns_response );
-						$data = json_decode( $body, true );
-						if ( isset( $data['success'] ) && $data['success'] ) {
-							$synced_patterns_response = $data;
-						} else {
-							$error_log[ $site_url ] = $synced_patterns_response;
-							continue;
-						}
-					} else {
-						$error_log[ $site_url ] = $synced_patterns_response;
-						continue;
-					}
 				}
+				$synced_patterns_response = $handled_response['data'];
 
 				// replace current site synced pattern ref with created post id.
 				if ( isset( $synced_patterns_response['created_posts'] ) && is_array( $synced_patterns_response['created_posts'] ) ) {
 					$created_posts = $synced_patterns_response['created_posts'];
 
-					// Process templates.
-					foreach ( $new_templates as &$template ) {
-						if ( isset( $template['content'] ) && ! empty( $template['content'] ) ) {
-							foreach ( $created_posts as $old_id => $new_post_id ) {
-								// Match both wp:block {"ref":ID} and wp:block {\"ref\":ID}.
-								$pattern             = '/(wp:block\s*\{\s*\\\\?"ref\\\\?"\s*:\s*)' . preg_quote( (string) $old_id, '/' ) . '(\s*\})/';
-								$template['content'] = preg_replace( $pattern, '${1}' . $new_post_id . '${2}', $template['content'] );
-							}
-						}
-					}
-
-					// Process template parts.
-					foreach ( $new_template_parts as &$template_part ) {
-						if ( isset( $template_part['content'] ) && ! empty( $template_part['content'] ) ) {
-							foreach ( $created_posts as $old_id => $new_post_id ) {
-								// Match both wp:block {"ref":ID} and wp:block {\"ref\":ID}.
-								$pattern                  = '/(wp:block\s*\{\s*\\\\?"ref\\\\?"\s*:\s*)' . preg_quote( (string) $old_id, '/' ) . '(\s*\})/';
-								$template_part['content'] = preg_replace( $pattern, '${1}' . $new_post_id . '${2}', $template_part['content'] );
-							}
-						}
-					}
-
-					// Process patterns.
-					foreach ( $new_patterns as &$pattern_item ) {
-						if ( isset( $pattern_item['content'] ) && ! empty( $pattern_item['content'] ) ) {
-							foreach ( $created_posts as $old_id => $new_post_id ) {
-								// Match both wp:block {"ref":ID} and wp:block {\"ref\":ID}.
-								$pattern                 = '/(wp:block\s*\{\s*\\\\?"ref\\\\?"\s*:\s*)' . preg_quote( (string) $old_id, '/' ) . '(\s*\})/';
-								$pattern_item['content'] = preg_replace( $pattern, '${1}' . $new_post_id . '${2}', $pattern_item['content'] );
-							}
-						}
-					}
+					$new_templates      = Utils::replace_block_refs( $new_templates, $created_posts );
+					$new_template_parts = Utils::replace_block_refs( $new_template_parts, $created_posts );
+					$new_patterns       = Utils::replace_block_refs( $new_patterns, $created_posts );
 				}
 				$response = wp_safe_remote_post(
 					$request_url,
@@ -756,23 +709,13 @@ class Templates {
 						),
 					)
 				);
-				if ( is_wp_error( $response ) ) {
-					$error_log[ $site_url ] = $response->get_error_message();
+
+				$handled_response = $this->handle_remote_response( $response );
+				if ( ! $handled_response['success'] ) {
+					$error_log[ $site_url ] = $handled_response['error'];
 				} else {
-					$response_code = wp_remote_retrieve_response_code( $response );
-					if ( 200 === $response_code ) {
-						$body = wp_remote_retrieve_body( $response );
-						$data = json_decode( $body, true );
-						if ( isset( $data['success'] ) && $data['success'] ) {
-							$response_data[ $site_url ] = $data;
-						} else {
-							$error_log[ $site_url ] = $response;
-						}
-					} else {
-						$error_log[ $site_url ] = $response;
-					}
+					$response_data[ $site_url ] = $handled_response['data'];
 				}
-				$response_data[ $site_url ] = $response;
 			}
 		}
 
@@ -815,13 +758,13 @@ class Templates {
 	 * @return \WP_REST_Response
 	 */
 	public function get_templates_from_connected_sites(): \WP_REST_Response {
-		$connected_sites = get_option( 'onedesign_child_sites', array() );
+		$connected_sites = Utils::get_sites_info();
 		$sites_response  = array();
 		$error_log       = array();
 		foreach ( $connected_sites as $site ) {
-			$request_url = esc_url_raw( trailingslashit( $site['url'] ) ) . '/wp-json/' . self::NAMESPACE . '/shared';
-			$api_key     = $site['api_key'];
-			$response    = wp_safe_remote_get(
+			$request_url      = esc_url_raw( trailingslashit( $site['url'] ) ) . '/wp-json/' . self::NAMESPACE . '/shared';
+			$api_key          = $site['api_key'];
+			$response         = wp_safe_remote_get(
 				$request_url,
 				array(
 					'headers' => array(
@@ -831,21 +774,19 @@ class Templates {
 					'timeout' => 15,
 				)
 			);
-			if ( is_wp_error( $response ) ) {
-				$error_log[ $site['id'] ] = $response->get_error_message();
-			} else {
-				$response_code = wp_remote_retrieve_response_code( $response );
-				if ( 200 === $response_code ) {
-					$body = wp_remote_retrieve_body( $response );
-					$data = json_decode( $body, true );
-					if ( isset( $data['success'] ) && $data['success'] && isset( $data['templates'] ) ) {
-						$sites_response[ $site['id'] ] = $data['templates'];
-					} else {
-						$error_log[ $site['id'] ] = $response;
-					}
+			$handled_response = $this->handle_remote_response( $response );
+			if ( $handled_response['success'] ) {
+				if ( isset( $handled_response['data']['templates'] ) ) {
+					$sites_response[ $site['id'] ] = $handled_response['data']['templates'];
 				} else {
-					$error_log[ $site['id'] ] = $response;
+					$error_log[ $site['id'] ] = sprintf(
+						/* translators: %s: site name */
+						__( 'No templates found in the response from site: %s', 'onedesign' ),
+						$site['name']
+					);
 				}
+			} else {
+				$error_log[ $site['id'] ] = $handled_response['error'];
 			}
 		}
 		return new \WP_REST_Response(
@@ -864,13 +805,52 @@ class Templates {
 	 * @return \WP_REST_Response
 	 */
 	public function get_shared_templates(): \WP_REST_Response {
-		$shared_templates = get_option( 'onedesign_shared_templates', array() );
+		$shared_templates = get_option( Constants::ONEDESIGN_SHARED_TEMPLATES, array() );
 		return new \WP_REST_Response(
 			array(
 				'success'   => true,
 				'templates' => $shared_templates,
 			),
 			200
+		);
+	}
+
+	/**
+	 * Handle remote response.
+	 *
+	 * @param array|\WP_Error $response The response from wp_remote_get or wp_remote_post.
+	 *
+	 * @return array The processed response data.
+	 */
+	private function handle_remote_response( array|\WP_Error $response ): array {
+		if ( is_wp_error( $response ) ) {
+			return array(
+				'success' => false,
+				'error'   => $response->get_error_message(),
+			);
+		}
+
+		$response_code = wp_remote_retrieve_response_code( $response );
+		if ( 200 !== $response_code ) {
+			return array(
+				'success' => false,
+				'error'   => 'Unexpected response code: ' . $response_code,
+			);
+		}
+
+		$body = wp_remote_retrieve_body( $response );
+		$data = json_decode( $body, true );
+
+		if ( json_last_error() !== JSON_ERROR_NONE ) {
+			return array(
+				'success' => false,
+				'error'   => 'JSON decode error: ' . json_last_error_msg(),
+			);
+		}
+
+		return array(
+			'success' => true,
+			'data'    => $data,
 		);
 	}
 }

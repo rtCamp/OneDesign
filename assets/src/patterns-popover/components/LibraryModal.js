@@ -118,6 +118,7 @@ const LibraryModal = () => {
 			setIsLoadingApplied( false );
 		};
 		fetchPatterns();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ patternStore ] ); // Include patternStore in dependencies
 
 	const { editPost } = useDispatch( 'core/editor' );
@@ -248,7 +249,7 @@ const LibraryModal = () => {
 			const title = ( pattern.title || pattern.name || '' ).toLowerCase();
 			return title.includes( searchLower );
 		} );
-	}, [ allConsumerSitePatterns, searchTerm, activeCategory ] );
+	}, [ allConsumerSitePatterns, searchTerm, activeCategory, activeTab ] );
 
 	// Search results indicator
 	const renderSearchResults = () => {

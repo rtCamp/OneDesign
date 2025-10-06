@@ -69,8 +69,8 @@ class CPT_Restriction {
 			return $args;
 		}
 
-		if ( 'dashboard' === get_option( 'onedesign_site_type' ) ) {
-			// Only remove it from the menu if it's a dashboard site.
+		if ( Utils::is_governing_site() ) {
+			// Only remove it from the menu if it's a governing site.
 			$args['show_in_menu']        = false;
 			$args['show_in_admin_bar']   = false;
 			$args['show_in_nav_menus']   = false;
@@ -110,7 +110,7 @@ class CPT_Restriction {
 	 * Callback function to remove CPT support.
 	 */
 	public function unregister_cpt(): void {
-		if ( 'dashboard' === get_option( 'onedesign_site_type' ) ) {
+		if ( Utils::is_governing_site() ) {
 			return;
 		}
 
