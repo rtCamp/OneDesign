@@ -154,23 +154,13 @@ class Hooks {
 
 			$current_theme = get_option( 'stylesheet' );
 			$theme_slug    = get_option( 'template' );
-			// CRITICAL: Add all required meta fields.
+
+			// add required meta & assign taxonomy terms.
 			update_post_meta( $post_id, '_wp_template_part_area', $template_part['area'] ?? 'uncategorized' );
 			update_post_meta( $post_id, '_wp_theme', $current_theme );
-
-			// Add these additional meta fields that might be required.
 			update_post_meta( $post_id, '_wp_template_part_theme', $theme_slug );
-
-			// Set the correct taxonomy terms.
 			wp_set_object_terms( $post_id, $template_part['area'] ?? 'uncategorized', 'wp_template_part_area' );
 			wp_set_object_terms( $post_id, $current_theme, 'wp_theme' );
-
-			// Store theme information.
-			if ( isset( $template_part['theme'] ) ) {
-				update_post_meta( $post_id, 'theme', $template_part['theme'] );
-			} else {
-				update_post_meta( $post_id, 'theme', get_stylesheet() );
-			}
 
 			// Store description if provided.
 			if ( isset( $template_part['description'] ) ) {
