@@ -217,7 +217,7 @@ class Templates {
 				'permission_callback' => array( $patterns_instance, 'api_token_permission_check' ),
 				'args'                => array(
 					'synced_patterns' => array(
-						'required' => true,
+						'required' => false,
 						'type'     => 'array',
 					),
 				),
@@ -234,16 +234,6 @@ class Templates {
 	 */
 	public function create_synced_patterns( \WP_REST_Request $request ): \WP_REST_Response {
 		$synced_patterns = $request->get_param( 'synced_patterns' );
-
-		if ( empty( $synced_patterns ) || ! is_array( $synced_patterns ) ) {
-			return new \WP_REST_Response(
-				array(
-					'success' => false,
-					'message' => __( 'Synced patterns parameter is required and should be an array.', 'onedesign' ),
-				),
-				400
-			);
-		}
 
 		$existing_synced_patterns = get_option( Constants::ONEDESIGN_SHARED_SYNCED_PATTERNS, array() );
 		if ( ! is_array( $existing_synced_patterns ) ) {

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-10-06T07:58:32+00:00\n"
+"POT-Creation-Date: 2025-10-06T10:50:32+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 
@@ -81,16 +81,16 @@ msgid "Template part created successfully: %1$s (ID: %2$d)"
 msgstr ""
 
 #. translators: 1: Template part slug. 2: Post ID.
-#: inc/classes/class-hooks.php:187
+#: inc/classes/class-hooks.php:177
 #, php-format
 msgid "Template part setup completed: %1$s (ID: %2$d)"
 msgstr ""
 
-#: inc/classes/class-hooks.php:240
+#: inc/classes/class-hooks.php:230
 msgid "Patterns Selection"
 msgstr ""
 
-#: inc/classes/class-hooks.php:262
+#: inc/classes/class-hooks.php:252
 #: inc/classes/class-settings.php:103
 #: inc/classes/class-settings.php:104
 #: inc/classes/class-settings.php:164
@@ -442,81 +442,77 @@ msgstr ""
 msgid "Patterns processed."
 msgstr ""
 
-#: inc/classes/rest/class-templates.php:242
-msgid "Synced patterns parameter is required and should be an array."
-msgstr ""
-
-#: inc/classes/rest/class-templates.php:314
+#: inc/classes/rest/class-templates.php:304
 msgid "Synced patterns created successfully."
 msgstr ""
 
-#: inc/classes/rest/class-templates.php:338
-#: inc/classes/rest/class-templates.php:621
+#: inc/classes/rest/class-templates.php:328
+#: inc/classes/rest/class-templates.php:611
 msgid "Sites and templates parameters are required."
 msgstr ""
 
-#: inc/classes/rest/class-templates.php:360
+#: inc/classes/rest/class-templates.php:350
 msgid "Templates re-synced successfully to the selected sites."
 msgstr ""
 
-#: inc/classes/rest/class-templates.php:383
+#: inc/classes/rest/class-templates.php:373
 msgid "Template IDs parameter is required."
 msgstr ""
 
 #. translators: %s: error message
-#: inc/classes/rest/class-templates.php:409
+#: inc/classes/rest/class-templates.php:399
 #, php-format
 msgid "Failed to delete post ID %s."
 msgstr ""
 
 #. translators: %s: post ID
-#: inc/classes/rest/class-templates.php:418
+#: inc/classes/rest/class-templates.php:408
 #, php-format
 msgid "Deleted post ID %s."
 msgstr ""
 
-#: inc/classes/rest/class-templates.php:439
+#: inc/classes/rest/class-templates.php:429
 msgid "Templates removed successfully."
 msgstr ""
 
-#: inc/classes/rest/class-templates.php:463
+#: inc/classes/rest/class-templates.php:453
 msgid "Template IDs and site parameters are required."
 msgstr ""
 
-#: inc/classes/rest/class-templates.php:478
+#: inc/classes/rest/class-templates.php:468
 msgid "Site not found."
 msgstr ""
 
-#: inc/classes/rest/class-templates.php:514
+#: inc/classes/rest/class-templates.php:504
 msgid "Templates removed successfully from the site."
 msgstr ""
 
-#: inc/classes/rest/class-templates.php:540
+#: inc/classes/rest/class-templates.php:530
 msgid "Templates parameter is required and should be an array."
 msgstr ""
 
-#: inc/classes/rest/class-templates.php:597
+#: inc/classes/rest/class-templates.php:587
 msgid "Templates saved successfully."
 msgstr ""
 
-#: inc/classes/rest/class-templates.php:725
+#: inc/classes/rest/class-templates.php:715
 msgid "Templates applied successfully to the selected sites."
 msgstr ""
 
 #. translators: %s: site name
-#: inc/classes/rest/class-templates.php:784
+#: inc/classes/rest/class-templates.php:774
 #, php-format
 msgid "No templates found in the response from site: %s"
 msgstr ""
 
 #. translators: %s: response code
-#: inc/classes/rest/class-templates.php:839
+#: inc/classes/rest/class-templates.php:829
 #, php-format
 msgid "Unexpected response code: %s"
 msgstr ""
 
 #. translators: %s: error message
-#: inc/classes/rest/class-templates.php:853
+#: inc/classes/rest/class-templates.php:843
 #, php-format
 msgid "JSON decode error: %s"
 msgstr ""
