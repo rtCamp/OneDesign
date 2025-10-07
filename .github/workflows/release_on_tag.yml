@@ -37,9 +37,10 @@ jobs:
           cp composer.json /tmp/onedesign/
           cp -r inc/ /tmp/onedesign/
           cp onedesign.php /tmp/onedesign/
-          cp README.md /tmp/onedesign/
+          cp readme.txt /tmp/onedesign/
           cp -r vendor/ /tmp/onedesign/
           cp uninstall.php /tmp/onedesign/
+          cp -r languages/ /tmp/onedesign/
           
           # Create the zip file
           cd /tmp
