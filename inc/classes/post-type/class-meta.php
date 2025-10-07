@@ -2,7 +2,7 @@
 /**
  * Class Meta to register all the metas based on post type.
  *
- * @package onedesign
+ * @package OneDesign
  */
 
 namespace OneDesign\Post_Types;

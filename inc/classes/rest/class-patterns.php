@@ -2,7 +2,7 @@
 /**
  * Patterns class to handle all the REST API related to patterns sharing.
  *
- * @package onedesign
+ * @package OneDesign
  */
 
 namespace OneDesign\Rest;

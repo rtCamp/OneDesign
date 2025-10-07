@@ -3,7 +3,7 @@
  * Settings class.
  * This class handles the settings page for the OneDesign plugin,
  *
- * @package onedesign
+ * @package OneDesign
  */
 
 namespace OneDesign;

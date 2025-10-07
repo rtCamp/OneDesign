@@ -7,10 +7,8 @@
 
 namespace OneDesign;
 
-use OneDesign\Post_Types\Template;
+use OneDesign\Post_Types\{ Template, Design_Library, Meta };
 use OneDesign\Traits\Singleton;
-use OneDesign\Post_Types\Design_Library;
-use OneDesign\Post_Types\Meta;
 
 /**
  * Class Plugin

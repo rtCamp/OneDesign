@@ -2,7 +2,7 @@
 /**
  * Register Design Library post type.
  *
- * @package onedesign
+ * @package OneDesign
  */
 
 namespace OneDesign\Post_Types;

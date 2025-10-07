@@ -8,7 +8,7 @@
 namespace OneDesign;
 
 use OneDesign\Traits\Singleton;
-use OneDesign\Rest\{Patterns, Templates};
+use OneDesign\Rest\{ Patterns, Templates };
 
 /**
  * Class Rest

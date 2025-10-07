@@ -2,7 +2,7 @@
 /**
  * Enqueue assets for OneDesign.
  *
- * @package onedesign
+ * @package OneDesign
  */
 
 namespace OneDesign;

@@ -2,7 +2,7 @@
 /**
  * Hooks class to handle all the hooks related functionalities.
  *
- * @package onedesign
+ * @package OneDesign
  */
 
 namespace OneDesign;
