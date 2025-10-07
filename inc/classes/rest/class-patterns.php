@@ -387,7 +387,7 @@ class Patterns {
 			return new WP_Error( 'no_patterns_removed', __( 'No patterns were removed. Please check the pattern names provided.', 'onedesign' ), array( 'status' => 400 ) );
 		}
 
-		update_option( Constants::CONSUMER_SITE_PATTERNS, $updated_patterns );
+		update_option( Constants::CONSUMER_SITE_PATTERNS, $updated_patterns, false );
 
 		return new WP_REST_Response(
 			array(
@@ -928,7 +928,7 @@ class Patterns {
 		}
 
 		// Save merged patterns back to the option.
-		update_option( Constants::CONSUMER_SITE_PATTERNS, $existing_patterns );
+		update_option( Constants::CONSUMER_SITE_PATTERNS, $existing_patterns, false );
 
 		return new WP_REST_Response(
 			array(

@@ -187,7 +187,7 @@ class Hooks {
 				$post_id
 			);
 		}
-		update_option( Constants::ONEDESIGN_BRAND_SITE_POST_IDS, array_unique( $brand_site_post_ids ) );
+		update_option( Constants::ONEDESIGN_BRAND_SITE_POST_IDS, array_unique( $brand_site_post_ids ), false );
 
 		// flush cache to reflect template changes.
 		wp_cache_flush();

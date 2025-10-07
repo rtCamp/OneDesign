@@ -247,7 +247,7 @@ class Templates {
 			}
 		}
 
-		update_option( Constants::ONEDESIGN_SHARED_SYNCED_PATTERNS, $existing_synced_patterns );
+		update_option( Constants::ONEDESIGN_SHARED_SYNCED_PATTERNS, $existing_synced_patterns, false );
 
 		// need to actual create posts so that in governing site I can map existing synced pattern.
 		$created_posts = array();
@@ -296,7 +296,7 @@ class Templates {
 		}
 		$brand_site_post_ids = array_merge( $brand_site_post_ids, array_values( $created_posts ) );
 
-		update_option( Constants::ONEDESIGN_BRAND_SITE_POST_IDS, $brand_site_post_ids );
+		update_option( Constants::ONEDESIGN_BRAND_SITE_POST_IDS, $brand_site_post_ids, false );
 
 		return new \WP_REST_Response(
 			array(
@@ -412,16 +412,16 @@ class Templates {
 					}
 				}
 			}
-			update_option( Constants::ONEDESIGN_BRAND_SITE_POST_IDS, array() );
-			update_option( Constants::ONEDESIGN_SHARED_PATTERNS, array() );
-			update_option( Constants::ONEDESIGN_SHARED_TEMPLATE_PARTS, array() );
-			update_option( Constants::ONEDESIGN_SHARED_SYNCED_PATTERNS, array() );
+			update_option( Constants::ONEDESIGN_BRAND_SITE_POST_IDS, array(), false );
+			update_option( Constants::ONEDESIGN_SHARED_PATTERNS, array(), false );
+			update_option( Constants::ONEDESIGN_SHARED_TEMPLATE_PARTS, array(), false );
+			update_option( Constants::ONEDESIGN_SHARED_SYNCED_PATTERNS, array(), false );
 
 		} else {
 			$updated_templates = array_filter( $existing_templates, fn( $t ) => ! in_array( $t['id'], $template_ids, true ) );
 		}
 
-		update_option( Constants::ONEDESIGN_SHARED_TEMPLATES, array_values( $updated_templates ) );
+		update_option( Constants::ONEDESIGN_SHARED_TEMPLATES, array_values( $updated_templates ), false );
 
 		return new \WP_REST_Response(
 			array(
@@ -545,7 +545,7 @@ class Templates {
 			}
 		}
 
-		update_option( Constants::ONEDESIGN_SHARED_TEMPLATES, $existing_templates );
+		update_option( Constants::ONEDESIGN_SHARED_TEMPLATES, $existing_templates, false );
 
 		// get existing patterns.
 		$existing_patterns = get_option( Constants::ONEDESIGN_SHARED_PATTERNS, array() );
@@ -562,7 +562,7 @@ class Templates {
 			}
 		}
 
-		update_option( Constants::ONEDESIGN_SHARED_PATTERNS, $existing_patterns );
+		update_option( Constants::ONEDESIGN_SHARED_PATTERNS, $existing_patterns, false );
 
 		// get existing template parts.
 		$existing_template_parts = get_option( Constants::ONEDESIGN_SHARED_TEMPLATE_PARTS, array() );
@@ -579,7 +579,7 @@ class Templates {
 			}
 		}
 
-		update_option( Constants::ONEDESIGN_SHARED_TEMPLATE_PARTS, $existing_template_parts );
+		update_option( Constants::ONEDESIGN_SHARED_TEMPLATE_PARTS, $existing_template_parts, false );
 
 		return new \WP_REST_Response(
 			array(
