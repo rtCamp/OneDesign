@@ -10,7 +10,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import TemplateModal from './components/TemplateModal';
 
 /**
- * Registers the Pattern Sync Library plugin.
+ * Registers the Template Library plugin.
  *
  * @return {void}
  */
