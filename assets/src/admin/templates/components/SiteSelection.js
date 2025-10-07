@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import {
 	Button,
 	Notice,
@@ -127,20 +127,27 @@ const SiteSelection = ( { siteInfo, isApplying, setIsApplying, onApply, setIsApp
 												if ( alreadyPresentCount === totalSelected ) {
 													return (
 														<span className="onedesign-site-template-status onedesign-templates-available">
-															{ __( 'All selected templates are already present', 'onedesign' ) }
+															{ __( 'All selected templates are already present.', 'onedesign' ) }
 														</span>
 													);
 												} else if ( alreadyPresentCount > 0 ) {
 													return (
 														<span className="onedesign-site-template-status onedesign-templates-partial">
-															{ alreadyPresentCount } { __( 'of', 'onedesign' ) } { totalSelected } { __( 'selected templates are already present', 'onedesign' ) }
+															{
+																sprintf(
+																	/* translators: 1: Number of templates already present. 2: Total number of selected templates. */
+																	__( '%1$d of %2$d selected templates are already present.', 'onedesign' ),
+																	alreadyPresentCount,
+																	totalSelected,
+																)
+															}
 														</span>
 													);
 												}
 
 												return (
 													<span className="onedesign-site-template-status onedesign-templates-not-available">
-														{ __( 'All templates will be synced', 'onedesign' ) }
+														{ __( 'All templates will be synced.', 'onedesign' ) }
 													</span>
 												);
 											} )()
