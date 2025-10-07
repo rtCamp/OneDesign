@@ -139,10 +139,10 @@ class Hooks {
 			// Create the template part post.
 			$post_data = array(
 				'post_type'    => 'wp_template_part',
-				'post_title'   => $template_part['title'],
-				'post_name'    => $template_part['slug'],
+				'post_title'   => $template_part['title'] ?? '',
+				'post_name'    => $template_part['slug'] ?? '',
 				'post_status'  => 'publish',
-				'post_content' => $template_part['content'],
+				'post_content' => $template_part['content'] ?? '',
 			);
 
 			$post_id = wp_insert_post( $post_data );
