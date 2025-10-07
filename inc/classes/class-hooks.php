@@ -45,8 +45,8 @@ class Hooks {
 		add_action( 'after_setup_theme', array( $this, 'remove_core_block_patterns' ) );
 		add_filter( 'allowed_block_types_all', array( $this, 'allowed_block_types' ), 10, 2 );
 
-		// on admin init create template, pattern and template part.
-		add_action( 'admin_init', array( $this, 'create_template' ), 99 );
+		// Create templates, patterns and template parts from saved options.
+		add_action( 'after_setup_theme', array( $this, 'create_template' ), 99 );
 	}
 
 	/**
@@ -66,11 +66,24 @@ class Hooks {
 
 		$logs = array();
 
+		$all_post_types = get_post_types( array( 'public' => true ), 'names' );
+
+		// Remove post types that shouldn't have templates.
+		$excluded_types = array( 'attachment', 'wp_block', 'wp_template', 'wp_template_part', 'wp_navigation' );
+		$all_post_types = array_values( array_diff( $all_post_types, $excluded_types ) );
+
 		foreach ( $shared_templates as $template ) {
-			$res    = register_block_template(
+			$res = register_block_template(
 				$template['id'],
-				$template
+				array(
+					'slug'        => $template['slug'] ?? '',
+					'title'       => $template['title'] ?? '',
+					'description' => $template['description'] ?? '',
+					'content'     => $template['content'] ?? '',
+					'post_types'  => isset( $template['post_types'] ) ? $template['post_types'] : $all_post_types,
+				)
 			);
+
 			$logs[] = sprintf(
 				/* translators: 1: Template slug. 2: Result. */
 				__( 'Template %1$s registration result: %2$s', 'onedesign' ),
@@ -167,11 +180,6 @@ class Hooks {
 				update_post_meta( $post_id, 'description', $template_part['description'] );
 			}
 
-			// Store post types if provided.
-			if ( isset( $template_part['post_types'] ) && is_array( $template_part['post_types'] ) ) {
-				update_post_meta( $post_id, 'post_types', $template_part['post_types'] );
-			}
-
 			$logs[] = sprintf(
 				/* translators: 1: Template part slug. 2: Post ID. */
 				__( 'Template part setup completed: %1$s (ID: %2$d)', 'onedesign' ),
@@ -180,6 +188,9 @@ class Hooks {
 			);
 		}
 		update_option( Constants::ONEDESIGN_BRAND_SITE_POST_IDS, array_unique( $brand_site_post_ids ) );
+
+		// flush cache to reflect template changes.
+		wp_cache_flush();
 
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 			foreach ( $logs as $log_entry ) {

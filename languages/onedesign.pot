@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-10-06T10:50:32+00:00\n"
+"POT-Creation-Date: 2025-10-07T05:31:49+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 
@@ -51,46 +51,46 @@ msgid "Edit Design Library"
 msgstr ""
 
 #. translators: 1: Template slug. 2: Result.
-#: inc/classes/class-hooks.php:76
+#: inc/classes/class-hooks.php:89
 #, php-format
 msgid "Template %1$s registration result: %2$s"
 msgstr ""
 
 #. translators: 1: Pattern slug. 2: Result.
-#: inc/classes/class-hooks.php:98
+#: inc/classes/class-hooks.php:111
 #, php-format
 msgid "Pattern %1$s registration result: %2$s"
 msgstr ""
 
 #. translators: 1: Template part slug.
-#: inc/classes/class-hooks.php:120
+#: inc/classes/class-hooks.php:133
 #, php-format
 msgid "Template part already exists: %s"
 msgstr ""
 
 #. translators: 1: Error message.
-#: inc/classes/class-hooks.php:140
+#: inc/classes/class-hooks.php:153
 #, php-format
 msgid "Error creating template part %1$s: %2$s"
 msgstr ""
 
 #. translators: 1: Template part slug. 2: Post ID.
-#: inc/classes/class-hooks.php:148
+#: inc/classes/class-hooks.php:161
 #, php-format
 msgid "Template part created successfully: %1$s (ID: %2$d)"
 msgstr ""
 
 #. translators: 1: Template part slug. 2: Post ID.
-#: inc/classes/class-hooks.php:177
+#: inc/classes/class-hooks.php:185
 #, php-format
 msgid "Template part setup completed: %1$s (ID: %2$d)"
 msgstr ""
 
-#: inc/classes/class-hooks.php:230
+#: inc/classes/class-hooks.php:241
 msgid "Patterns Selection"
 msgstr ""
 
-#: inc/classes/class-hooks.php:252
+#: inc/classes/class-hooks.php:263
 #: inc/classes/class-settings.php:103
 #: inc/classes/class-settings.php:104
 #: inc/classes/class-settings.php:164
