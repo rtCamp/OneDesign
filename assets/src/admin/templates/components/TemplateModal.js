@@ -1,3 +1,6 @@
+/**
+ * WordPress dependencies
+ */
 import {
 	Button,
 	Modal,
@@ -8,15 +11,25 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useCallback, useEffect, useMemo } from '@wordpress/element';
 import { cog } from '@wordpress/icons';
+
+/**
+ * Internal dependencies
+ */
 import BaseSiteTemplates from './BaseSiteTemplates';
 import SiteSelection from './SiteSelection';
 import BrandSiteTemplates from './BrandSiteTemplates';
 
+// Global variable from PHP
 const REST_NAMESPACE = TemplateLibraryData?.restUrl;
 const NONCE = TemplateLibraryData?.nonce;
 const SettingLink = TemplateLibraryData?.settingsLink;
 const PER_PAGE = 9;
 
+/**
+ * TemplateModal component.
+ *
+ * @return {JSX.Element} The rendered component.
+ */
 const TemplateModal = () => {
 	const [ templates, setTemplates ] = useState( [] );
 	const [ isLoading, setIsLoading ] = useState( false );

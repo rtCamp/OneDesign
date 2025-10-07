@@ -1,6 +1,24 @@
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
 import MemoizedTemplatePreview from './MemoizedTemplatePreview';
 
+/**
+ * BaseSiteTemplates component.
+ *
+ * @param {Object}   props                         - Component props.
+ * @param {Array}    props.filteredTemplates       - Array of filtered templates to display.
+ * @param {number}   props.currentPage             - Current page number for pagination.
+ * @param {number}   props.PER_PAGE                - Number of templates to display per page.
+ * @param {Array}    props.selectedTemplates       - Array of selected template IDs.
+ * @param {Function} props.handleTemplateSelection - Function to handle template selection.
+ * @return {JSX.Element} The rendered component.
+ */
 const BaseSiteTemplates = ( { filteredTemplates, currentPage, PER_PAGE, selectedTemplates, handleTemplateSelection } ) => {
 	const renderTemplates = () => {
 		if ( filteredTemplates.length === 0 ) {

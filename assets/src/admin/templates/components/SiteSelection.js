@@ -1,7 +1,28 @@
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n';
 import { Button, Notice } from '@wordpress/components';
+
+/**
+ * Internal dependencies
+ */
 import { getInitials } from '../../../js/utils';
 
+/**
+ * SiteSelection component.
+ *
+ * @param {Object}   props                     - Component props.
+ * @param {Array}    props.siteInfo            - Array of connected site information.
+ * @param {boolean}  props.isApplying          - Boolean indicating if templates are being applied.
+ * @param {Function} props.setIsApplying       - Function to set the isApplying state.
+ * @param {Function} props.onApply             - Function to handle applying templates to selected sites.
+ * @param {Function} props.setIsApplyModalOpen - Function to control the visibility of the apply modal.
+ * @param {Function} props.setSelectedSites    - Function to set the selected site IDs.
+ * @param {Array}    props.selectedSites       - Array of selected site IDs.
+ * @param {Object}   props.notice              - Notice object containing type and message.
+ * @return {JSX.Element} The rendered component.
+ */
 const SiteSelection = ( { siteInfo, isApplying, setIsApplying, onApply, setIsApplyModalOpen, setSelectedSites, selectedSites, notice } ) => {
 	const handleSiteSelection = ( siteId ) => {
 		setSelectedSites( ( prevSelected ) => {

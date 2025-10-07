@@ -7,7 +7,13 @@ import { __ } from '@wordpress/i18n';
 import { parse } from '@wordpress/blocks';
 import { BlockPreview } from '@wordpress/block-editor';
 
-// Separate memoized component for the preview
+/**
+ * Separate memoized component for the block preview content
+ *
+ * @param {Object} props              - Component props.
+ * @param {Array}  props.parsedBlocks - Parsed blocks to render in the preview.
+ * @return {JSX.Element} The rendered block preview content.
+ */
 const TemplatePreviewContent = memo( ( { parsedBlocks } ) => {
 	return (
 		<div className="od-template-preview">
@@ -16,7 +22,13 @@ const TemplatePreviewContent = memo( ( { parsedBlocks } ) => {
 	);
 } );
 
-// Separate memoized component for template categories
+/**
+ * Separate memoized component for template categories
+ *
+ * @param {Object} props            - Component props.
+ * @param {Object} props.categories - Categories object from the template.
+ * @return {JSX.Element|null} The rendered categories or null if none.
+ */
 const TemplateCategories = memo( ( { categories } ) => {
 	if ( ! categories || typeof categories !== 'object' || Array.isArray( categories ) ) {
 		return null;
@@ -40,7 +52,13 @@ const TemplateCategories = memo( ( { categories } ) => {
 	);
 } );
 
-// Separate memoized component for provider site
+/**
+ * Separate memoized component for provider site info
+ *
+ * @param {Object} props              - Component props.
+ * @param {string} props.providerSite - Name of the provider site.
+ * @return {JSX.Element|null} The rendered provider site info or null if none.
+ */
 const ProviderSiteInfo = memo( ( { providerSite } ) => {
 	if ( ! providerSite ) {
 		return null;

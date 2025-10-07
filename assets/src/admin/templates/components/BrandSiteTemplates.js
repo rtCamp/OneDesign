@@ -1,11 +1,35 @@
+/**
+ * WordPress dependencies
+ */
 import { __, _n, sprintf } from '@wordpress/i18n';
-import MemoizedTemplatePreview from './MemoizedTemplatePreview';
 import { Button, Modal, Notice } from '@wordpress/components';
 import { useCallback, useState } from '@wordpress/element';
 
+/**
+ * Internal dependencies
+ */
+import MemoizedTemplatePreview from './MemoizedTemplatePreview';
+
+// Global variable from PHP
 const REST_NAMESPACE = TemplateLibraryData?.restUrl;
 const NONCE = TemplateLibraryData?.nonce;
 
+/**
+ * BrandSiteTemplates component.
+ *
+ * @param {Object}   props                              - Component props.
+ * @param {Array}    props.filteredTemplates            - Array of filtered templates to display.
+ * @param {number}   props.currentPage                  - Current page number for pagination.
+ * @param {number}   props.PER_PAGE                     - Number of templates to display per page.
+ * @param {Array}    props.selectedTemplates            - Array of selected template IDs.
+ * @param {Function} props.handleTemplateSelection      - Function to handle template selection.
+ * @param {Function} props.setCurrentPage               - Function to set the current page number.
+ * @param {number}   props.currentSiteId                - Current brand site ID.
+ * @param {Function} props.fetchConnectedSitesTemplates - Function to fetch templates for connected brand sites.
+ * @param {Function} props.setSelectedTemplates         - Function to set selected templates.
+ * @param {Array}    props.allTemplates                 - Array of all available templates.
+ * @return {JSX.Element} The rendered component.
+ */
 const BrandSiteTemplates = ( { filteredTemplates, currentPage, PER_PAGE, selectedTemplates, handleTemplateSelection, setCurrentPage, currentSiteId, fetchConnectedSitesTemplates, setSelectedTemplates, allTemplates } ) => {
 	const [ isProcessing, setIsProcessing ] = useState( false );
 	const [ notice, setNotice ] = useState( null );
