@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-10-07T05:31:49+00:00\n"
+"POT-Creation-Date: 2025-10-07T07:59:01+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 
@@ -17,8 +17,13 @@ msgstr ""
 #: onedesign.php
 #: inc/classes/class-settings.php:81
 #: inc/classes/class-settings.php:82
-#: onedesign.php:46
+#: onedesign.php:51
 msgid "OneDesign"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: onedesign.php
+msgid "https://github.com/rtCamp/OneDesign/"
 msgstr ""
 
 #. Description of the plugin
@@ -92,9 +97,14 @@ msgstr ""
 
 #: inc/classes/class-hooks.php:263
 #: inc/classes/class-settings.php:103
-#: inc/classes/class-settings.php:104
 #: inc/classes/class-settings.php:164
 msgid "Templates"
+msgstr ""
+
+#: inc/classes/class-settings.php:104
+#: assets/build/js/templates-library.js:3
+#: assets/src/admin/templates/components/TemplateModal.js:315
+msgid "Template Library"
 msgstr ""
 
 #: inc/classes/class-settings.php:113
@@ -518,24 +528,24 @@ msgid "JSON decode error: %s"
 msgstr ""
 
 #. translators: %s is the plugin name.
-#: onedesign.php:45
+#: onedesign.php:50
 #, php-format
 msgid "You are running the %s plugin from the GitHub repository. Please build the assets and install composer dependencies to use the plugin."
 msgstr ""
 
 #. translators: %s is the command to run.
-#: onedesign.php:54
+#: onedesign.php:59
 #, php-format
 msgid "Run the following commands in the plugin directory: %s"
 msgstr ""
 
 #. translators: %s is the plugin name.
-#: onedesign.php:62
+#: onedesign.php:67
 #, php-format
 msgid "Please refer to the %s for more information."
 msgstr ""
 
-#: onedesign.php:66
+#: onedesign.php:71
 msgid "OneDesign GitHub repository"
 msgstr ""
 
@@ -546,14 +556,14 @@ msgstr ""
 
 #: assets/build/js/editor.js:1
 #: assets/build/js/templates-library.js:1
-#: assets/src/admin/templates/components/MemoizedTemplatePreview.js:33
+#: assets/src/admin/templates/components/MemoizedTemplatePreview.js:45
 #: assets/src/patterns-popover/components/MemoizedPatternPreview.js:33
 msgid "Categories:"
 msgstr ""
 
 #: assets/build/js/editor.js:1
 #: assets/build/js/templates-library.js:1
-#: assets/src/admin/templates/components/MemoizedTemplatePreview.js:52
+#: assets/src/admin/templates/components/MemoizedTemplatePreview.js:70
 #: assets/src/patterns-popover/components/MemoizedPatternPreview.js:52
 msgid "Provider Site:"
 msgstr ""
@@ -655,6 +665,8 @@ msgid "All selected patterns are already on this site"
 msgstr ""
 
 #: assets/build/js/editor.js:2
+#: assets/build/js/templates-library.js:1
+#: assets/src/admin/templates/components/SiteSelection.js:136
 #: assets/src/plugins/consumer-site.js:421
 msgid "of"
 msgstr ""
@@ -700,8 +712,8 @@ msgstr ""
 #: assets/build/js/editor.js:2
 #: assets/build/js/templates-library.js:2
 #: assets/build/js/templates-library.js:3
-#: assets/src/admin/templates/components/BrandSiteTemplates.js:83
-#: assets/src/admin/templates/components/TemplateModal.js:270
+#: assets/src/admin/templates/components/BrandSiteTemplates.js:112
+#: assets/src/admin/templates/components/TemplateModal.js:284
 #: assets/src/patterns-popover/components/BasePatternsTab.js:320
 msgid "Show More"
 msgstr ""
@@ -739,9 +751,9 @@ msgstr ""
 #: assets/build/js/editor.js:2
 #: assets/build/js/templates-library.js:1
 #: assets/build/js/templates-library.js:2
-#: assets/src/admin/templates/components/BrandSiteTemplates.js:168
-#: assets/src/admin/templates/components/BrandSiteTemplates.js:170
-#: assets/src/admin/templates/components/SiteSelection.js:78
+#: assets/src/admin/templates/components/BrandSiteTemplates.js:197
+#: assets/src/admin/templates/components/BrandSiteTemplates.js:199
+#: assets/src/admin/templates/components/SiteSelection.js:163
 #: assets/src/patterns-popover/components/AppliedPatternsTab.js:241
 #: assets/src/patterns-popover/components/BasePatternsTab.js:243
 msgid "Cancel"
@@ -770,7 +782,7 @@ msgstr ""
 
 #: assets/build/js/editor.js:2
 #: assets/build/js/templates-library.js:1
-#: assets/src/admin/templates/components/SiteSelection.js:89
+#: assets/src/admin/templates/components/SiteSelection.js:174
 #: assets/src/patterns-popover/components/BasePatternsTab.js:261
 msgid "Applying…"
 msgstr ""
@@ -878,6 +890,8 @@ msgid "Failed to remove patterns"
 msgstr ""
 
 #: assets/build/js/editor.js:2
+#: assets/build/js/templates-library.js:3
+#: assets/src/admin/templates/components/TemplateModal.js:311
 #: assets/src/patterns-popover/components/LibraryModal.js:420
 msgid "Loading…"
 msgstr ""
@@ -899,31 +913,46 @@ msgstr ""
 
 #: assets/build/js/editor.js:2
 #: assets/build/js/templates-library.js:3
-#: assets/src/admin/templates/components/TemplateModal.js:332
+#: assets/src/admin/templates/components/TemplateModal.js:352
 #: assets/src/patterns-popover/components/LibraryModal.js:502
 msgid "Go to OneDesign Settings"
 msgstr ""
 
 #: assets/build/js/templates-library.js:1
 #: assets/build/js/templates-library.js:2
-#: assets/src/admin/templates/components/BaseSiteTemplates.js:9
-#: assets/src/admin/templates/components/BrandSiteTemplates.js:104
+#: assets/src/admin/templates/components/BaseSiteTemplates.js:27
+#: assets/src/admin/templates/components/BrandSiteTemplates.js:133
 msgid "No templates found."
 msgstr ""
 
 #: assets/build/js/templates-library.js:1
-#: assets/src/admin/templates/components/SiteSelection.js:28
+#: assets/src/admin/templates/components/SiteSelection.js:67
 msgid "No connected sites found."
 msgstr ""
 
 #: assets/build/js/templates-library.js:1
-#: assets/src/admin/templates/components/SiteSelection.js:89
+#: assets/src/admin/templates/components/SiteSelection.js:130
+msgid "All selected templates are already present"
+msgstr ""
+
+#: assets/build/js/templates-library.js:1
+#: assets/src/admin/templates/components/SiteSelection.js:136
+msgid "selected templates are already present"
+msgstr ""
+
+#: assets/build/js/templates-library.js:1
+#: assets/src/admin/templates/components/SiteSelection.js:143
+msgid "All templates will be synced"
+msgstr ""
+
+#: assets/build/js/templates-library.js:1
+#: assets/src/admin/templates/components/SiteSelection.js:174
 msgid "Apply Templates"
 msgstr ""
 
 #. translators: %d: Number of templates removed.
 #: assets/build/js/templates-library.js:2
-#: assets/src/admin/templates/components/BrandSiteTemplates.js:39
+#: assets/src/admin/templates/components/BrandSiteTemplates.js:68
 #, js-format
 msgid "%d template removed successfully."
 msgid_plural "%d templates removed successfully."
@@ -931,117 +960,112 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: assets/build/js/templates-library.js:2
-#: assets/src/admin/templates/components/BrandSiteTemplates.js:52
+#: assets/src/admin/templates/components/BrandSiteTemplates.js:81
 msgid "Failed to remove templates."
 msgstr ""
 
 #: assets/build/js/templates-library.js:2
-#: assets/src/admin/templates/components/BrandSiteTemplates.js:58
+#: assets/src/admin/templates/components/BrandSiteTemplates.js:87
 msgid "An error occurred while removing templates."
 msgstr ""
 
 #: assets/build/js/templates-library.js:2
 #: assets/build/js/templates-library.js:3
-#: assets/src/admin/templates/components/BrandSiteTemplates.js:73
-#: assets/src/admin/templates/components/TemplateModal.js:260
+#: assets/src/admin/templates/components/BrandSiteTemplates.js:102
+#: assets/src/admin/templates/components/TemplateModal.js:274
 msgid "Template selected"
 msgstr ""
 
 #: assets/build/js/templates-library.js:2
 #: assets/build/js/templates-library.js:3
-#: assets/src/admin/templates/components/BrandSiteTemplates.js:73
-#: assets/src/admin/templates/components/TemplateModal.js:260
+#: assets/src/admin/templates/components/BrandSiteTemplates.js:102
+#: assets/src/admin/templates/components/TemplateModal.js:274
 msgid "Templates selected"
 msgstr ""
 
 #: assets/build/js/templates-library.js:2
-#: assets/src/admin/templates/components/BrandSiteTemplates.js:93
-#: assets/src/admin/templates/components/BrandSiteTemplates.js:142
+#: assets/src/admin/templates/components/BrandSiteTemplates.js:122
+#: assets/src/admin/templates/components/BrandSiteTemplates.js:171
 msgid "Remove Template"
 msgstr ""
 
 #: assets/build/js/templates-library.js:2
-#: assets/src/admin/templates/components/BrandSiteTemplates.js:149
+#: assets/src/admin/templates/components/BrandSiteTemplates.js:178
 msgid "Are you sure your want to remove selected templates?"
 msgstr ""
 
 #: assets/build/js/templates-library.js:2
-#: assets/src/admin/templates/components/BrandSiteTemplates.js:151
+#: assets/src/admin/templates/components/BrandSiteTemplates.js:180
 msgid "Once you removed template it might break things on brand site so please check and confirm template is not in active use."
 msgstr ""
 
 #: assets/build/js/templates-library.js:2
-#: assets/src/admin/templates/components/BrandSiteTemplates.js:181
-#: assets/src/admin/templates/components/BrandSiteTemplates.js:183
+#: assets/src/admin/templates/components/BrandSiteTemplates.js:210
+#: assets/src/admin/templates/components/BrandSiteTemplates.js:212
 msgid "Remove Templates"
 msgstr ""
 
 #: assets/build/js/templates-library.js:2
 #: assets/build/js/templates-library.js:3
-#: assets/src/admin/templates/components/TemplateModal.js:35
-#: assets/src/admin/templates/components/TemplateModal.js:215
+#: assets/src/admin/templates/components/TemplateModal.js:49
+#: assets/src/admin/templates/components/TemplateModal.js:229
 msgid "Current Site Templates"
 msgstr ""
 
 #: assets/build/js/templates-library.js:2
-#: assets/src/admin/templates/components/TemplateModal.js:133
+#: assets/src/admin/templates/components/TemplateModal.js:147
 msgid "Templates re-synced successfully."
 msgstr ""
 
 #: assets/build/js/templates-library.js:2
-#: assets/src/admin/templates/components/TemplateModal.js:138
+#: assets/src/admin/templates/components/TemplateModal.js:152
 msgid "Failed to re-sync templates."
 msgstr ""
 
 #. translators: 1: Number of templates, 2: List of site names.
 #: assets/build/js/templates-library.js:3
-#: assets/src/admin/templates/components/TemplateModal.js:174
+#: assets/src/admin/templates/components/TemplateModal.js:188
 #, js-format
 msgid "%1$d templates applied to %2$s site successfully."
 msgstr ""
 
 #: assets/build/js/templates-library.js:3
-#: assets/src/admin/templates/components/TemplateModal.js:182
+#: assets/src/admin/templates/components/TemplateModal.js:196
 msgid "Failed to apply templates."
 msgstr ""
 
 #: assets/build/js/templates-library.js:3
-#: assets/src/admin/templates/components/TemplateModal.js:188
+#: assets/src/admin/templates/components/TemplateModal.js:202
 msgid "An error occurred while applying templates."
 msgstr ""
 
 #: assets/build/js/templates-library.js:3
-#: assets/src/admin/templates/components/TemplateModal.js:296
-msgid "Template Library"
-msgstr ""
-
-#: assets/build/js/templates-library.js:3
-#: assets/src/admin/templates/components/TemplateModal.js:319
-#: assets/src/admin/templates/components/TemplateModal.js:321
+#: assets/src/admin/templates/components/TemplateModal.js:339
+#: assets/src/admin/templates/components/TemplateModal.js:341
 msgid "Sync Shared Templates"
 msgstr ""
 
 #: assets/build/js/templates-library.js:3
-#: assets/src/admin/templates/components/TemplateModal.js:341
+#: assets/src/admin/templates/components/TemplateModal.js:361
 msgid "Loading templates…"
 msgstr ""
 
 #: assets/build/js/templates-library.js:3
-#: assets/src/admin/templates/components/TemplateModal.js:349
+#: assets/src/admin/templates/components/TemplateModal.js:369
 msgid "Search Templates"
 msgstr ""
 
 #: assets/build/js/templates-library.js:3
-#: assets/src/admin/templates/components/TemplateModal.js:279
+#: assets/src/admin/templates/components/TemplateModal.js:293
 msgid "Select Template First"
 msgstr ""
 
 #: assets/build/js/templates-library.js:3
-#: assets/src/admin/templates/components/TemplateModal.js:279
+#: assets/src/admin/templates/components/TemplateModal.js:293
 msgid "Apply To Sites"
 msgstr ""
 
 #: assets/build/js/templates-library.js:3
-#: assets/src/admin/templates/components/TemplateModal.js:393
+#: assets/src/admin/templates/components/TemplateModal.js:415
 msgid "Select Brand Sites"
 msgstr ""

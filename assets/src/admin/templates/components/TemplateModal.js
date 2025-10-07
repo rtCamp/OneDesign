@@ -32,6 +32,7 @@ const PER_PAGE = 9;
  */
 const TemplateModal = () => {
 	const [ templates, setTemplates ] = useState( [] );
+	const [ isOpen, setIsOpen ] = useState( true );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ searchQuery, setSearchQuery ] = useState( '' );
 	const [ selectedTemplates, setSelectedTemplates ] = useState( [] );
@@ -56,7 +57,7 @@ const TemplateModal = () => {
 	const fetchConnectedSitesTemplates = useCallback( async () => {
 		try {
 			const response = await fetch(
-				`${ REST_NAMESPACE }/templates/connected-sites`,
+				`${ REST_NAMESPACE }/templates/connected-sites?timestamp=${ Date.now() }`,
 				{
 					method: 'GET',
 					headers: {
@@ -100,7 +101,7 @@ const TemplateModal = () => {
 		setIsLoading( true );
 		try {
 			const response = await fetch(
-				`${ REST_NAMESPACE }/configured-sites`,
+				`${ REST_NAMESPACE }/configured-sites?timestamp=${ Date.now() }`,
 				{
 					method: 'GET',
 					headers: {
@@ -305,127 +306,138 @@ const TemplateModal = () => {
 
 	return (
 		<>
-			<Modal
-				title={ __( 'Template Library', 'onedesign' ) }
-				onRequestClose={ () => {
-					// take user to previous page
-					window.history.back();
-				} }
-				className="onedesign-template-modal"
-				headerActions={
-					<div
-						style={ {
-							display: 'flex',
-							gap: '8px',
-							flexDirection: 'row',
-							alignItems: 'center',
-						} }
-					>
-						{ activeTab !== 'baseTemplate' && (
-							<Button
-								variant="primary"
-								onClick={ () => {
-									handleTemplateReSync();
-								} }
-								isBusy={ isReSyncing }
-								disabled={ isReSyncing || Object.keys( connectedSitesTemplates )?.length === 0 || ( connectedSitesTemplates?.[ activeTab ] || [] )?.length === 0 }
-								label={ __( 'Sync Shared Templates', 'onedesign' ) }
-							>
-								{ __( 'Sync Shared Templates', 'onedesign' ) }
-							</Button>
-						) }
-
-						{ SettingLink && (
-							<Button
-								icon={ cog }
-								variant="secondary"
-								onClick={ () => {
-									window.location.href = SettingLink;
-								} }
-								label={ __( 'Go to OneDesign Settings', 'onedesign' ) }
-							/>
-						) }
-					</div>
-				}
-			>
-				{ isLoading && (
-					<div style={ { textAlign: 'center', padding: '20px' } }>
-						<Spinner />
-						<p>{ __( 'Loading templates…', 'onedesign' ) }</p>
-					</div>
-				) }
-				{ ! isLoading && (
-					<>
-						<SearchControl
-							value={ searchQuery }
-							onChange={ ( value ) => setSearchQuery( value ) }
-							placeholder={ __( 'Search Templates', 'onedesign' ) }
-							className="onedesign-template-search"
-						/>
-						<TabPanel
-							className="onedesign-template-tabs"
-							activeClass="active-tab"
-							onSelect={ handleTabSelection }
-							tabs={ tabs }
-						>
-							{ ( tab ) => {
-								if ( tab.name === 'baseTemplate' ) {
-									return (
-										<>
-											<BaseSiteTemplates
-												filteredTemplates={ filteredTemplates }
-												currentPage={ currentPage }
-												PER_PAGE={ PER_PAGE }
-												selectedTemplates={ selectedTemplates }
-												handleTemplateSelection={ handleTemplateSelection }
-											/>
-											{ renderPagination() }
-										</>
-									);
-								}
-								return (
-									<BrandSiteTemplates
-										filteredTemplates={ ( connectedSitesTemplates[ tab.value ] || [] ).filter( ( template ) =>
-											template.title.toLowerCase().includes( searchQuery.toLowerCase() ) ||
-											( template.description && template.description.toLowerCase().includes( searchQuery.toLowerCase() ) ),
-										) }
-										currentPage={ 1 }
-										PER_PAGE={ PER_PAGE }
-										selectedTemplates={ selectedTemplates }
-										handleTemplateSelection={ handleTemplateSelection }
-										setCurrentPage={ setCurrentPage }
-										currentSiteId={ tab.value }
-										fetchConnectedSitesTemplates={ fetchConnectedSitesTemplates }
-										setSelectedTemplates={ setSelectedTemplates }
-										allTemplates={ templates }
-									/> );
+			<div className="onedesign-loader">
+				<Spinner />
+				{ __( 'Loading…', 'onedesign' ) }
+			</div>
+			{ isOpen && (
+				<Modal
+					title={ __( 'Template Library', 'onedesign' ) }
+					onRequestClose={ () => {
+						setIsOpen( false );
+						// take user to previous page
+						window.history.back();
+					} }
+					className="onedesign-template-modal"
+					headerActions={
+						<div
+							style={ {
+								display: 'flex',
+								gap: '8px',
+								flexDirection: 'row',
+								alignItems: 'center',
 							} }
-						</TabPanel>
-						{ isApplyModalOpen && (
-							<Modal
-								title={ __( 'Select Brand Sites', 'onedesign' ) }
-								onRequestClose={ () => setIsApplyModalOpen( false ) }
-								className="onedesign-apply-templates-modal"
-								isFullScreen={ true }
-							>
-								<SiteSelection
-									siteInfo={ siteInfo }
-									isApplying={ isApplying }
-									setIsApplying={ setIsApplying }
-									onApply={ () => {
-										handleApplyTemplates();
+						>
+							{ activeTab !== 'baseTemplate' && (
+								<Button
+									variant="primary"
+									onClick={ () => {
+										handleTemplateReSync();
 									} }
-									setIsApplyModalOpen={ setIsApplyModalOpen }
-									setSelectedSites={ setSelectedSites }
-									selectedSites={ selectedSites }
-									notice={ notice }
-								/>
-							</Modal>
-						) }
+									isBusy={ isReSyncing }
+									disabled={ isReSyncing || Object.keys( connectedSitesTemplates )?.length === 0 || ( connectedSitesTemplates?.[ activeTab ] || [] )?.length === 0 }
+									label={ __( 'Sync Shared Templates', 'onedesign' ) }
+								>
+									{ __( 'Sync Shared Templates', 'onedesign' ) }
+								</Button>
+							) }
 
-					</>
-				) }
-			</Modal>
+							{ SettingLink && (
+								<Button
+									icon={ cog }
+									variant="secondary"
+									onClick={ () => {
+										window.location.href = SettingLink;
+									} }
+									label={ __( 'Go to OneDesign Settings', 'onedesign' ) }
+								/>
+							) }
+						</div>
+					}
+				>
+					{ isLoading && (
+						<div style={ { textAlign: 'center', padding: '20px' } }>
+							<Spinner />
+							<p>{ __( 'Loading templates…', 'onedesign' ) }</p>
+						</div>
+					) }
+					{ ! isLoading && (
+						<>
+							<SearchControl
+								value={ searchQuery }
+								onChange={ ( value ) => setSearchQuery( value ) }
+								placeholder={ __( 'Search Templates', 'onedesign' ) }
+								className="onedesign-template-search"
+							/>
+							<TabPanel
+								className="onedesign-template-tabs"
+								activeClass="active-tab"
+								onSelect={ handleTabSelection }
+								tabs={ tabs }
+							>
+								{ ( tab ) => {
+									if ( tab.name === 'baseTemplate' ) {
+										return (
+											<>
+												<BaseSiteTemplates
+													filteredTemplates={ filteredTemplates }
+													currentPage={ currentPage }
+													PER_PAGE={ PER_PAGE }
+													selectedTemplates={ selectedTemplates }
+													handleTemplateSelection={ handleTemplateSelection }
+												/>
+												{ renderPagination() }
+											</>
+										);
+									}
+									return (
+										<BrandSiteTemplates
+											filteredTemplates={ ( connectedSitesTemplates[ tab.value ] || [] ).filter( ( template ) =>
+												template.title.toLowerCase().includes( searchQuery.toLowerCase() ) ||
+											( template.description && template.description.toLowerCase().includes( searchQuery.toLowerCase() ) ),
+											) }
+											currentPage={ 1 }
+											PER_PAGE={ PER_PAGE }
+											selectedTemplates={ selectedTemplates }
+											handleTemplateSelection={ handleTemplateSelection }
+											setCurrentPage={ setCurrentPage }
+											currentSiteId={ tab.value }
+											fetchConnectedSitesTemplates={ fetchConnectedSitesTemplates }
+											setSelectedTemplates={ setSelectedTemplates }
+											allTemplates={ templates }
+											notice={ notice }
+											setNotice={ setNotice }
+										/> );
+								} }
+							</TabPanel>
+							{ isApplyModalOpen && (
+								<Modal
+									title={ __( 'Select Brand Sites', 'onedesign' ) }
+									onRequestClose={ () => setIsApplyModalOpen( false ) }
+									className="onedesign-apply-templates-modal"
+									isFullScreen={ true }
+								>
+									<SiteSelection
+										siteInfo={ siteInfo }
+										isApplying={ isApplying }
+										setIsApplying={ setIsApplying }
+										onApply={ () => {
+											handleApplyTemplates();
+										} }
+										setIsApplyModalOpen={ setIsApplyModalOpen }
+										setSelectedSites={ setSelectedSites }
+										selectedSites={ selectedSites }
+										notice={ notice }
+										brandSiteTemplates={ connectedSitesTemplates }
+										selectedTemplates={ selectedTemplates }
+									/>
+								</Modal>
+							) }
+
+						</>
+					) }
+				</Modal>
+			) }
 		</>
 	);
 };

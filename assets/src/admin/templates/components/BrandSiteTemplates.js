@@ -2,7 +2,11 @@
  * WordPress dependencies
  */
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { Button, Modal, Notice } from '@wordpress/components';
+import {
+	Button,
+	Modal,
+	Notice,
+} from '@wordpress/components';
 import { useCallback, useState } from '@wordpress/element';
 
 /**
@@ -28,11 +32,12 @@ const NONCE = TemplateLibraryData?.nonce;
  * @param {Function} props.fetchConnectedSitesTemplates - Function to fetch templates for connected brand sites.
  * @param {Function} props.setSelectedTemplates         - Function to set selected templates.
  * @param {Array}    props.allTemplates                 - Array of all available templates.
+ * @param {Object}   props.notice                       - Notice object containing type and message.
+ * @param {Function} props.setNotice                    - Function to set the notice state.
  * @return {JSX.Element} The rendered component.
  */
-const BrandSiteTemplates = ( { filteredTemplates, currentPage, PER_PAGE, selectedTemplates, handleTemplateSelection, setCurrentPage, currentSiteId, fetchConnectedSitesTemplates, setSelectedTemplates, allTemplates } ) => {
+const BrandSiteTemplates = ( { filteredTemplates, currentPage, PER_PAGE, selectedTemplates, handleTemplateSelection, setCurrentPage, currentSiteId, fetchConnectedSitesTemplates, setSelectedTemplates, allTemplates, notice, setNotice } ) => {
 	const [ isProcessing, setIsProcessing ] = useState( false );
-	const [ notice, setNotice ] = useState( null );
 	const [ isRemoveModalOpen, setIsRemoveModalOpen ] = useState( false );
 
 	const handleRemoveTemplates = useCallback( async () => {
@@ -84,7 +89,7 @@ const BrandSiteTemplates = ( { filteredTemplates, currentPage, PER_PAGE, selecte
 		} finally {
 			setIsProcessing( false );
 		}
-	}, [ selectedTemplates, currentSiteId, fetchConnectedSitesTemplates, setSelectedTemplates ] );
+	}, [ selectedTemplates, currentSiteId, fetchConnectedSitesTemplates, setSelectedTemplates ] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const renderPagination = () => {
 		// default will show 9 templates then will show load more button.

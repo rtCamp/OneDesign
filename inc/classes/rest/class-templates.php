@@ -752,7 +752,7 @@ class Templates {
 		$sites_response  = array();
 		$error_log       = array();
 		foreach ( $connected_sites as $site ) {
-			$request_url      = esc_url_raw( trailingslashit( $site['url'] ) ) . '/wp-json/' . self::NAMESPACE . '/shared';
+			$request_url      = esc_url_raw( trailingslashit( $site['url'] ) ) . '/wp-json/' . self::NAMESPACE . '/shared?timestamp=' . time();
 			$api_key          = $site['api_key'];
 			$response         = wp_safe_remote_get(
 				$request_url,
