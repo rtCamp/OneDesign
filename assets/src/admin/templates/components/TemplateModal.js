@@ -184,9 +184,8 @@ const TemplateModal = () => {
 				setNotice( {
 					type: 'success',
 					message: sprintf(
-						/* translators: 1: Number of templates, 2: List of site names. */
-						__( '%1$d templates applied to %2$s site successfully.', 'onedesign' ),
-						selectedTemplates.length,
+						/* translators: %s site names. */
+						__( 'Templates applied successfully to %s site.', 'onedesign' ),
 						Object.values( siteInfo ).filter( ( site ) => selectedSites.includes( site.id ) ).map( ( site ) => site.name ).join( ', ' ),
 					),
 				} );
