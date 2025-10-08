@@ -189,6 +189,10 @@ const TemplateModal = () => {
 						Object.values( siteInfo ).filter( ( site ) => selectedSites.includes( site.id ) ).map( ( site ) => site.name ).join( ', ' ),
 					),
 				} );
+				setTimeout( () => {
+					setNotice( null );
+					setIsApplyModalOpen( false );
+				}, 3000 );
 			} else {
 				setNotice( {
 					type: 'error',
@@ -204,7 +208,7 @@ const TemplateModal = () => {
 			setIsApplying( false );
 			setTimeout( () => {
 				setNotice( null );
-			}, 5000 );
+			}, 3000 );
 		}
 	}, [ selectedTemplates, selectedSites, fetchConnectedSitesTemplates, siteInfo ] );
 
