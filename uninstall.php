@@ -24,6 +24,15 @@ if ( ! function_exists( 'onedesign_plugin_deletion' ) ) {
 		$brand_site_post_ids = get_option( 'onedesign_brand_site_post_ids', array() );
 		if ( is_array( $brand_site_post_ids ) && ! empty( $brand_site_post_ids ) ) {
 			foreach ( $brand_site_post_ids as $post_id ) {
+
+				// delete post meta associated with the post.
+				$meta_keys = get_post_meta( $post_id );
+				if ( is_array( $meta_keys ) && ! empty( $meta_keys ) ) {
+					foreach ( $meta_keys as $meta_key => $meta_value ) {
+						delete_post_meta( $post_id, $meta_key );
+					}
+				}
+
 				wp_delete_post( $post_id, true );
 			}
 		}
