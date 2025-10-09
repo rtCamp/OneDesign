@@ -3,13 +3,13 @@
  * Settings class.
  * This class handles the settings page for the OneDesign plugin,
  *
- * @package onedesign
+ * @package OneDesign
  */
 
 namespace OneDesign;
 
 use OneDesign\Traits\Singleton;
-use OneDesign\Post_Types\Design_Library;
+use OneDesign\Post_Types\{ Design_Library, Template };
 
 /**
  * Class Settings
@@ -68,6 +68,7 @@ class Settings {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
 		add_action( 'admin_init', array( $this, 'handle_form_actions' ) );
 		add_action( 'admin_init', array( $this, 'handle_design_library_redirect' ) );
+		add_action( 'admin_init', array( $this, 'templates_page_redirection' ) );
 	}
 
 	/**
@@ -83,7 +84,7 @@ class Settings {
 			self::PAGE_SLUG,
 			'__return_null',
 			'',
-			100
+			2
 		);
 
 		// Add submenu for opening design library only for dashboard sites.
@@ -95,6 +96,14 @@ class Settings {
 				__( 'Design Library', 'onedesign' ),
 				'manage_options',
 				'design-library',
+				'__return_null'
+			);
+			add_submenu_page(
+				self::PAGE_SLUG,
+				__( 'Templates', 'onedesign' ),
+				__( 'Template Library', 'onedesign' ),
+				'manage_options',
+				'onedesign-templates',
 				'__return_null'
 			);
 		}
@@ -109,6 +118,62 @@ class Settings {
 		);
 
 		remove_submenu_page( 'onedesign', 'onedesign' );
+	}
+
+	/**
+	 * Handle the redirect to create or open the Templates post.
+	 *
+	 * This function checks if the Templates post exists and redirects to it,
+	 * or creates a new one if it doesn't exist.
+	 *
+	 * @return void
+	 */
+	public function templates_page_redirection(): void {
+		$pages = array( 'onedesign-templates' );
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! isset( $_GET['page'] ) || ! in_array( $_GET['page'], $pages, true ) ) {
+			return;
+		}
+
+		// Only run for users with proper permissions.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		// Check if a Design Library post already exists.
+		$existing_posts = get_posts(
+			array(
+				'post_type'        => Template::SLUG,
+				'post_status'      => array( 'publish', 'draft', 'pending', 'private' ),
+				'numberposts'      => 1,
+				'suppress_filters' => false,
+			)
+		);
+
+		if ( ! empty( $existing_posts ) ) {
+			// Redirect to edit the existing post.
+			wp_safe_redirect( admin_url( 'post.php?post=' . $existing_posts[0]->ID . '&action=edit' ) );
+			exit;
+		}
+
+		// If no post exists, create a new one.
+		$new_post_id = wp_insert_post(
+			array(
+				'post_type'    => Template::SLUG,
+				'post_title'   => esc_html__( 'Templates', 'onedesign' ),
+				'post_content' => '',
+				'post_status'  => 'draft',
+			)
+		);
+
+		if ( is_wp_error( $new_post_id ) ) {
+			wp_die( esc_html__( 'Error creating template post.', 'onedesign' ) );
+		}
+
+		// Redirect to the newly created post for editing.
+		wp_safe_redirect( admin_url( 'post.php?post=' . $new_post_id . '&action=edit' ) );
+		exit;
 	}
 
 	/**
@@ -153,7 +218,7 @@ class Settings {
 		if ( '' === $api_key && 'consumer' === $site_type ) {
 			// Generate an API key if it doesn't exist for consumer sites.
 			$api_key = $this->generate_api_key();
-			update_option( self::OPTION_OWN_API_KEY, $api_key );
+			update_option( self::OPTION_OWN_API_KEY, $api_key, false );
 		}
 		?>
 		<div class="wrap">
@@ -298,14 +363,14 @@ class Settings {
 		if ( isset( $_POST['site_type'] ) ) {
 			$site_type = sanitize_text_field( wp_unslash( $_POST['site_type'] ) );
 			if ( in_array( $site_type, array( 'consumer', 'dashboard' ), true ) ) {
-				update_option( self::OPTION_SITE_TYPE, $site_type );
+				update_option( self::OPTION_SITE_TYPE, $site_type, false );
 			}
 		}
 
 		// Handle API key regeneration.
 		if ( isset( $_POST['regenerate_api_key'] ) ) {
 			$new_api_key = $this->generate_api_key();
-			update_option( self::OPTION_OWN_API_KEY, $new_api_key );
+			update_option( self::OPTION_OWN_API_KEY, $new_api_key, false );
 			add_action( 'admin_notices', array( $this, 'api_key_regenerated_notice' ) );
 			return;
 		}
@@ -313,13 +378,13 @@ class Settings {
 		// Handle API key update for consumer sites.
 		if ( isset( $_POST['api_key'] ) && get_option( self::OPTION_SITE_TYPE ) === 'consumer' ) {
 			$api_key = sanitize_text_field( wp_unslash( $_POST['api_key'] ) );
-			update_option( self::OPTION_OWN_API_KEY, $api_key );
+			update_option( self::OPTION_OWN_API_KEY, $api_key, false );
 		}
 
 		// Handle site logo update (only for dashboard sites).
 		if ( isset( $_POST['site_logo'] ) && get_option( self::OPTION_SITE_TYPE ) === 'dashboard' ) {
 			$site_logo = esc_url_raw( wp_unslash( $_POST['site_logo'] ) );
-			update_option( self::OPTION_SITE_LOGO, $site_logo );
+			update_option( self::OPTION_SITE_LOGO, $site_logo, false );
 		}
 
 		// Handle child sites update for dashboard sites.
@@ -345,13 +410,13 @@ class Settings {
 				}
 			}
 
-			update_option( self::OPTION_CHILD_SITES, $child_sites );
+			update_option( self::OPTION_CHILD_SITES, $child_sites, false );
 		}
 
 		// Generate an API key if the consumer site doesn't have one.
 		if ( get_option( self::OPTION_SITE_TYPE ) === 'consumer' && empty( get_option( self::OPTION_OWN_API_KEY ) ) ) {
 			$api_key = $this->generate_api_key();
-			update_option( self::OPTION_OWN_API_KEY, $api_key );
+			update_option( self::OPTION_OWN_API_KEY, $api_key, false );
 		}
 
 		add_action( 'admin_notices', array( $this, 'settings_saved_notice' ) );

@@ -7,9 +7,8 @@
 
 namespace OneDesign;
 
+use OneDesign\Post_Types\{ Template, Design_Library, Meta };
 use OneDesign\Traits\Singleton;
-use OneDesign\Post_Types\Design_Library;
-use OneDesign\Post_Types\Meta;
 
 /**
  * Class Plugin
@@ -36,6 +35,7 @@ class Plugin {
 		CPT_Restriction::get_instance();
 		Settings::get_instance();
 		Design_Library::get_instance();
+		Template::get_instance();
 		Meta::get_instance();
 	}
 }

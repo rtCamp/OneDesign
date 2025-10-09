@@ -885,6 +885,7 @@
 	margin-top: 2px;
 }
 
+.od-template-status,
 .od-pattern-status {
 	margin-top: 8px;
 	font-size: 12px;
@@ -908,6 +909,7 @@
 	flex-wrap: wrap;
 	justify-content: center;
 
+	&.od-all-templates-present,
 	&.od-all-patterns-present {
 		color: #388e3c;
 		font-weight: 500;
