@@ -74,20 +74,20 @@ class Hooks {
 
 		foreach ( $shared_templates as $template ) {
 			$res = register_block_template(
-				$template['id'],
+				sanitize_text_field( $template['id'] ),
 				array(
-					'slug'        => $template['slug'] ?? '',
-					'title'       => $template['title'] ?? '',
-					'description' => $template['description'] ?? '',
+					'slug'        => isset( $template['slug'] ) ? sanitize_text_field( $template['slug'] ) : '',
+					'title'       => isset( $template['title'] ) ? sanitize_text_field( $template['title'] ) : '',
+					'description' => isset( $template['description'] ) ? sanitize_textarea_field( $template['description'] ) : '',
 					'content'     => $template['content'] ?? '',
-					'post_types'  => isset( $template['post_types'] ) ? $template['post_types'] : $all_post_types,
+					'post_types'  => isset( $template['post_types'] ) ? array_map( 'sanitize_textarea_field', $template['post_types'] ) : $all_post_types,
 				)
 			);
 
 			$logs[] = sprintf(
 				/* translators: 1: Template slug. 2: Result. */
 				__( 'Template %1$s registration result: %2$s', 'onedesign' ),
-				$template['slug'] ?? '',
+				sanitize_text_field( $template['slug'] ) ?? '',
 				wp_json_encode( $res )
 			);
 		}
@@ -98,18 +98,18 @@ class Hooks {
 				require_once ABSPATH . 'wp-includes/class-wp-block-patterns-registry.php';
 			}
 			$res    = register_block_pattern(
-				$pattern['slug'],
+				sanitize_text_field( $pattern['slug'] ),
 				array(
-					'title'       => $pattern['title'] ?? '',
+					'title'       => isset( $pattern['title'] ) ? sanitize_text_field( $pattern['title'] ) : '',
 					'content'     => $pattern['content'] ?? '',
-					'description' => $pattern['description'] ?? '',
-					'postTypes'   => $pattern['post_types'] ?? array(),
+					'description' => isset( $pattern['description'] ) ? sanitize_textarea_field( $pattern['description'] ) : '',
+					'postTypes'   => isset( $pattern['post_types'] ) ? array_map( 'sanitize_textarea_field', $pattern['post_types'] ) : array(),
 				)
 			);
 			$logs[] = sprintf(
 				/* translators: 1: Pattern slug. 2: Result. */
 				__( 'Pattern %1$s registration result: %2$s', 'onedesign' ),
-				$pattern['slug'],
+				sanitize_text_field( $pattern['slug'] ),
 				$res
 			);
 		}
@@ -120,7 +120,7 @@ class Hooks {
 			$existing = get_posts(
 				array(
 					'post_type'   => 'wp_template_part',
-					'name'        => $template_part['slug'],
+					'name'        => sanitize_text_field( $template_part['slug'] ),
 					'post_status' => 'any',
 					'numberposts' => 1,
 					'fields'      => 'ids',
@@ -131,7 +131,7 @@ class Hooks {
 				$logs[] = sprintf(
 					/* translators: 1: Template part slug. */
 					__( 'Template part already exists: %s', 'onedesign' ),
-					$template_part['slug']
+					sanitize_text_field( $template_part['slug'] ),
 				);
 				continue;
 			}
@@ -139,8 +139,8 @@ class Hooks {
 			// Create the template part post.
 			$post_data = array(
 				'post_type'    => 'wp_template_part',
-				'post_title'   => $template_part['title'] ?? '',
-				'post_name'    => $template_part['slug'] ?? '',
+				'post_title'   => isset( $template_part['title'] ) ? sanitize_text_field( $template_part['title'] ) : '',
+				'post_name'    => isset( $template_part['slug'] ) ? sanitize_text_field( $template_part['slug'] ) : '',
 				'post_status'  => 'publish',
 				'post_content' => $template_part['content'] ?? '',
 			);
@@ -151,7 +151,7 @@ class Hooks {
 				$logs[] = sprintf(
 					/* translators: 1: Error message. */
 					__( 'Error creating template part %1$s: %2$s', 'onedesign' ),
-					$template_part['slug'],
+					sanitize_text_field( $template_part['slug'] ),
 					$post_id->get_error_message()
 				);
 				continue;
@@ -159,7 +159,7 @@ class Hooks {
 				$logs[] = sprintf(
 					/* translators: 1: Template part slug. 2: Post ID. */
 					__( 'Template part created successfully: %1$s (ID: %2$d)', 'onedesign' ),
-					$template_part['slug'],
+					sanitize_text_field( $template_part['slug'] ),
 					$post_id
 				);
 				$brand_site_post_ids[] = $post_id;
@@ -169,21 +169,21 @@ class Hooks {
 			$theme_slug    = get_option( 'template' );
 
 			// add required meta & assign taxonomy terms.
-			update_post_meta( $post_id, '_wp_template_part_area', $template_part['area'] ?? 'uncategorized' );
+			update_post_meta( $post_id, '_wp_template_part_area', sanitize_text_field( $template_part['area'] ) ?? 'uncategorized' );
 			update_post_meta( $post_id, '_wp_theme', $current_theme );
 			update_post_meta( $post_id, '_wp_template_part_theme', $theme_slug );
-			wp_set_object_terms( $post_id, $template_part['area'] ?? 'uncategorized', 'wp_template_part_area' );
+			wp_set_object_terms( $post_id, sanitize_text_field( $template_part['area'] ) ?? 'uncategorized', 'wp_template_part_area' );
 			wp_set_object_terms( $post_id, $current_theme, 'wp_theme' );
 
 			// Store description if provided.
 			if ( isset( $template_part['description'] ) ) {
-				update_post_meta( $post_id, 'description', $template_part['description'] );
+				update_post_meta( $post_id, 'description', sanitize_textarea_field( $template_part['description'] ) );
 			}
 
 			$logs[] = sprintf(
 				/* translators: 1: Template part slug. 2: Post ID. */
 				__( 'Template part setup completed: %1$s (ID: %2$d)', 'onedesign' ),
-				$template_part['slug'],
+				sanitize_text_field( $template_part['slug'] ),
 				$post_id
 			);
 		}

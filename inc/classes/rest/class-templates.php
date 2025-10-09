@@ -257,7 +257,7 @@ class Templates {
 			$existing_post = get_posts(
 				array(
 					'post_type'   => 'wp_block',
-					'post_name'   => $sync_pattern['slug'],
+					'post_name'   => sanitize_text_field( $sync_pattern['slug'] ),
 					'post_status' => 'publish',
 					'numberposts' => 1,
 				),
@@ -270,8 +270,8 @@ class Templates {
 
 			$post_data = array(
 				'post_type'    => 'wp_block',
-				'post_title'   => $sync_pattern['title'],
-				'post_name'    => $sync_pattern['slug'],
+				'post_title'   => isset( $sync_pattern['title'] ) ? sanitize_text_field( $sync_pattern['title'] ) : '',
+				'post_name'    => isset( $sync_pattern['slug'] ) ? sanitize_text_field( $sync_pattern['slug'] ) : '',
 				'post_status'  => 'publish',
 				'post_content' => $sync_pattern['content'],
 			);
