@@ -415,7 +415,6 @@ const TemplateModal = () => {
 							</TabPanel>
 							{ isApplyModalOpen && (
 								<Modal
-									title={ __( 'Select Brand Sites', 'onedesign' ) }
 									onRequestClose={ () => setIsApplyModalOpen( false ) }
 									className="onedesign-apply-templates-modal"
 									isFullScreen={ true }
