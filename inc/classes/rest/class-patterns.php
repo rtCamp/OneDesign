@@ -9,9 +9,11 @@ namespace OneDesign\Rest;
 
 use OneDesign\Plugin_Configs\Constants;
 use OneDesign\Traits\Singleton;
+use OneDesign\Utils;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
+use WP_REST_Server;
 
 /**
  * Class Patterns
@@ -24,19 +26,9 @@ class Patterns {
 	use Singleton;
 
 	/**
-	 * Option name for child sites.
+	 * REST namespace.
 	 */
-	const OPTION_CHILD_SITES = 'onedesign_child_sites';
-
-	/**
-	 * Option name for own API key.
-	 */
-	const OPTION_OWN_API_KEY = 'onedesign_child_site_public_key';
-
-	/**
-	 * Option name for site type.
-	 */
-	const OPTION_SITE_TYPE = 'onedesign_site_type';
+	const NAMESPACE = 'onedesign/v1';
 
 	/**
 	 * Constructor.
@@ -81,7 +73,7 @@ class Patterns {
 	public function api_token_permission_check( WP_REST_Request $request ): bool|WP_Error {
 		$token = $request->get_header( 'X-OneDesign-API-Key' );
 		// Use the option name from your settings class.
-		$expected_token = get_option( self::OPTION_OWN_API_KEY );
+		$expected_token = get_option( Constants::ONEDESIGN_API_KEY );
 
 		if ( ! $expected_token ) {
 			return new WP_Error(
@@ -124,40 +116,40 @@ class Patterns {
 	 */
 	public function register_rest_routes(): void {
 		register_rest_route(
-			'onedesign/v1',
+			self::NAMESPACE,
 			'/local-patterns',
 			array(
-				'methods'             => 'GET',
+				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_local_patterns' ),
 				'permission_callback' => array( $this, 'manage_options_permission_check' ),
 			)
 		);
 
 		register_rest_route(
-			'onedesign/v1',
+			self::NAMESPACE,
 			'/consumer-site-patterns',
 			array(
-				'methods'             => 'GET',
+				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_consumer_site_patterns' ),
 				'permission_callback' => array( $this, 'api_token_permission_check' ),
 			)
 		);
 
 		register_rest_route(
-			'onedesign/v1',
+			self::NAMESPACE,
 			'/get-all-consumer-site-patterns',
 			array(
-				'methods'             => 'GET',
+				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_all_consumer_site_patterns' ),
 				'permission_callback' => array( $this, 'manage_options_permission_check' ),
 			)
 		);
 
 		register_rest_route(
-			'onedesign/v1',
+			self::NAMESPACE,
 			'/request-remove-consumer-site-patterns',
 			array(
-				'methods'             => 'DELETE',
+				'methods'             => WP_REST_Server::DELETABLE,
 				'callback'            => array( $this, 'request_remove_consumer_site_patterns' ),
 				'permission_callback' => array( $this, 'manage_options_permission_check' ),
 				'args'                => array(
@@ -180,10 +172,10 @@ class Patterns {
 		);
 
 		register_rest_route(
-			'onedesign/v1',
+			self::NAMESPACE,
 			'/remove-consumer-site-patterns',
 			array(
-				'methods'             => 'DELETE',
+				'methods'             => WP_REST_Server::DELETABLE,
 				'callback'            => array( $this, 'remove_consumer_site_patterns' ),
 				'permission_callback' => array( $this, 'api_token_permission_check' ),
 				'args'                => array(
@@ -199,10 +191,10 @@ class Patterns {
 		);
 
 		register_rest_route(
-			'onedesign/v1',
+			self::NAMESPACE,
 			'/pattern-categories',
 			array(
-				'methods'             => 'GET',
+				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_pattern_categories' ),
 				'permission_callback' => array( $this, 'manage_options_permission_check' ),
 			)
@@ -212,20 +204,20 @@ class Patterns {
 		 * Get configured child sites (for a parent site type).
 		 */
 		register_rest_route(
-			'onedesign/v1',
+			self::NAMESPACE,
 			'/configured-sites', // Renamed for clarity, was '/sites'.
 			array(
-				'methods'             => 'GET',
+				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_configured_child_sites' ),
 				'permission_callback' => array( $this, 'manage_options_permission_check' ),
 			)
 		);
 
 		register_rest_route(
-			'onedesign/v1',
+			self::NAMESPACE,
 			'/push-patterns',
 			array(
-				'methods'             => 'POST',
+				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'push_patterns_to_targets' ),
 				'permission_callback' => array( $this, 'manage_options_permission_check' ),
 				'args'                => array(
@@ -250,10 +242,10 @@ class Patterns {
 		);
 
 		register_rest_route(
-			'onedesign/v1',
+			self::NAMESPACE,
 			'/receive-patterns',
 			array(
-				'methods'             => 'POST',
+				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'receive_patterns' ),
 				'permission_callback' => array( $this, 'api_token_permission_check' ),
 				'args'                => array(
@@ -281,8 +273,8 @@ class Patterns {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function request_remove_consumer_site_patterns( WP_REST_Request $request ): WP_Error|WP_REST_Response {
-		$site_type = get_option( self::OPTION_SITE_TYPE, 'consumer' );
-		if ( 'dashboard' !== $site_type ) {
+
+		if ( ! Utils::is_governing_site() ) {
 			return new WP_Error( 'not_parent_site', __( 'This site is not configured as a parent site.', 'onedesign' ), array( 'status' => 403 ) );
 		}
 
@@ -311,7 +303,7 @@ class Patterns {
 
 		$remote_url = trailingslashit( $site['url'] ) . 'wp-json/onedesign/v1/remove-consumer-site-patterns';
 
-		$response = wp_remote_request(
+		$response = wp_safe_remote_request(
 			$remote_url,
 			array(
 				'method'  => 'DELETE',
@@ -405,8 +397,7 @@ class Patterns {
 	 */
 	public function get_all_consumer_site_patterns(): WP_Error|WP_REST_Response {
 
-		$site_type = get_option( self::OPTION_SITE_TYPE, 'consumer' );
-		if ( 'dashboard' !== $site_type ) {
+		if ( ! Utils::is_governing_site() ) {
 			return new WP_Error( 'not_parent_site', __( 'This site is not configured as a parent site.', 'onedesign' ), array( 'status' => 403 ) );
 		}
 
@@ -426,7 +417,7 @@ class Patterns {
 				continue; // Skip sites without API key.
 			}
 
-			$response = wp_remote_get(
+			$response = wp_safe_remote_get(
 				$remote_url,
 				array(
 					'headers' => array(
@@ -599,8 +590,7 @@ class Patterns {
 	 */
 	public function get_configured_child_sites(): WP_REST_Response {
 
-		$site_type = get_option( self::OPTION_SITE_TYPE, 'consumer' );
-		if ( 'dashboard' !== $site_type ) {
+		if ( ! Utils::is_governing_site() ) {
 			return new WP_REST_Response( array(), 200 ); // Return empty if not a parent site.
 		}
 
@@ -619,8 +609,7 @@ class Patterns {
 	 */
 	public function push_patterns_to_targets( WP_REST_Request $request ) {
 
-		$site_type = get_option( self::OPTION_SITE_TYPE, 'consumer' );
-		if ( 'dashboard' !== $site_type ) {
+		if ( ! Utils::is_governing_site() ) {
 			return new WP_Error( 'not_parent_site', __( 'This site is not configured as a parent site.', 'onedesign' ), array( 'status' => 403 ) );
 		}
 
@@ -693,7 +682,7 @@ class Patterns {
 				continue;
 			}
 
-			$response = wp_remote_post(
+			$response = wp_safe_remote_post(
 				$remote_url,
 				array(
 					'method'  => 'POST',
@@ -782,7 +771,7 @@ class Patterns {
 		$registered_patterns = \WP_Block_Patterns_Registry::get_instance()->get_all_registered();
 
 		foreach ( $registered_patterns as $pattern ) {
-			if ( false === $pattern['inserter'] ) {
+			if ( isset( $pattern['inserter'] ) && false === $pattern['inserter'] ) {
 				continue; // Skip patterns not intended for inserter.
 			}
 
@@ -881,7 +870,7 @@ class Patterns {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function receive_patterns( WP_REST_Request $request ) {
-		$site_type = get_option( self::OPTION_SITE_TYPE, 'dashboard' ); // Default to parent if not set, though a child is expected here.
+		$site_type = get_option( Constants::ONEDESIGN_SITE_TYPE, 'dashboard' ); // Default to parent if not set, though a child is expected here.
 		// This endpoint is primarily for child sites, but a site could technically receive even if set as parent if token matches.
 		if ( 'consumer' !== $site_type ) {
 			return new WP_Error( 'not_child_site', __( 'This site is not configured as a child site to receive patterns.', 'onedesign' ), array( 'status' => 403 ) );
@@ -945,7 +934,7 @@ class Patterns {
 	 * Get child sites configured for this parent site.
 	 */
 	public function get_compatible_sites_object() {
-		$children = get_option( self::OPTION_CHILD_SITES, array() );
+		$children = get_option( Constants::ONEDESIGN_CHILD_SITES, array() );
 		if ( empty( $children ) || ! is_array( $children ) ) {
 			return array(); // Return an empty array if no children configured.
 		}

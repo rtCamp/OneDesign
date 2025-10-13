@@ -8,6 +8,7 @@
 
 namespace OneDesign;
 
+use OneDesign\Plugin_Configs\Constants;
 use OneDesign\Traits\Singleton;
 use OneDesign\Post_Types\{ Design_Library, Template };
 
@@ -24,27 +25,6 @@ class Settings {
 	 * @var string
 	 */
 	const PAGE_SLUG = 'onedesign';
-
-	/**
-	 * Option name for site type.
-	 *
-	 * @var string
-	 */
-	const OPTION_SITE_TYPE = 'onedesign_site_type';
-
-	/**
-	 * Option name for public key.
-	 *
-	 * @var string
-	 */
-	const OPTION_OWN_API_KEY = 'onedesign_child_site_public_key';
-
-	/**
-	 * Option name for child sites storage.
-	 *
-	 * @var string
-	 */
-	const OPTION_CHILD_SITES = 'onedesign_child_sites';
 
 	/**
 	 * Option name for site logo.
@@ -88,8 +68,7 @@ class Settings {
 		);
 
 		// Add submenu for opening design library only for dashboard sites.
-		$site_type = get_option( self::OPTION_SITE_TYPE, 'consumer' );
-		if ( 'dashboard' === $site_type ) {
+		if ( Utils::is_governing_site() ) {
 			add_submenu_page(
 				self::PAGE_SLUG,
 				__( 'Design Library', 'onedesign' ),
@@ -211,14 +190,14 @@ class Settings {
 			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'onedesign' ) );
 		}
 
-		$site_type   = get_option( self::OPTION_SITE_TYPE, 'consumer' );
-		$api_key     = get_option( self::OPTION_OWN_API_KEY, '' );
-		$child_sites = get_option( self::OPTION_CHILD_SITES, array() );
+		$site_type   = get_option( Constants::ONEDESIGN_SITE_TYPE, 'consumer' );
+		$api_key     = get_option( Constants::ONEDESIGN_API_KEY, '' );
+		$child_sites = get_option( Constants::ONEDESIGN_CHILD_SITES, array() );
 
-		if ( '' === $api_key && 'consumer' === $site_type ) {
+		if ( '' === $api_key && Utils::is_brand_site() ) {
 			// Generate an API key if it doesn't exist for consumer sites.
 			$api_key = $this->generate_api_key();
-			update_option( self::OPTION_OWN_API_KEY, $api_key, false );
+			update_option( Constants::ONEDESIGN_API_KEY, $api_key, false );
 		}
 		?>
 		<div class="wrap">
@@ -270,7 +249,7 @@ class Settings {
 				</div>
 
 				<!-- Dashboard Site Options -->
-				<div id="dashboard-options" style="<?php echo 'dashboard' === $site_type ? '' : 'display: none;'; ?>">
+				<div id="dashboard-options" style="<?php echo Utils::is_governing_site() ? '' : 'display: none;'; ?>">
 					<h2><?php esc_html_e( 'Dashboard Site Settings', 'onedesign' ); ?></h2>
 					<p><?php esc_html_e( 'Manage child sites that this dashboard will distribute patterns to.', 'onedesign' ); ?>
 					</p>
@@ -363,32 +342,32 @@ class Settings {
 		if ( isset( $_POST['site_type'] ) ) {
 			$site_type = sanitize_text_field( wp_unslash( $_POST['site_type'] ) );
 			if ( in_array( $site_type, array( 'consumer', 'dashboard' ), true ) ) {
-				update_option( self::OPTION_SITE_TYPE, $site_type, false );
+				update_option( Constants::ONEDESIGN_SITE_TYPE, $site_type, false );
 			}
 		}
 
 		// Handle API key regeneration.
 		if ( isset( $_POST['regenerate_api_key'] ) ) {
 			$new_api_key = $this->generate_api_key();
-			update_option( self::OPTION_OWN_API_KEY, $new_api_key, false );
+			update_option( Constants::ONEDESIGN_API_KEY, $new_api_key, false );
 			add_action( 'admin_notices', array( $this, 'api_key_regenerated_notice' ) );
 			return;
 		}
 
 		// Handle API key update for consumer sites.
-		if ( isset( $_POST['api_key'] ) && get_option( self::OPTION_SITE_TYPE ) === 'consumer' ) {
+		if ( isset( $_POST['api_key'] ) && Utils::is_brand_site() ) {
 			$api_key = sanitize_text_field( wp_unslash( $_POST['api_key'] ) );
-			update_option( self::OPTION_OWN_API_KEY, $api_key, false );
+			update_option( Constants::ONEDESIGN_API_KEY, $api_key, false );
 		}
 
 		// Handle site logo update (only for dashboard sites).
-		if ( isset( $_POST['site_logo'] ) && get_option( self::OPTION_SITE_TYPE ) === 'dashboard' ) {
+		if ( isset( $_POST['site_logo'] ) && Utils::is_governing_site() ) {
 			$site_logo = esc_url_raw( wp_unslash( $_POST['site_logo'] ) );
 			update_option( self::OPTION_SITE_LOGO, $site_logo, false );
 		}
 
 		// Handle child sites update for dashboard sites.
-		if ( isset( $_POST['child_sites'] ) && get_option( self::OPTION_SITE_TYPE ) === 'dashboard' ) {
+		if ( isset( $_POST['child_sites'] ) && Utils::is_governing_site() ) {
 			$child_sites      = array();
 			$post_child_sites = $_POST['child_sites'] ?? array(); // phpcs:ignore -- sites info is sanitized below.
 			foreach ( $post_child_sites as $site_data ) {
@@ -410,13 +389,13 @@ class Settings {
 				}
 			}
 
-			update_option( self::OPTION_CHILD_SITES, $child_sites, false );
+			update_option( Constants::ONEDESIGN_CHILD_SITES, $child_sites, false );
 		}
 
 		// Generate an API key if the consumer site doesn't have one.
-		if ( get_option( self::OPTION_SITE_TYPE ) === 'consumer' && empty( get_option( self::OPTION_OWN_API_KEY ) ) ) {
+		if ( Utils::is_brand_site() && empty( get_option( Constants::ONEDESIGN_API_KEY ) ) ) {
 			$api_key = $this->generate_api_key();
-			update_option( self::OPTION_OWN_API_KEY, $api_key, false );
+			update_option( Constants::ONEDESIGN_API_KEY, $api_key, false );
 		}
 
 		add_action( 'admin_notices', array( $this, 'settings_saved_notice' ) );
