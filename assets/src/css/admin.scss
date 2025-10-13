@@ -1,65 +1,116 @@
-.wp-list-table input[type="text"],
-.wp-list-table input[type="url"] {
-	width: 100%;
-	max-width: 200px;
+/* onedesign admin styles */
+
+#onedesign-settings-page {
+
+	&:has(.components-snackbar-list) {
+
+		.components-snackbar-list {
+			position: fixed;
+			bottom: 20px;
+			right: 20px;
+			z-index: 1000000;
+			align-items: flex-end;
+			justify-content: flex-end;
+			display: flex;
+			flex-direction: column;
+		}
+	}
+
+	&:not(:has(.components-snackbar-list)) {
+
+		.components-snackbar {
+			position: fixed;
+			bottom: 20px;
+			right: 20px;
+			z-index: 1000000;
+			width: auto;
+		}
+	}
+
+	.components-notice__content {
+		white-space: pre-line !important;
+	}
+
+	.onedesign-success-notice {
+		background-color: #16a32d;
+		color: #fff;
+	}
+
+	.onedesign-error-notice {
+		background-color: #e11d1d;
+		color: #fff;
+	}
+
+	.onedesign-site-initials {
+		width: 36px;
+		height: 36px;
+		border-radius: 50%;
+		background: linear-gradient(135deg, #2196F3, #1976D2);
+		color: rgb(255, 255, 255);
+		font-weight: 600;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		text-transform: uppercase;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+	}
+	
 }
 
-.wp-list-table td {
-	vertical-align: middle;
-}
+.toplevel_page_onedesign {
 
-#child-sites-table input {
-	margin: 0;
-}
-
-.delete-site {
-	color: #a00;
-}
-
-.delete-site:hover {
-	color: #dc3232;
-}
-
-.logo-preview {
-	display: block;
-	max-width: 100px;
-	max-height: 100px;
-	margin-bottom: 10px;
-	border: 1px solid #ddd;
-	border-radius: 4px;
-	padding: 5px;
-	background: #f7f7f7;
-}
-
-.logo-preview img {
-	max-width: 100%;
-	max-height: 90px;
-	display: block;
-}
-
-.logo-upload-button {
-	margin-right: 10px !important;
-}
-
-.logo-remove-button {
-	color: #a00;
-}
-
-.logo-container {
-	display: flex;
-	align-items: flex-start;
-	margin-bottom: 10px;
-}
-
-.hidden-logo-url {
-	display: none;
+	.onedesign-site-checkbox {
+		pointer-events: none;
+	}
 }
 
 
-// add icon to the OneDesign admin menu
+body {
+
+	&.onedesign-missing-brand-sites,
+	&.onedesign-brand-site {
+
+		.wp-first-item:has(.onedesign-plugin-manager-page) {
+			display: none;
+		}
+	}
+
+	&.onedesign-governing-site-site {
+
+		.wp-first-item:has(.onedesign-plugin-manager-page) {
+			display: inline-block;
+		}
+	}
+}
+
+[id="onedesign-site-selection-modal"] {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 10000;
+	min-width: 40vw;
+}
+
+body.onedesign-site-selection-modal {
+
+	&::before {
+		content: "";
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0, 0, 0, 0.5);
+		z-index: 9999;
+	}
+}
+
+
 [id="toplevel_page_onedesign"] {
 
-	.dashicons-admin-generic::before{
+	.dashicons-admin-generic::before {
 		content: url("../../images/logo.svg") !important;
 	}
 }
