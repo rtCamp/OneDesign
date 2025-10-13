@@ -152,12 +152,12 @@ class Utils {
 	/**
 	 * Modify template part and pattern references within block content.
 	 *
-	 * @param string $content The block content containing WordPress block markup.
-	 * @param string $shared_site_name The name of the site to which template is going to be shared.
+	 * @param string|array|\WP_Block_Template $content The block content containing WordPress block markup.
+	 * @param string                          $shared_site_name The name of the site to which template is going to be shared.
 	 *
 	 * @return string Modified content with updated slugs and themes.
 	 */
-	public static function modify_content_references( string $content, string $shared_site_name ): array|string|null {
+	public static function modify_content_references( string|array|\WP_Block_Template $content, string $shared_site_name ): array|string|null {
 
 		$content_string = '';
 

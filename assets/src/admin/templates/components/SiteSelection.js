@@ -93,7 +93,7 @@ const SiteSelection = ( {
 					<p>{ __( 'No connected sites found.', 'onedesign' ) }</p>
 					<p>
 						{ __(
-							'Please configure consumer sites first to apply templates.',
+							'Please configure brand sites first to apply templates.',
 							'onedesign',
 						) }
 					</p>
@@ -114,9 +114,9 @@ const SiteSelection = ( {
 				</Notice>
 			) }
 
-			<div className="od-consumer-site-modal-content">
+			<div className="od-brand-site-modal-content">
 				<div className="od-site-selection-wrapper">
-					<div className="od-consumer-site-selection">
+					<div className="od-brand-site-selection">
 
 						<div className="od-selection-header">
 							<div className="od-selection-summary">
@@ -124,13 +124,13 @@ const SiteSelection = ( {
 								<span className="od-selection-count">
 									{ selectedCount > 0
 										? sprintf(
-											/* translators: 1: Number of selected sites. 2: Total number of sites. */
+											/* translators: %1$d: Number of selected sites, %2$d: Total number of sites. */
 											__( '%1$d of %2$d selected', 'onedesign' ),
 											selectedCount,
 											selectableSiteCount,
 										)
 										: sprintf(
-											/* translators: 1: Number of available sites. 2: Total number of sites. */
+											/* translators: %1$d: Number of available sites, %2$d: Total number of sites. */
 											__( '%1$d of %2$d sites available', 'onedesign' ),
 											selectableSiteCount,
 											totalCount,
@@ -170,7 +170,7 @@ const SiteSelection = ( {
 								<p>
 									<span className="dashicons dashicons-info"></span>
 									{ sprintf(
-										/* translators: 1: Number of sites that already have all selected templates. 2: Total number of sites. */
+										/* translators: %1$d: Number of sites that already have all selected templates. %2$d: Total number of sites. */
 										__(
 											'%1$d of %2$d sites already have all selected templates and are disabled.',
 											'onedesign',
@@ -268,7 +268,7 @@ const SiteSelection = ( {
 															<span className="od-onedesign-info">
 																{
 																	sprintf(
-																		/* translators: 1: Number of templates already present. 2: Total number of selected templates. */
+																		/* translators: %1$d: Number of selected templates already present. %2$d: Total number of selected templates. */
 																		__( '%1$d of %2$d selected templates are already present', 'onedesign' ),
 																		alreadyPresentCount,
 																		totalSelected,

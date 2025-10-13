@@ -32,13 +32,13 @@ import Category from './Category';
 const SettingLink = patternSyncData?.settingsLink;
 
 /**
- * Fetch all consumer site patterns
+ * Fetch all brand site patterns
  *
  * @return {Promise<Array>} A promise that resolves to an array of patterns.
  */
-function fetchAllConsumerSitePatterns() {
+function fetchAllBrandSitePatterns() {
 	return apiFetch( {
-		path: `/onedesign/v1/get-all-consumer-site-patterns?timestamp=${ Date.now() }`,
+		path: `/onedesign/v1/get-all-brand-site-patterns?timestamp=${ Date.now() }`,
 	} )
 		.then( ( data ) => {
 			if ( data.success ) {
@@ -47,7 +47,7 @@ function fetchAllConsumerSitePatterns() {
 			throw new Error( 'Failed to fetch patterns' );
 		} )
 		.catch( ( error ) => {
-			console.error( 'Error fetching consumer site patterns:', error ); // eslint-disable-line no-console
+			console.error( 'Error fetching brand site patterns:', error ); // eslint-disable-line no-console
 			return [];
 		} );
 }
@@ -55,7 +55,7 @@ function fetchAllConsumerSitePatterns() {
 /**
  * PatternModal component
  * Displays the patterns library modal with tabs for base patterns and applied patterns.
- * Allows users to search, filter, and apply patterns across different consumer sites.
+ * Allows users to search, filter, and apply patterns across different brand sites.
  *
  * @return {JSX.Element} The rendered modal component.
  */
@@ -65,7 +65,7 @@ const PatternModal = () => {
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ isLoadingApplied, setIsLoadingApplied ] = useState( true );
 	const [ activeCategory, setActiveCategory ] = useState( 'All' );
-	const [ allConsumerSitePatterns, setAllConsumerSitePatterns ] = useState( [] );
+	const [ allBrandSitePatterns, setAllBrandSitePatterns ] = useState( [] );
 	const [ activeTab, setActiveTab ] = useState( 'basePatterns' );
 
 	// Access the global pattern store
@@ -86,9 +86,9 @@ const PatternModal = () => {
 		useState( patternsPerPage );
 	const [ selectedPatterns, setSelectedPatterns ] = useState( [] );
 
-	const consumerSites = useSelect( ( select ) => {
+	const BrandSites = useSelect( ( select ) => {
 		const meta = select( 'core/editor' ).getEditedPostAttribute( 'meta' );
-		return meta?.consumer_site || [];
+		return meta?.brand_site || [];
 	} );
 
 	const fetchSites = async () => {
@@ -100,7 +100,7 @@ const PatternModal = () => {
 			const data = response;
 			setSiteOptions( data );
 		} catch ( fetchError ) {
-			console.error( 'Error fetching consumer sites:', fetchError ); // eslint-disable-line no-console
+			console.error( 'Error fetching brand sites:', fetchError ); // eslint-disable-line no-console
 			setSiteOptions( [] );
 		} finally {
 			setIsLoading( false );
@@ -120,15 +120,15 @@ const PatternModal = () => {
 			try {
 				// If we already have site patterns in the global store, use those
 				if ( Object.keys( sitePatterns ).length > 0 ) {
-					setAllConsumerSitePatterns( sitePatterns );
+					setAllBrandSitePatterns( sitePatterns );
 				} else {
 					// Otherwise fetch them directly and update both states
-					const patterns = await fetchAllConsumerSitePatterns();
-					setAllConsumerSitePatterns( patterns );
+					const patterns = await fetchAllBrandSitePatterns();
+					setAllBrandSitePatterns( patterns );
 					patternStore.setSitePatterns( patterns );
 				}
 			} catch ( error ) {
-				console.error( 'Error fetching consumer site patterns:', error ); // eslint-disable-line no-console
+				console.error( 'Error fetching brand site patterns:', error ); // eslint-disable-line no-console
 			}
 			setIsLoadingApplied( false );
 		};
@@ -247,7 +247,7 @@ const PatternModal = () => {
 	}, [ siteOptions ] );
 
 	const filteredAppliedPatterns = useMemo( () => {
-		const currentTabAppliedPatterns = allConsumerSitePatterns[ activeTab ] || [];
+		const currentTabAppliedPatterns = allBrandSitePatterns[ activeTab ] || [];
 		const categoryFiltered =
 			activeCategory === 'All'
 				? currentTabAppliedPatterns
@@ -264,7 +264,7 @@ const PatternModal = () => {
 			const title = ( pattern.title || pattern.name || '' ).toLowerCase();
 			return title.includes( searchLower );
 		} );
-	}, [ allConsumerSitePatterns, searchTerm, activeCategory, activeTab ] );
+	}, [ allBrandSitePatterns, searchTerm, activeCategory, activeTab ] );
 
 	// Search results indicator
 	const renderSearchResults = () => {
@@ -283,10 +283,10 @@ const PatternModal = () => {
 	};
 
 	const applySelectedPatterns = async () => {
-		if ( selectedPatterns.length > 0 && consumerSites.length > 0 ) {
+		if ( selectedPatterns.length > 0 && BrandSites.length > 0 ) {
 			const data = {
 				pattern_names: selectedPatterns,
-				target_site_ids: consumerSites,
+				target_site_ids: BrandSites,
 			};
 
 			try {
@@ -306,8 +306,8 @@ const PatternModal = () => {
 
 				if ( ! hasFailures ) {
 					// Fetch patterns again to update the state
-					const patterns = await fetchAllConsumerSitePatterns();
-					setAllConsumerSitePatterns( patterns );
+					const patterns = await fetchAllBrandSitePatterns();
+					setAllBrandSitePatterns( patterns );
 
 					// Return success for the BasePatternsTab to use
 					return { success: true };
@@ -339,7 +339,7 @@ const PatternModal = () => {
 			}
 		}
 
-		// Return failure if no patterns or consumer sites selected
+		// Return failure if no patterns or brand sites selected
 		return {
 			success: false,
 			message: __( 'No patterns or sites selected', 'onedesign' ),
@@ -347,7 +347,7 @@ const PatternModal = () => {
 	};
 
 	const getFilteredPatterns = ( tab ) => {
-		const patternsToBeApplied = allConsumerSitePatterns[ tab.name ];
+		const patternsToBeApplied = allBrandSitePatterns[ tab.name ];
 
 		// First, filter by search term if one exists
 		if ( searchTerm.trim() ) {
@@ -384,7 +384,7 @@ const PatternModal = () => {
 				const removePatterns = async () => {
 					try {
 						const response = await apiFetch( {
-							path: `/onedesign/v1/request-remove-consumer-site-patterns`,
+							path: `/onedesign/v1/request-remove-brand-site-patterns`,
 							method: 'DELETE',
 							headers: {
 								'Content-Type': 'application/json',
@@ -403,8 +403,8 @@ const PatternModal = () => {
 							}, 2000 );
 
 							// Fetch patterns again to update the state
-							const patterns = await fetchAllConsumerSitePatterns();
-							setAllConsumerSitePatterns( patterns );
+							const patterns = await fetchAllBrandSitePatterns();
+							setAllBrandSitePatterns( patterns );
 
 							// Resolve the promise with success
 							resolve( response );
@@ -476,7 +476,7 @@ const PatternModal = () => {
 							basePatterns={
 								activeTab === 'basePatterns'
 									? basePatterns
-									: allConsumerSitePatterns[ activeTab ]
+									: allBrandSitePatterns[ activeTab ]
 							}
 						/>
 
@@ -512,8 +512,7 @@ const PatternModal = () => {
 													setSelectedPatterns={ setSelectedPatterns }
 													selectedPatterns={ selectedPatterns }
 													applySelectedPatterns={ applySelectedPatterns }
-													consumerSites={ consumerSites }
-													sitePatterns={ allConsumerSitePatterns }
+													sitePatterns={ allBrandSitePatterns }
 												/>
 											);
 										}

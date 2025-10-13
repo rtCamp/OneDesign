@@ -395,12 +395,12 @@ class Hooks {
 	 * @return void
 	 */
 	public function register_block_patterns_if_not_exist(): void {
-		$consumer_site_patterns = get_option( Constants::CONSUMER_SITE_PATTERNS );
-		if ( ! is_array( $consumer_site_patterns ) ) {
+		$site_patterns = get_option( Constants::ONEDESIGN_BRAND_SITE_PATTERNS );
+		if ( ! is_array( $site_patterns ) ) {
 			return;
 		}
 
-		foreach ( $consumer_site_patterns as $pattern_name => $pattern_data ) {
+		foreach ( $site_patterns as $pattern_name => $pattern_data ) {
 			if ( ! is_array( $pattern_data ) || empty( $pattern_name ) ) {
 				continue;
 			}

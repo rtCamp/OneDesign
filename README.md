@@ -12,7 +12,7 @@ This plugin is licensed under the GPL v2 or later.
 This tool enables synchronization of block patterns across multiple sites in a WordPress multisite network.
 
 ## Description
-OneDesign allows you to define patterns on a Dashboard site and apply them to consumer sites, maintaining consistency across your network. The plugin provides an intuitive interface for browsing, searching, and applying patterns, making it easy to maintain design consistency across all your network sites.
+OneDesign allows you to define patterns on a Governing site and apply them to brand sites, maintaining consistency across your network. The plugin provides an intuitive interface for browsing, searching, and applying patterns, making it easy to maintain design consistency across all your network sites.
 
 ## Why OneDesign?
 Managing multiple websites—whether for different brands, regions, or languages shouldn’t mean reinventing the wheel each time. Instead of designing layouts from scratch for each site, OneDesign lets you create once and deploy anywhere, in just one click.
@@ -43,7 +43,7 @@ Built for enterprise teams, OneDesign unifies your design, editorial, and develo
 
 - **Pattern Status Monitoring**: Track deployment success and synchronization across all connected sites
 
-- **Multisite Pattern Sync**: Define patterns on the dashboard site and apply to multiple consumer sites
+- **Multisite Pattern Sync**: Define patterns on the governing site and apply to multiple brand sites
 
 - **Pattern Management**: View and manage already applied patterns
 
@@ -64,19 +64,19 @@ Built for enterprise teams, OneDesign unifies your design, editorial, and develo
 
 ## How It Works
 
-### Setting Up Dashboard and Consumer Sites
+### Setting Up Governing and Brand Sites
 1. Install and activate the OneDesign plugin on all sites in your network
-2. From the OneDesign settings, designate one site as the “Dashboard Site” (source of patterns)
-3. Designate all other sites as “Consumer Sites” (where patterns will be applied)
-4. Copy the API keys generated for each Consumer Site from their respective settings pages
-5. In the Dashboard Site settings, register each Consumer Site by adding:
+2. From the OneDesign settings, designate one site as the “Governing Site” (source of patterns)
+3. Designate all other sites as “Brand Sites” (where patterns will be applied)
+4. Copy the API keys generated for each Brand Site from their respective settings pages
+5. In the Governing Site settings, register each Brand Site by adding:
    - Site name
    - URL
    - Logo
    - API key
 
 ### Accessing the Pattern Library
-1. On your Dashboard Site, access the Design Library from the sidebar menu
+1. On your Governing Site, access the Design Library from the sidebar menu
 2. This opens a full-page interface showing all available patterns
 3. Patterns are organized by categories with vertical tabs for your registered sites
 
@@ -113,7 +113,7 @@ For development guidelines, please refer to our [Development Guide](./docs/DEVEL
 ### How are patterns transferred between sites?
 Patterns are transferred securely via WordPress REST API, ensuring that all pattern data, including blocks and settings, are properly synchronized.
 ### Can I customize which patterns are available to specific sites?
-Yes, you can control which patterns are applied to each consumer site by managing the selections in the Design Library.
+Yes, you can control which patterns are applied to each brand site by managing the selections in the Design Library.
 ### Are there any limits to how many patterns I can sync?
 There are no hard limits on the number of patterns you can sync, but performance may vary depending on your server resources and the complexity of the patterns.
 ### Can I also remove patterns from specific sites?
@@ -121,7 +121,7 @@ Yes. You are able to do that from the dashboard itself.
 
 ### Troubleshooting
 1. **Patterns not showing up in the library**
-   - Ensure your dashboard site is correctly set up
+   - Ensure your governing site is correctly set up
    - Check network connectivity between sites
    - Verify REST API permissions
 2. **Search not working correctly**

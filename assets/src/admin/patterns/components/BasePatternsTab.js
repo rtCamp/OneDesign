@@ -12,7 +12,7 @@ import MemoizedPatternPreview from './MemoizedPatternPreview';
 import SiteSelection from './SiteSelection';
 
 /**
- * BasePatternsTab component displays a list of base patterns with options to apply them to consumer sites
+ * BasePatternsTab component displays a list of base patterns with options to apply them to brand sites
  *
  * @param {Object}   props                        - Component properties.
  * @param {boolean}  props.isLoading              - Indicates if base patterns are loading.
@@ -24,7 +24,7 @@ import SiteSelection from './SiteSelection';
  * @param {Function} props.loadMorePatterns       - Function to load more base patterns.
  * @param {Function} props.applySelectedPatterns  - Function to apply selected patterns.
  * @param {Function} props.setSelectedPatterns    - Function to set the selected patterns.
- * @param {Object}   props.sitePatterns           - Patterns from the consumer site.
+ * @param {Object}   props.sitePatterns           - Patterns from the brand site.
  * @return {JSX.Element} Rendered component.
  */
 const BasePatternsTab = memo(
@@ -66,7 +66,7 @@ const BasePatternsTab = memo(
 			);
 		}
 
-		const openConsumerSiteModal = () => {
+		const OpenBrandSiteModal = () => {
 			if ( selectedPatterns.length === 0 ) {
 				setApplicationStatus( {
 					type: 'warning',
@@ -82,7 +82,7 @@ const BasePatternsTab = memo(
 			setIsModalOpen( true );
 		};
 
-		const closeConsumerSiteModal = () => {
+		const CloseBrandSiteModal = () => {
 			// If we're in the middle of applying patterns, show confirmation first
 			if ( isApplying && ! showCloseConfirmation ) {
 				setShowCloseConfirmation( true );
@@ -121,7 +121,7 @@ const BasePatternsTab = memo(
 
 					// Close modal after success with slightly longer delay for better user feedback
 					setTimeout( () => {
-						closeConsumerSiteModal();
+						CloseBrandSiteModal();
 					}, 2000 );
 				} else {
 					setApplicationStatus( {
@@ -178,9 +178,9 @@ const BasePatternsTab = memo(
 			}
 		};
 
-		const consumerSiteSelection = () => {
+		const BrandSiteSelection = () => {
 			return (
-				<div className="od-consumer-site-modal-content">
+				<div className="od-brand-site-modal-content">
 					<div className="od-site-selection-wrapper">
 						<SiteSelection
 							setIsSiteSelected={ setIsSiteSelected }
@@ -235,7 +235,7 @@ const BasePatternsTab = memo(
 					<div className="od-modal-actions">
 						<Button
 							variant="secondary"
-							onClick={ closeConsumerSiteModal }
+							onClick={ CloseBrandSiteModal }
 							disabled={ isApplying && ! showCloseConfirmation }
 						>
 							{ showCloseConfirmation
@@ -325,7 +325,7 @@ const BasePatternsTab = memo(
 						) }
 
 						<Button
-							onClick={ openConsumerSiteModal }
+							onClick={ OpenBrandSiteModal }
 							variant="primary"
 							className="od-apply-to-sites-button"
 							disabled={ selectedPatterns.length === 0 }
@@ -340,13 +340,13 @@ const BasePatternsTab = memo(
 				{ isModalOpen && (
 					<Modal
 						title=""
-						onRequestClose={ closeConsumerSiteModal }
-						className="od-consumer-site-modal"
+						onRequestClose={ CloseBrandSiteModal }
+						className="od-brand-site-modal"
 						shouldCloseOnClickOutside={ ! isApplying }
 						shouldCloseOnEsc={ ! isApplying }
 						isFullScreen={ true }
 					>
-						{ consumerSiteSelection() }
+						{ BrandSiteSelection() }
 					</Modal>
 				) }
 			</div>

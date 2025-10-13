@@ -39,7 +39,7 @@ if ( ! function_exists( 'onedesign_plugin_deletion' ) ) {
 
 		$options_to_delete = array(
 			'onedesign_site_type',
-			'consumer_site_patterns',
+			'onedesign_brand_site_patterns',
 			'onedesign_child_site_public_key',
 			'onedesign_child_sites',
 			'onedesign_child_site_api_key',

@@ -63,40 +63,40 @@ class Patterns {
 		);
 
 		/**
-		 * Get consumer site patterns.
+		 * Get brand site patterns.
 		 */
 		register_rest_route(
 			self::NAMESPACE,
-			'/consumer-site-patterns',
+			'/brand-site-patterns',
 			array(
 				'methods'             => WP_REST_Server::READABLE,
-				'callback'            => array( $this, 'get_consumer_site_patterns' ),
+				'callback'            => array( $this, 'get_brand_site_patterns' ),
 				'permission_callback' => 'onedesign_validate_api_key',
 			)
 		);
 
 		/**
-		 * Get all consumer site patterns from child sites.
+		 * Get all brand site patterns from child sites.
 		 */
 		register_rest_route(
 			self::NAMESPACE,
-			'/get-all-consumer-site-patterns',
+			'/get-all-brand-site-patterns',
 			array(
 				'methods'             => WP_REST_Server::READABLE,
-				'callback'            => array( $this, 'get_all_consumer_site_patterns' ),
+				'callback'            => array( $this, 'get_all_brand_site_patterns' ),
 				'permission_callback' => array( Basic_Options::class, 'permission_callback' ),
 			)
 		);
 
 		/**
-		 * Route to request to consumer sites to remove patterns.
+		 * Route to request to brand sites to remove patterns.
 		 */
 		register_rest_route(
 			self::NAMESPACE,
-			'/request-remove-consumer-site-patterns',
+			'/request-remove-brand-site-patterns',
 			array(
 				'methods'             => WP_REST_Server::DELETABLE,
-				'callback'            => array( $this, 'request_remove_consumer_site_patterns' ),
+				'callback'            => array( $this, 'request_remove_brand_site_patterns' ),
 				'permission_callback' => array( Basic_Options::class, 'permission_callback' ),
 				'args'                => array(
 					'pattern_names' => array(
@@ -118,14 +118,14 @@ class Patterns {
 		);
 
 		/**
-		 * Remove patterns from consumer site patterns.
+		 * Remove patterns from brand site patterns.
 		 */
 		register_rest_route(
 			self::NAMESPACE,
-			'/remove-consumer-site-patterns',
+			'/remove-brand-site-patterns',
 			array(
 				'methods'             => WP_REST_Server::DELETABLE,
-				'callback'            => array( $this, 'remove_consumer_site_patterns' ),
+				'callback'            => array( $this, 'remove_brand_site_patterns' ),
 				'permission_callback' => 'onedesign_validate_api_key',
 				'args'                => array(
 					'pattern_names' => array(
@@ -224,13 +224,13 @@ class Patterns {
 	}
 
 	/**
-	 * Request to remove patterns from consumer sites.
+	 * Request to remove patterns from brand sites.
 	 *
 	 * @param WP_REST_Request $request The REST request object.
 	 *
 	 * @return WP_Error|WP_REST_Response
 	 */
-	public function request_remove_consumer_site_patterns( WP_REST_Request $request ): WP_Error|WP_REST_Response {
+	public function request_remove_brand_site_patterns( WP_REST_Request $request ): WP_Error|WP_REST_Response {
 
 		if ( ! Utils::is_governing_site() ) {
 			return new WP_Error( 'not_parent_site', __( 'This site is not configured as a parent site.', 'onedesign' ), array( 'status' => 403 ) );
@@ -259,7 +259,7 @@ class Patterns {
 			return new WP_Error( 'site_not_found', __( 'Target site not found in configuration.', 'onedesign' ), array( 'status' => 404 ) );
 		}
 
-		$remote_url = trailingslashit( $site['url'] ) . 'wp-json/onedesign/v1/remove-consumer-site-patterns';
+		$remote_url = trailingslashit( $site['url'] ) . 'wp-json/onedesign/v1/remove-brand-site-patterns';
 
 		$response = wp_safe_remote_request(
 			$remote_url,
@@ -307,53 +307,53 @@ class Patterns {
 	}
 
 	/**
-	 * Remove patterns from consumer site patterns.
+	 * Remove patterns from brand site patterns.
 	 *
 	 * @param WP_REST_Request $request The REST request object.
 	 *
 	 * @return WP_Error|WP_REST_Response
 	 */
-	public function remove_consumer_site_patterns( WP_REST_Request $request ): WP_Error|WP_REST_Response {
+	public function remove_brand_site_patterns( WP_REST_Request $request ): WP_Error|WP_REST_Response {
 		$pattern_names = $request->get_param( 'pattern_names' );
 
 		if ( empty( $pattern_names ) || ! is_array( $pattern_names ) ) {
 			return new WP_Error( 'invalid_params', __( 'Pattern names must be provided as an array.', 'onedesign' ), array( 'status' => 400 ) );
 		}
 
-		// Remove the patterns from the consumer site patterns option.
-		$consumer_patterns = get_option( Constants::CONSUMER_SITE_PATTERNS, array() );
-		if ( empty( $consumer_patterns ) ) {
-			return new WP_Error( 'no_patterns_found', __( 'No patterns found for this consumer site.', 'onedesign' ), array( 'status' => 404 ) );
+		// Remove the patterns from the brand site patterns option.
+		$brand_patterns = get_option( Constants::ONEDESIGN_BRAND_SITE_PATTERNS, array() );
+		if ( empty( $brand_patterns ) ) {
+			return new WP_Error( 'no_patterns_found', __( 'No patterns found for this brand site.', 'onedesign' ), array( 'status' => 404 ) );
 		}
 
 		$updated_patterns = array();
-		foreach ( $consumer_patterns as $pattern ) {
+		foreach ( $brand_patterns as $pattern ) {
 			if ( ! in_array( $pattern['name'], $pattern_names, true ) ) {
 				$updated_patterns[ $pattern['name'] ] = $pattern; // Keep patterns not in the removal list.
 			}
 		}
 
-		if ( count( $updated_patterns ) === count( $consumer_patterns ) ) {
+		if ( count( $updated_patterns ) === count( $brand_patterns ) ) {
 			return new WP_Error( 'no_patterns_removed', __( 'No patterns were removed. Please check the pattern names provided.', 'onedesign' ), array( 'status' => 400 ) );
 		}
 
-		update_option( Constants::CONSUMER_SITE_PATTERNS, $updated_patterns, false );
+		update_option( Constants::ONEDESIGN_BRAND_SITE_PATTERNS, $updated_patterns, false );
 
 		return new WP_REST_Response(
 			array(
 				'success' => true,
-				'message' => __( 'Consumer site patterns removed successfully.', 'onedesign' ),
+				'message' => __( 'Brand site patterns removed successfully.', 'onedesign' ),
 			),
 			200
 		);
 	}
 
 	/**
-	 * Get all consumer site patterns from child sites.
+	 * Get all brand site patterns from child sites.
 	 *
 	 * @return WP_Error|WP_REST_Response
 	 */
-	public function get_all_consumer_site_patterns(): WP_Error|WP_REST_Response {
+	public function get_all_brand_site_patterns(): WP_Error|WP_REST_Response {
 
 		if ( ! Utils::is_governing_site() ) {
 			return new WP_Error( 'not_parent_site', __( 'This site is not configured as a parent site.', 'onedesign' ), array( 'status' => 403 ) );
@@ -369,7 +369,7 @@ class Patterns {
 		foreach ( $child_sites as $site ) {
 			$site_patterns  = array();
 			$remote_api_key = $site['api_key'] ?? '';
-			$remote_url     = trailingslashit( $site['url'] ) . 'wp-json/onedesign/v1/consumer-site-patterns?timestamp=' . time(); // Add timestamp to avoid caching issues.
+			$remote_url     = trailingslashit( $site['url'] ) . 'wp-json/onedesign/v1/brand-site-patterns?timestamp=' . time(); // Add timestamp to avoid caching issues.
 
 			if ( empty( $remote_api_key ) ) {
 				continue; // Skip sites without API key.
@@ -445,19 +445,19 @@ class Patterns {
 	}
 
 	/**
-	 * Get consumer site patterns.
+	 * Get brand site patterns.
 	 *
 	 * @return WP_REST_Response
 	 */
-	public function get_consumer_site_patterns(): WP_REST_Response {
+	public function get_brand_site_patterns(): WP_REST_Response {
 		// Use the option name from your settings class.
-		$consumer_patterns = get_option( Constants::CONSUMER_SITE_PATTERNS, array() );
+		$brand_patterns = get_option( Constants::ONEDESIGN_BRAND_SITE_PATTERNS, array() );
 
-		if ( empty( $consumer_patterns ) ) {
+		if ( empty( $brand_patterns ) ) {
 			return new WP_REST_Response(
 				array(
 					'success' => false,
-					'message' => __( 'No patterns found for this consumer site.', 'onedesign' ),
+					'message' => __( 'No patterns found for this brand site.', 'onedesign' ),
 				),
 				404
 			);
@@ -466,7 +466,7 @@ class Patterns {
 		return new WP_REST_Response(
 			array(
 				'success'  => true,
-				'patterns' => $consumer_patterns,
+				'patterns' => $brand_patterns,
 			),
 			200
 		);
@@ -843,7 +843,7 @@ class Patterns {
 		}
 
 		// Get existing patterns from option.
-		$existing_patterns = get_option( Constants::CONSUMER_SITE_PATTERNS, array() );
+		$existing_patterns = get_option( Constants::ONEDESIGN_BRAND_SITE_PATTERNS, array() );
 
 		foreach ( $patterns_data as $pattern ) {
 			if ( empty( $pattern['name'] ) || empty( $pattern['title'] ) || ! isset( $pattern['content'] ) ) {
@@ -877,7 +877,7 @@ class Patterns {
 		}
 
 		// Save merged patterns back to the option.
-		update_option( Constants::CONSUMER_SITE_PATTERNS, $existing_patterns, false );
+		update_option( Constants::ONEDESIGN_BRAND_SITE_PATTERNS, $existing_patterns, false );
 
 		return new WP_REST_Response(
 			array(

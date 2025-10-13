@@ -60,7 +60,7 @@ class Settings {
 			2
 		);
 
-		// Add submenu for opening design library only for dashboard sites.
+		// Add submenu for opening design library only for governing sites.
 		if ( Utils::is_governing_site() ) {
 			add_submenu_page(
 				self::PAGE_SLUG,
@@ -217,7 +217,7 @@ class Settings {
 			array(
 				'post_type'    => Design_Library::SLUG,
 				'post_title'   => esc_html__( 'Design Library', 'onedesign' ),
-				'post_content' => '<!-- wp:heading {"level":2} --><h2>Click on the "Patterns Selection" to push patterns to consumer site.</h2><!-- /wp:heading -->',
+				'post_content' => '<!-- wp:heading {"level":2} --><h2>Click on the "Patterns Selection" to push patterns to brand site.</h2><!-- /wp:heading -->',
 				'post_status'  => 'draft',
 			)
 		);

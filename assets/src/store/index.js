@@ -38,7 +38,7 @@ const actions = {
 			yield { type: 'SET_ERROR', error: null };
 
 			const response = yield apiFetch( {
-				path: `/onedesign/v1/get-all-consumer-site-patterns?timestamp=${ Date.now() }`,
+				path: `/onedesign/v1/get-all-brand-site-patterns?timestamp=${ Date.now() }`,
 			} );
 
 			if ( response.success ) {

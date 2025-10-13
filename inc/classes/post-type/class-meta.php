@@ -77,7 +77,7 @@ class Meta {
 		$post_meta_array = array(
 			array(
 				'post_type'    => array( Design_Library::SLUG ),
-				'meta'         => 'consumer_site',
+				'meta'         => 'brand_site',
 				'type'         => 'array',
 				'show_in_rest' => array(
 					'schema' => array(

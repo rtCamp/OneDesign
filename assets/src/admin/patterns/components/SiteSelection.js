@@ -9,7 +9,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { getInitials } from '../../../js/utils';
 
 /**
- * Component to render the consumer site selection with enhanced UX.
+ * Component to render the brand site selection with enhanced UX.
  *
  * @param {Object}   props                   - Component properties.
  * @param {Function} props.setIsSiteSelected - Function to set the site selection state.
@@ -26,17 +26,17 @@ const SiteSelection = ( {
 	sitePatterns = {},
 } ) => {
 	/**
-	 * Get the current value of the consumer_site meta field.
+	 * Get the current value of the brand_site meta field.
 	 */
-	const { consumerSite } = useSelect( ( select ) => {
+	const { BrandSite } = useSelect( ( select ) => {
 		const meta = select( 'core/editor' ).getEditedPostAttribute( 'meta' );
 		return {
-			consumerSite: meta?.consumer_site || [],
+			BrandSite: meta?.brand_site || [],
 		};
 	} );
 
 	/**
-	 * Dispatch the action to update the consumer_site meta field.
+	 * Dispatch the action to update the brand_site meta field.
 	 */
 	const { editPost } = useDispatch( 'core/editor' );
 
@@ -44,12 +44,12 @@ const SiteSelection = ( {
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ error, setError ] = useState( null );
 
-	const onConsumerSiteChange = ( siteId ) => {
-		const newConsumerSite = consumerSite.includes( siteId )
-			? consumerSite.filter( ( site ) => site !== siteId )
-			: [ ...consumerSite, siteId ];
-		setIsSiteSelected( newConsumerSite.length > 0 );
-		editPost( { meta: { consumer_site: newConsumerSite } } );
+	const onBrandSiteChange = ( siteId ) => {
+		const newBrandSite = BrandSite.includes( siteId )
+			? BrandSite.filter( ( site ) => site !== siteId )
+			: [ ...BrandSite, siteId ];
+		setIsSiteSelected( newBrandSite.length > 0 );
+		editPost( { meta: { brand_site: newBrandSite } } );
 	};
 
 	const selectAllSites = () => {
@@ -75,11 +75,11 @@ const SiteSelection = ( {
 			} )
 			.map( ( site ) => site.id );
 
-		editPost( { meta: { consumer_site: selectableSiteIds } } );
+		editPost( { meta: { brand_site: selectableSiteIds } } );
 	};
 
 	const deselectAllSites = () => {
-		editPost( { meta: { consumer_site: [] } } );
+		editPost( { meta: { brand_site: [] } } );
 	};
 
 	const retryFetch = () => {
@@ -100,7 +100,7 @@ const SiteSelection = ( {
 		} catch ( fetchError ) {
 			setError( {
 				message: __(
-					'Failed to load consumer sites. Please check your connection and try again.',
+					'Failed to load brand sites. Please check your connection and try again.',
 					'onedesign',
 				),
 				details: fetchError.message,
@@ -116,8 +116,8 @@ const SiteSelection = ( {
 		setError( null );
 		// Reset loading state
 		setIsLoading( true );
-		// Clear consumer site selection on mount
-		editPost( { meta: { consumer_site: [] } } );
+		// Clear brand site selection on mount
+		editPost( { meta: { brand_site: [] } } );
 
 		// Ensure dashicons are loaded
 		if ( document.querySelector( 'body' ).classList.contains( 'wp-admin' ) ) {
@@ -153,18 +153,18 @@ const SiteSelection = ( {
 	} );
 
 	const selectableSiteCount = selectableSites.length;
-	const selectedSelectableSiteCount = consumerSite.filter( ( siteId ) =>
+	const selectedSelectableSiteCount = BrandSite.filter( ( siteId ) =>
 		selectableSites.some( ( site ) => site.id === siteId ),
 	).length;
 
-	const selectedCount = consumerSite.length;
+	const selectedCount = BrandSite.length;
 
 	if ( isLoading ) {
 		return (
 			<div className="od-site-loading">
 				<div className="od-loading-content">
 					<Spinner />
-					<p>{ __( 'Loading consumer sites…', 'onedesign' ) }</p>
+					<p>{ __( 'Loading brand sites…', 'onedesign' ) }</p>
 				</div>
 			</div>
 		);
@@ -197,10 +197,10 @@ const SiteSelection = ( {
 		return (
 			<div className="od-no-sites">
 				<Notice status="warning" isDismissible={ false }>
-					<p>{ __( 'No consumer sites configured.', 'onedesign' ) }</p>
+					<p>{ __( 'No brand sites configured.', 'onedesign' ) }</p>
 					<p>
 						{ __(
-							'Please configure consumer sites first to apply patterns.',
+							'Please configure brand sites first to apply patterns.',
 							'onedesign',
 						) }
 					</p>
@@ -210,18 +210,20 @@ const SiteSelection = ( {
 	}
 
 	return (
-		<div className="od-consumer-site-selection">
+		<div className="od-brand-site-selection">
 			<div className="od-selection-header">
 				<div className="od-selection-summary">
-					<h4>{ __( 'Select Consumer Sites', 'onedesign' ) }</h4>
+					<h4>{ __( 'Select Brand Sites', 'onedesign' ) }</h4>
 					<span className="od-selection-count">
 						{ selectedCount > 0
-							? /* translators: %1$d: number of selected sites, %2$d: total number of selectable sites */ sprintf(
+							? sprintf(
+								/* translators: %1$d: Number of selected sites, %2$d: Total number of sites. */
 								__( '%1$d of %2$d selected', 'onedesign' ),
 								selectedCount,
 								selectableSiteCount,
 							)
-							: /* translators: %1$d: number of selectable sites, %2$d: total number of sites */ sprintf(
+							: sprintf(
+								/* translators: %1$d: Number of available sites, %2$d: Total number of sites. */
 								__( '%1$d of %2$d sites available', 'onedesign' ),
 								selectableSiteCount,
 								totalCount,
@@ -280,7 +282,7 @@ const SiteSelection = ( {
 
 			<div className="od-sites-list od-sites-grid">
 				{ siteOptions.map( ( { id, name, url, logo } ) => {
-					const isSelected = consumerSite?.includes( id );
+					const isSelected = BrandSite?.includes( id );
 
 					// Check if all selected patterns are already present on this site
 					let hasAllPatterns = false;
@@ -305,10 +307,10 @@ const SiteSelection = ( {
 						<div
 							key={ id }
 							className={ `od-site-item ${ isSelected ? 'od-site-selected' : '' } ${ isDisabled ? 'od-site-disabled' : '' }` }
-							onClick={ () => ! isDisabled && onConsumerSiteChange( id ) }
+							onClick={ () => ! isDisabled && onBrandSiteChange( id ) }
 							onKeyDown={ ( e ) => {
 								if ( ! isDisabled && ( e.key === 'Enter' || e.key === ' ' ) ) {
-									onConsumerSiteChange( id );
+									onBrandSiteChange( id );
 								}
 							} }
 							tabIndex={ isDisabled ? -1 : 0 }

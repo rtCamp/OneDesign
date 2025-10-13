@@ -64,12 +64,13 @@ class Constants {
 	public const ONEDESIGN_SHARED_TEMPLATES = 'onedesign_shared_templates';
 
 	/**
-	 * Consumer sites pattern.
-	 * Note: in all previous versions this was not prefixed with onedesign_ that's why we are keeping it same for backward compatibility.
+	 * Brand site patterns.
+	 *
+	 * Note: migrated from consumer_site_patterns to onedesign_brand_site_patterns for better clarity.
 	 *
 	 * @var string
 	 */
-	public const CONSUMER_SITE_PATTERNS = 'consumer_site_patterns';
+	public const ONEDESIGN_BRAND_SITE_PATTERNS = 'onedesign_brand_site_patterns';
 
 	/**
 	 * Child sites.

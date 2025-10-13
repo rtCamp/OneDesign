@@ -274,7 +274,7 @@ class CPT_Restriction {
 	public function add_default_content_to_editor( string $content, object $post ): string {
 		if ( Design_Library::SLUG === $post->post_type && empty( $content ) ) {
 			$content = '<!-- wp:heading {"level":2} -->
-			<h2>Click on the "Patterns Selection" to push patterns to consumer site.</h2>
+			<h2>Click on the "Patterns Selection" to push patterns to brand site.</h2>
 			<!-- /wp:heading -->';
 		}
 
