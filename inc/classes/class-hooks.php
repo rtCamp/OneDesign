@@ -47,6 +47,112 @@ class Hooks {
 
 		// Create templates, patterns and template parts from saved options.
 		add_action( 'after_setup_theme', array( $this, 'create_template' ), 99 );
+
+		// add container for modal for site selection on activation.
+		add_action( 'admin_footer', array( $this, 'add_site_selection_modal' ) );
+
+		// add body class for site selection modal.
+		add_filter( 'admin_body_class', array( $this, 'add_body_class_for_modal' ) );
+		add_filter( 'admin_body_class', array( $this, 'add_body_class_for_missing_sites' ) );
+
+		// add setup page link to plugins page.
+		add_filter( 'plugin_action_links_' . ONEDESIGN_PLUGIN_LOADER_PLUGIN_BASENAME, array( $this, 'add_setup_page_link' ) );
+	}
+
+		/**
+		 * Add setup page link to plugins page.
+		 *
+		 * @param array $links Existing plugin action links.
+		 * @return array Modified plugin action links.
+		 */
+	public function add_setup_page_link( $links ): array {
+		$setup_link = sprintf(
+			'<a href="%s">%s</a>',
+			esc_url( admin_url( 'admin.php?page=onedesign-settings' ) ),
+			__( 'Settings', 'onedesign' )
+		);
+		array_unshift( $links, $setup_link );
+		return $links;
+	}
+
+		/**
+		 * Add site selection modal to admin footer.
+		 *
+		 * @return void
+		 */
+	public function add_site_selection_modal(): void {
+		$current_screen = get_current_screen();
+		if ( ! $current_screen || 'plugins' !== $current_screen->base ) {
+			return;
+		}
+
+		// get current site type.
+		$site_type = Utils::get_current_site_type();
+		if ( ! empty( $site_type ) ) {
+			return;
+		}
+
+		?>
+		<div class="wrap">
+			<div id="onedesign-site-selection-modal" class="onedesign-modal"></div>
+		</div>
+		<?php
+	}
+
+		/**
+		 * Create global variable onedesign_sites with site info.
+		 *
+		 * @param string $classes Existing body classes.
+		 *
+		 * @return string
+		 */
+	public function add_body_class_for_modal( $classes ): string {
+		$current_screen = get_current_screen();
+		if ( ! $current_screen || 'plugins' !== $current_screen->base ) {
+			return $classes;
+		}
+
+		// get current site type.
+		$site_type = Utils::get_current_site_type();
+
+		if ( ! empty( $site_type ) ) {
+			return $classes;
+		}
+
+		// add onedesign-site-selection-modal class to body.
+		$classes .= ' onedesign-site-selection-modal ';
+		return $classes;
+	}
+
+		/**
+		 * Add body class for missing sites.
+		 *
+		 * @param string $classes Existing body classes.
+		 *
+		 * @return string
+		 */
+	public function add_body_class_for_missing_sites( $classes ): string {
+		$current_screen = get_current_screen();
+
+		if ( ! $current_screen ) {
+			return $classes;
+		}
+
+		// get onedesign_shared_sites option.
+		$shared_sites = get_option( Constants::ONEDESIGN_SHARED_SITES, array() );
+
+		// if shared_sites is empty or not an array, return the classes.
+		if ( empty( $shared_sites ) || ! is_array( $shared_sites ) ) {
+			$classes .= ' onedesign-missing-brand-sites ';
+
+			// remove submenu pages.
+			remove_submenu_page( 'onedesign', 'design-library' );
+			remove_submenu_page( 'onedesign', 'onedesign-templates' );
+
+			return $classes;
+		}
+
+		return $classes;
 	}
 
 	/**

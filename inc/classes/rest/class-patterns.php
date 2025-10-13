@@ -45,73 +45,6 @@ class Patterns {
 	}
 
 	/**
-	 * Permission check for manage options.
-	 *
-	 * @return bool
-	 */
-	public function manage_options_permission_check(): bool {
-		// Check if a user is logged in.
-		if ( ! is_user_logged_in() ) {
-			return false; // Not logged in, no access.
-		}
-
-		// Check if the current user has manage_options capability.
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return false; // User does not have permission.
-		}
-
-		return true;
-	}
-
-	/**
-	 * Permission check for API token.
-	 *
-	 * @param WP_REST_Request $request The REST request object.
-	 *
-	 * @return bool|WP_Error True, if permission is granted, WP_Error otherwise.
-	 */
-	public function api_token_permission_check( WP_REST_Request $request ): bool|WP_Error {
-		$token = $request->get_header( 'X-OneDesign-API-Key' );
-		// Use the option name from your settings class.
-		$expected_token = get_option( Constants::ONEDESIGN_API_KEY );
-
-		if ( ! $expected_token ) {
-			return new WP_Error(
-				'rest_no_api_token_set',
-				__( 'API key for this site is not configured. Please set it in Pattern Sync settings.', 'onedesign' ),
-				array( 'status' => 500 )
-			);
-		}
-
-		if ( empty( $token ) ) {
-			return new WP_Error(
-				'rest_forbidden_no_token',
-				__( 'Authorization token not provided.', 'onedesign' ),
-				array( 'status' => 401 )
-			);
-		}
-
-		if ( ! preg_match( '/^Bearer\s+(.+)$/', $token, $matches ) ) {
-			return new WP_Error(
-				'rest_forbidden_invalid_token_format',
-				__( 'Invalid authorization token format. Expected "Bearer <token>".', 'onedesign' ),
-				array( 'status' => 401 )
-			);
-		}
-		$provided_token = $matches[1];
-
-		if ( ! hash_equals( $expected_token, $provided_token ) ) {
-			return new WP_Error(
-				'rest_forbidden_invalid_token',
-				__( 'Invalid API token.', 'onedesign' ),
-				array( 'status' => 403 )
-			);
-		}
-
-		return true;
-	}
-
-	/**
 	 * Register REST routes for the plugin.
 	 */
 	public function register_rest_routes(): void {
@@ -121,7 +54,7 @@ class Patterns {
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_local_patterns' ),
-				'permission_callback' => array( $this, 'manage_options_permission_check' ),
+				'permission_callback' => array( Basic_Options::class, 'permission_callback' ),
 			)
 		);
 
@@ -131,7 +64,7 @@ class Patterns {
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_consumer_site_patterns' ),
-				'permission_callback' => array( $this, 'api_token_permission_check' ),
+				'permission_callback' => 'onedesign_validate_api_key',
 			)
 		);
 
@@ -141,7 +74,7 @@ class Patterns {
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_all_consumer_site_patterns' ),
-				'permission_callback' => array( $this, 'manage_options_permission_check' ),
+				'permission_callback' => array( Basic_Options::class, 'permission_callback' ),
 			)
 		);
 
@@ -151,7 +84,7 @@ class Patterns {
 			array(
 				'methods'             => WP_REST_Server::DELETABLE,
 				'callback'            => array( $this, 'request_remove_consumer_site_patterns' ),
-				'permission_callback' => array( $this, 'manage_options_permission_check' ),
+				'permission_callback' => array( Basic_Options::class, 'permission_callback' ),
 				'args'                => array(
 					'pattern_names' => array(
 						'required'          => true,
@@ -177,7 +110,7 @@ class Patterns {
 			array(
 				'methods'             => WP_REST_Server::DELETABLE,
 				'callback'            => array( $this, 'remove_consumer_site_patterns' ),
-				'permission_callback' => array( $this, 'api_token_permission_check' ),
+				'permission_callback' => 'onedesign_validate_api_key',
 				'args'                => array(
 					'pattern_names' => array(
 						'required'          => true,
@@ -196,7 +129,7 @@ class Patterns {
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_pattern_categories' ),
-				'permission_callback' => array( $this, 'manage_options_permission_check' ),
+				'permission_callback' => array( Basic_Options::class, 'permission_callback' ),
 			)
 		);
 
@@ -209,7 +142,7 @@ class Patterns {
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_configured_child_sites' ),
-				'permission_callback' => array( $this, 'manage_options_permission_check' ),
+				'permission_callback' => array( Basic_Options::class, 'permission_callback' ),
 			)
 		);
 
@@ -219,7 +152,7 @@ class Patterns {
 			array(
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'push_patterns_to_targets' ),
-				'permission_callback' => array( $this, 'manage_options_permission_check' ),
+				'permission_callback' => array( Basic_Options::class, 'permission_callback' ),
 				'args'                => array(
 					'pattern_names'   => array(
 						'required'          => true,
@@ -247,7 +180,7 @@ class Patterns {
 			array(
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'receive_patterns' ),
-				'permission_callback' => array( $this, 'api_token_permission_check' ),
+				'permission_callback' => 'onedesign_validate_api_key',
 				'args'                => array(
 					'patterns_data'    => array(
 						'required'          => true,
@@ -308,8 +241,8 @@ class Patterns {
 			array(
 				'method'  => 'DELETE',
 				'headers' => array(
-					'X-OneDesign-API-Key' => 'Bearer ' . $remote_api_key,
-					'Content-Type'        => 'application/json',
+					'X-OneDesign-Token' => $remote_api_key,
+					'Content-Type'      => 'application/json',
 				),
 				'body'    => wp_json_encode(
 					array(
@@ -421,8 +354,8 @@ class Patterns {
 				$remote_url,
 				array(
 					'headers' => array(
-						'X-OneDesign-API-Key' => 'Bearer ' . $remote_api_key,
-						'Content-Type'        => 'application/json',
+						'X-OneDesign-Token' => $remote_api_key,
+						'Content-Type'      => 'application/json',
 					),
 					'timeout' => 45,
 				)
@@ -462,15 +395,17 @@ class Patterns {
 			} else {
 				// Log or handle error response from a child site.
 				$error_message = $decoded_body['message'] ?? __( 'Unknown error from remote site.', 'onedesign' );
-				error_log( // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Using error_log for debugging purposes.
-					sprintf(
-						// translators: %1$s is the site name, %2$s is the error message, %3$d is the HTTP status code.
-						__( 'Error fetching patterns from %1$s: %2$s (Status: %3$d)', 'onedesign' ),
-						$site['name'] ?? 'Unknown Site',
-						$error_message,
-						$status_code
-					)
-				);
+				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+					error_log( // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- showing in dev mode only.
+						sprintf(
+							// translators: %1$s is the site name, %2$s is the error message, %3$d is the HTTP status code.
+							__( 'Error fetching patterns from %1$s: %2$s (Status: %3$d)', 'onedesign' ),
+							$site['name'] ?? __( 'Unknown Site', 'onedesign' ),
+							$error_message,
+							$status_code
+						)
+					);
+				}
 			}
 			$all_patterns[ $site['id'] ] = $site_patterns; // Store patterns by site ID.
 		}
@@ -687,8 +622,8 @@ class Patterns {
 				array(
 					'method'  => 'POST',
 					'headers' => array(
-						'X-OneDesign-API-Key' => 'Bearer ' . $remote_api_key,
-						'Content-Type'        => 'application/json',
+						'X-OneDesign-Token' => $remote_api_key,
+						'Content-Type'      => 'application/json',
 					),
 					'body'    => wp_json_encode(
 						array(
@@ -869,10 +804,10 @@ class Patterns {
 	 *
 	 * @return WP_Error|WP_REST_Response
 	 */
-	public function receive_patterns( WP_REST_Request $request ) {
-		$site_type = get_option( Constants::ONEDESIGN_SITE_TYPE, 'dashboard' ); // Default to parent if not set, though a child is expected here.
+	public function receive_patterns( WP_REST_Request $request ): WP_Error|WP_REST_Response {
+
 		// This endpoint is primarily for child sites, but a site could technically receive even if set as parent if token matches.
-		if ( 'consumer' !== $site_type ) {
+		if ( ! Utils::is_brand_site() ) {
 			return new WP_Error( 'not_child_site', __( 'This site is not configured as a child site to receive patterns.', 'onedesign' ), array( 'status' => 403 ) );
 		}
 
@@ -934,7 +869,7 @@ class Patterns {
 	 * Get child sites configured for this parent site.
 	 */
 	public function get_compatible_sites_object() {
-		$children = get_option( Constants::ONEDESIGN_CHILD_SITES, array() );
+		$children = get_option( Constants::ONEDESIGN_SHARED_SITES, array() );
 		if ( empty( $children ) || ! is_array( $children ) ) {
 			return array(); // Return an empty array if no children configured.
 		}

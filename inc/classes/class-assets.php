@@ -7,6 +7,7 @@
 
 namespace OneDesign;
 
+use OneDesign\Plugin_Configs\Constants;
 use OneDesign\Post_Types\{ Design_Library, Template };
 use OneDesign\Traits\Singleton;
 
@@ -38,11 +39,65 @@ class Assets {
 	/**
 	 * Add admin scripts.
 	 *
+	 * @param string $hook_suffix The current admin page.
+	 *
 	 * @return void
 	 */
-	public function add_admin_scripts(): void {
+	public function add_admin_scripts( $hook_suffix ): void {
 		$this->register_style( 'onedesign-admin-style', 'css/admin.css' );
 		wp_enqueue_style( 'onedesign-admin-style' );
+
+		$this->register_style( 'onedesign-admin-style', 'css/admin.css' );
+		wp_enqueue_style( 'onedesign-admin-style' );
+
+		if ( strpos( $hook_suffix, 'onedesign-settings' ) !== false ) {
+
+			// remove all notices.
+			remove_all_actions( 'admin_notices' );
+
+			$this->register_script(
+				'onedesign-settings-script',
+				'js/settings.js'
+			);
+
+			wp_localize_script(
+				'onedesign-settings-script',
+				'OneDesignSettings',
+				array(
+					'restUrl'   => esc_url( home_url( '/wp-json' ) ),
+					'restNonce' => wp_create_nonce( 'wp_rest' ),
+				)
+			);
+			wp_enqueue_script( 'onedesign-settings-script' );
+
+			// Enqueue the settings page styles.
+			$this->register_style( 'onedesign-settings-style', 'css/settings.css' );
+			wp_enqueue_style( 'onedesign-settings-style' );
+
+			wp_enqueue_media();
+		}
+
+		if ( strpos( $hook_suffix, 'plugins' ) !== false ) {
+			remove_all_actions( 'admin_notices' );
+			$this->register_script(
+				'onedesign-setup-script',
+				'js/plugin.js',
+			);
+
+			wp_localize_script(
+				'onedesign-setup-script',
+				'OneDesignSettings',
+				array(
+					'restUrl'   => esc_url( home_url( '/wp-json' ) ),
+					'apiKey'    => get_option( Constants::ONEDESIGN_API_KEY, 'default_api_key' ),
+					'restNonce' => wp_create_nonce( 'wp_rest' ),
+					'setupUrl'  => admin_url( 'admin.php?page=onedesign-settings' ),
+				)
+			);
+
+			wp_enqueue_script( 'onedesign-setup-script' );
+
+		}
 	}
 
 	/**

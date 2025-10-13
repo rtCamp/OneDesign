@@ -8,7 +8,7 @@
 namespace OneDesign;
 
 use OneDesign\Traits\Singleton;
-use OneDesign\Rest\{ Patterns, Templates };
+use OneDesign\Rest\{ Patterns, Templates, Basic_Options };
 
 /**
  * Class Rest
@@ -33,7 +33,23 @@ class Rest {
 	 * @return void
 	 */
 	protected function setup_hooks() {
+
+		Basic_Options::get_instance();
 		Patterns::get_instance();
 		Templates::get_instance();
+
+		// allow cors header for all REST API requests.
+		add_filter( 'rest_pre_serve_request', array( $this, 'add_cors_headers' ), PHP_INT_MAX - 30, 4 );
+	}
+
+	/**
+	 * Add CORS headers to REST API responses.
+	 *
+	 * @param bool $served Whether the request has been served.
+	 * @return bool
+	 */
+	public function add_cors_headers( $served ): bool {
+		header( 'Access-Control-Allow-Headers: X-OneDesign-Token, Content-Type, Authorization', false );
+		return $served;
 	}
 }

@@ -33,7 +33,7 @@ define( 'ONEDESIGN_BUILD_JS_URI', trailingslashit( ONEDESIGN_BUILD_URI ) . 'js/'
 define( 'ONEDESIGN_BUILD_JS_DIR_PATH', trailingslashit( ONEDESIGN_BUILD_PATH ) . 'js/' );
 define( 'ONEDESIGN_BUILD_CSS_URI', trailingslashit( ONEDESIGN_BUILD_URI ) . 'css/' );
 define( 'ONEDESIGN_BUILD_CSS_DIR_PATH', trailingslashit( ONEDESIGN_BUILD_PATH ) . 'css/' );
-
+define( 'ONEDESIGN_PLUGIN_LOADER_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
 
 // if autoload file does not exist then show notice that you are running the plugin from github repo so you need to build assets and install composer dependencies.

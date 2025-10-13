@@ -5,6 +5,9 @@
  * @package OneDesign
  */
 
+use OneDesign\Utils;
+use OneDesign\Plugin_Configs\Constants;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -108,4 +111,70 @@ function onedesign_parse_block_template( string $content, array &$already_tracke
 	}
 
 	return $results;
+}
+
+/**
+ * Validate API key for general request.
+ *
+ * @return bool
+ */
+function onedesign_validate_api_key(): bool {
+	return onedesign_key_validation( false );
+}
+
+/**
+ * Validate API key for health check.
+ *
+ * @return bool
+ */
+function onedesign_validate_api_key_health_check(): bool {
+	return onedesign_key_validation( true );
+}
+
+/**
+ * Validate API key.
+ *
+ * @param bool $is_health_check Whether the request is for health check or not.
+ *
+ * @return bool
+ */
+function onedesign_key_validation( $is_health_check ): bool {
+	// check if the request is from same site.
+	if ( Utils::is_governing_site() ) {
+		return current_user_can( 'manage_options' );
+	}
+
+	// check X-OneDesign-Token header.
+	if ( isset( $_SERVER['HTTP_X_ONEDESIGN_TOKEN'] ) && ! empty( $_SERVER['HTTP_X_ONEDESIGN_TOKEN'] ) ) {
+		$token = sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_ONEDESIGN_TOKEN'] ) );
+		// Get the api key from options.
+		$api_key = get_option( Constants::ONEDESIGN_API_KEY, 'default_api_key' );
+
+		// governing site url.
+		$governing_site_url = get_option( Constants::ONEDESIGN_GOVERNING_SITE_URL, '' );
+
+		// check if governing site is set and matches with request origin.
+		$request_origin   = isset( $_SERVER['HTTP_ORIGIN'] ) ? esc_url_raw( wp_unslash( $_SERVER['HTTP_ORIGIN'] ) ) : '';
+		$current_site_url = get_site_url();
+		$user_agent       = isset( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : ''; // phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___SERVER__HTTP_USER_AGENT__ -- this is to know requesting user domain for request which are generated from server.
+		$is_token_valid   = hash_equals( $token, $api_key );
+		$is_same_domain   = ! empty( $request_origin ) && Utils::is_same_domain( $current_site_url, $request_origin );
+
+		// if token is valid and from same domain return true.
+		if ( Utils::is_brand_site() && $is_same_domain && $is_token_valid ) {
+			return true;
+		}
+
+		// if token is valid and request is from different domain then save it as governing site.
+		if ( Utils::is_brand_site() && ! $is_same_domain && $is_token_valid && empty( $governing_site_url ) && $is_health_check ) {
+			update_option( Constants::ONEDESIGN_GOVERNING_SITE_URL, $request_origin, false );
+			return true;
+		}
+
+		// if token is valid and request is from different domain then check if it matches governing site url.
+		if ( Utils::is_brand_site() && ! $is_same_domain && $is_token_valid && ! empty( $governing_site_url ) && ( Utils::is_same_domain( $governing_site_url, $request_origin ) || false !== strpos( $user_agent, $governing_site_url ) ) ) {
+			return true;
+		}
+	}
+	return false;
 }

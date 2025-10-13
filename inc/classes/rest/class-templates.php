@@ -49,8 +49,6 @@ class Templates {
 	 */
 	public function register_routes(): void {
 
-		$patterns_instance = Patterns::get_instance();
-
 		/**
 		 * Register route to get all templates.
 		 *
@@ -62,7 +60,7 @@ class Templates {
 			array(
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_all_templates' ),
-				'permission_callback' => array( $patterns_instance, 'manage_options_permission_check' ),
+				'permission_callback' => array( Basic_Options::class, 'permission_callback' ),
 			)
 		);
 
@@ -75,7 +73,7 @@ class Templates {
 			array(
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_templates_from_connected_sites' ),
-				'permission_callback' => array( $patterns_instance, 'manage_options_permission_check' ),
+				'permission_callback' => array( Basic_Options::class, 'permission_callback' ),
 			)
 		);
 
@@ -89,12 +87,12 @@ class Templates {
 				array(
 					'methods'             => \WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_shared_templates' ),
-					'permission_callback' => array( $patterns_instance, 'api_token_permission_check' ),
+					'permission_callback' => 'onedesign_validate_api_key',
 				),
 				array(
 					'methods'             => \WP_REST_Server::CREATABLE,
 					'callback'            => array( $this, 'create_templates' ),
-					'permission_callback' => array( $patterns_instance, 'api_token_permission_check' ),
+					'permission_callback' => 'onedesign_validate_api_key',
 					'args'                => array(
 						'templates'      => array(
 							'required' => true,
@@ -122,7 +120,7 @@ class Templates {
 			array(
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'apply_templates_to_sites' ),
-				'permission_callback' => array( $patterns_instance, 'manage_options_permission_check' ),
+				'permission_callback' => array( Basic_Options::class, 'permission_callback' ),
 				'args'                => array(
 					'sites'     => array(
 						'required' => true,
@@ -145,7 +143,7 @@ class Templates {
 			array(
 				'methods'             => \WP_REST_Server::DELETABLE,
 				'callback'            => array( $this, 'remove_template' ),
-				'permission_callback' => array( $patterns_instance, 'manage_options_permission_check' ),
+				'permission_callback' => array( Basic_Options::class, 'permission_callback' ),
 				'args'                => array(
 					'template_ids' => array(
 						'required' => true,
@@ -168,7 +166,7 @@ class Templates {
 			array(
 				'methods'             => \WP_REST_Server::DELETABLE,
 				'callback'            => array( $this, 'remove_template_from_brand_site' ),
-				'permission_callback' => array( $patterns_instance, 'api_token_permission_check' ),
+				'permission_callback' => 'onedesign_validate_api_key',
 				'args'                => array(
 					'template_ids'  => array(
 						'required' => true,
@@ -191,7 +189,7 @@ class Templates {
 			array(
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'resync_applied_templates' ),
-				'permission_callback' => array( $patterns_instance, 'manage_options_permission_check' ),
+				'permission_callback' => array( Basic_Options::class, 'permission_callback' ),
 				'args'                => array(
 					'sites'     => array(
 						'required' => true,
@@ -214,7 +212,7 @@ class Templates {
 			array(
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'create_synced_patterns' ),
-				'permission_callback' => array( $patterns_instance, 'api_token_permission_check' ),
+				'permission_callback' => 'onedesign_validate_api_key',
 				'args'                => array(
 					'synced_patterns' => array(
 						'required' => false,
@@ -478,8 +476,8 @@ class Templates {
 			$request_url,
 			array(
 				'headers' => array(
-					'X-OneDesign-API-Key' => 'Bearer ' . $api_key,
-					'Content-Type'        => 'application/json',
+					'X-OneDesign-Token' => $api_key,
+					'Content-Type'      => 'application/json',
 				),
 				'method'  => 'DELETE',
 				'body'    => wp_json_encode(
@@ -657,8 +655,8 @@ class Templates {
 					$synced_patterns_request_url,
 					array(
 						'headers' => array(
-							'X-OneDesign-API-Key' => 'Bearer ' . $site_api_key,
-							'Content-Type'        => 'application/json',
+							'X-OneDesign-Token' => $site_api_key,
+							'Content-Type'      => 'application/json',
 						),
 						'body'    => wp_json_encode(
 							array(
@@ -687,8 +685,8 @@ class Templates {
 					$request_url,
 					array(
 						'headers' => array(
-							'X-OneDesign-API-Key' => 'Bearer ' . $site_api_key,
-							'Content-Type'        => 'application/json',
+							'X-OneDesign-Token' => $site_api_key,
+							'Content-Type'      => 'application/json',
 						),
 						'body'    => wp_json_encode(
 							array(
@@ -758,8 +756,8 @@ class Templates {
 				$request_url,
 				array(
 					'headers' => array(
-						'X-OneDesign-API-Key' => 'Bearer ' . $api_key,
-						'Content-Type'        => 'application/json',
+						'X-OneDesign-Token' => $api_key,
+						'Content-Type'      => 'application/json',
 					),
 					'timeout' => 15,
 				)

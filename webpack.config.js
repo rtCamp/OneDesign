@@ -76,6 +76,8 @@ const scripts = {
 		admin: path.resolve( process.cwd(), 'assets', 'src', 'js', 'admin.js' ),
 		'templates-library': path.resolve( process.cwd(), 'assets', 'src', 'admin', 'templates', 'index.js' ),
 		'patterns-library': path.resolve( process.cwd(), 'assets', 'src', 'admin', 'patterns', 'index.js' ),
+		settings: path.resolve( process.cwd(), 'assets', 'src', 'admin', 'settings', 'index.js' ),
+		plugin: path.resolve( process.cwd(), 'assets', 'src', 'admin', 'plugin', 'index.js' ),
 	},
 };
 

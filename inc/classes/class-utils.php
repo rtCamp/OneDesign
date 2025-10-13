@@ -52,8 +52,7 @@ class Utils {
 	 * @return bool
 	 */
 	public static function is_brand_site(): bool {
-		// using consumer as it's legacy naming convention used in initial releases.
-		return hash_equals( 'consumer', self::get_current_site_type() );
+		return hash_equals( 'brand-site', self::get_current_site_type() );
 	}
 
 	/**
@@ -62,8 +61,25 @@ class Utils {
 	 * @return bool
 	 */
 	public static function is_governing_site(): bool {
-		// using dashboard as it's legacy naming convention used in initial releases.
-		return hash_equals( 'dashboard', self::get_current_site_type() );
+		return hash_equals( 'governing-site', self::get_current_site_type() );
+	}
+
+	/**
+	 * Check if two URLs belong to the same domain.
+	 *
+	 * @param string $url1 First URL.
+	 * @param string $url2 Second URL.
+	 *
+	 * @return bool True if both URLs belong to the same domain, false otherwise.
+	 */
+	public static function is_same_domain( string $url1, string $url2 ): bool {
+		$parsed_url1 = wp_parse_url( $url1 );
+		$parsed_url2 = wp_parse_url( $url2 );
+
+		if ( ! isset( $parsed_url1['host'] ) || ! isset( $parsed_url2['host'] ) ) {
+			return false;
+		}
+		return hash_equals( $parsed_url1['host'], $parsed_url2['host'] );
 	}
 
 	/**
@@ -91,7 +107,7 @@ class Utils {
 	 * @return array Array of sites info.
 	 */
 	public static function get_sites_info(): array {
-		$sites_info = get_option( Constants::ONEDESIGN_CHILD_SITES, array() );
+		$sites_info = get_option( Constants::ONEDESIGN_SHARED_SITES, array() );
 		return is_array( $sites_info ) ? $sites_info : array();
 	}
 
