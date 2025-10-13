@@ -43,10 +43,8 @@ function fetchAllConsumerSitePatterns() {
 		.then( ( data ) => {
 			if ( data.success ) {
 				return data.patterns || [];
-				// eslint-disable-next-line no-else-return
-			} else {
-				throw new Error( 'Failed to fetch patterns' );
 			}
+			throw new Error( 'Failed to fetch patterns' );
 		} )
 		.catch( ( error ) => {
 			console.error( 'Error fetching consumer site patterns:', error ); // eslint-disable-line no-console
@@ -55,13 +53,13 @@ function fetchAllConsumerSitePatterns() {
 }
 
 /**
- * LibraryModal component
+ * PatternModal component
  * Displays the patterns library modal with tabs for base patterns and applied patterns.
  * Allows users to search, filter, and apply patterns across different consumer sites.
  *
  * @return {JSX.Element} The rendered modal component.
  */
-const LibraryModal = () => {
+const PatternModal = () => {
 	const [ basePatterns, setBasePatterns ] = useState( [] );
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ searchTerm, setSearchTerm ] = useState( '' );
@@ -544,4 +542,4 @@ const LibraryModal = () => {
 	);
 };
 
-export default LibraryModal;
+export default PatternModal;

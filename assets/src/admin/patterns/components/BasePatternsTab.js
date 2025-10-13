@@ -9,7 +9,7 @@ import { Button, Modal, Spinner, Notice } from '@wordpress/components';
  * Internal dependencies
  */
 import MemoizedPatternPreview from './MemoizedPatternPreview';
-import RenderConsumerSiteMeta from '../../plugins/consumer-site';
+import SiteSelection from './SiteSelection';
 
 /**
  * BasePatternsTab component displays a list of base patterns with options to apply them to consumer sites
@@ -182,7 +182,7 @@ const BasePatternsTab = memo(
 			return (
 				<div className="od-consumer-site-modal-content">
 					<div className="od-site-selection-wrapper">
-						<RenderConsumerSiteMeta
+						<SiteSelection
 							setIsSiteSelected={ setIsSiteSelected }
 							selectedPatterns={ selectedPatterns }
 							basePatterns={ basePatterns }

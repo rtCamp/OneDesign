@@ -56,9 +56,12 @@ class Assets {
 
 		if ( Design_Library::SLUG === $current_screen->id ) {
 
-			$this->register_script( 'onedesign-editor-script', 'js/editor.js' );
+			$this->register_script(
+				'onedesign-patterns-library-script',
+				'js/patterns-library.js'
+			);
 			wp_localize_script(
-				'onedesign-editor-script',
+				'onedesign-patterns-library-script',
 				'patternSyncData',
 				array(
 					'ajaxurl'      => admin_url( 'admin-ajax.php' ),
@@ -68,7 +71,7 @@ class Assets {
 					'settingsLink' => esc_url( admin_url( 'admin.php?page=onedesign-settings' ) ),
 				)
 			);
-			wp_enqueue_script( 'onedesign-editor-script' );
+			wp_enqueue_script( 'onedesign-patterns-library-script' );
 
 			$this->register_style( 'onedesign-editor-style', 'css/editor.css' );
 			wp_enqueue_style( 'onedesign-editor-style' );

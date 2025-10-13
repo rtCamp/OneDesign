@@ -13,25 +13,19 @@ import MemoizedPatternPreview from './MemoizedPatternPreview';
 /**
  * AppliedPatternsTab component displays a list of applied patterns with options to remove them.
  *
- * @param {Object}   props                         - Component properties.
- * @param {boolean}  props.isLoadingApplied        - Indicates if applied patterns are loading.
- * @param {Array}    props.appliedPatterns         - List of applied patterns.
- * @param {number}   props.visibleAppliedCount     - Number of applied patterns currently visible.
- * @param {Array}    props.selectedPatterns        - List of selected patterns (not used in this component).
- * @param {boolean}  props.hasMoreAppliedPatterns  - Indicates if there are more applied patterns to load (not used in this component).
- * @param {Function} props.loadMoreAppliedPatterns - Function to load more applied patterns (not used in this component).
- * @param {Function} props.applySelectedPatterns   - Function to apply selected patterns.
- * @param {Function} props.setVisibleAppliedCount  - Function to set the number of visible applied patterns.
- * @param {Object}   props.siteInfo                - Information about the site (used for applying patterns).
+ * @param {Object}   props                        - Component properties.
+ * @param {boolean}  props.isLoadingApplied       - Indicates if applied patterns are loading.
+ * @param {Array}    props.appliedPatterns        - List of applied patterns.
+ * @param {number}   props.visibleAppliedCount    - Number of applied patterns currently visible.
+ * @param {Function} props.applySelectedPatterns  - Function to apply selected patterns.
+ * @param {Function} props.setVisibleAppliedCount - Function to set the number of visible applied patterns.
+ * @param {Object}   props.siteInfo               - Information about the site (used for applying patterns).
  * @return {JSX.Element} Rendered component.
  */
 const AppliedPatternsTab = memo( ( {
 	isLoadingApplied,
 	appliedPatterns,
 	visibleAppliedCount,
-	selectedPatterns, // eslint-disable-line no-unused-vars
-	hasMoreAppliedPatterns, // eslint-disable-line no-unused-vars
-	loadMoreAppliedPatterns, // eslint-disable-line no-unused-vars
 	applySelectedPatterns,
 	setVisibleAppliedCount,
 	siteInfo,

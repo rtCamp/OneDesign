@@ -1,4 +1,3 @@
 /**
- * Patterns popover component.
+ * Editor Script
  */
-import '../patterns-popover';
