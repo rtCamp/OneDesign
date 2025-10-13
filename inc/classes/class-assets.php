@@ -61,10 +61,11 @@ class Assets {
 				'onedesign-editor-script',
 				'patternSyncData',
 				array(
-					'ajaxurl'  => admin_url( 'admin-ajax.php' ),
-					'nonce'    => wp_create_nonce( 'onedesign_nonce' ),
-					'siteUrl'  => home_url(),
-					'adminUrl' => admin_url(),
+					'ajaxurl'      => admin_url( 'admin-ajax.php' ),
+					'nonce'        => wp_create_nonce( 'onedesign_nonce' ),
+					'siteUrl'      => home_url(),
+					'adminUrl'     => admin_url(),
+					'settingsLink' => esc_url( admin_url( 'admin.php?page=onedesign-settings' ) ),
 				)
 			);
 			wp_enqueue_script( 'onedesign-editor-script' );
@@ -109,7 +110,7 @@ class Assets {
 	public function get_asset_meta( $file, $deps = array(), $ver = false ): array {
 		$asset_meta_file = sprintf( '%s/js/%s.asset.php', untrailingslashit( ONEDESIGN_BUILD_PATH ), basename( $file, '.' . pathinfo( $file )['extension'] ) );
 		$asset_meta      = is_readable( $asset_meta_file )
-			? require $asset_meta_file
+			? require_once $asset_meta_file
 			: array(
 				'dependencies' => array(),
 				'version'      => $this->get_file_version( $file, $ver ),

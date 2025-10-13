@@ -1,11 +1,23 @@
 /**
  * WordPress dependencies
  */
-import { useState, useEffect, useCallback, useMemo } from '@wordpress/element';
-import { Modal, SearchControl, TabPanel, Spinner, IconButton } from '@wordpress/components';
+import {
+	useState,
+	useEffect,
+	useCallback,
+	useMemo,
+} from '@wordpress/element';
+import {
+	Modal,
+	SearchControl,
+	TabPanel,
+	Spinner,
+	Button,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useSelect, useDispatch } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
+import { cog } from '@wordpress/icons';
 
 /**
  * Internal dependencies
@@ -13,6 +25,11 @@ import apiFetch from '@wordpress/api-fetch';
 import BasePatternsTab from './BasePatternsTab';
 import AppliedPatternsTab from './AppliedPatternsTab';
 import Category from './Category';
+
+/**
+ * Global data
+ */
+const SettingLink = patternSyncData?.settingsLink;
 
 /**
  * Fetch all consumer site patterns
@@ -430,6 +447,28 @@ const LibraryModal = () => {
 					isOpen={ isOpen }
 					isFullScreen
 					className="onedesign-modal-wrapper"
+					headerActions={
+						<div
+							style={ {
+								display: 'flex',
+								gap: '8px',
+								flexDirection: 'row',
+								alignItems: 'center',
+							} }
+						>
+
+							{ SettingLink && (
+								<Button
+									icon={ cog }
+									variant="secondary"
+									onClick={ () => {
+										window.location.href = SettingLink;
+									} }
+									label={ __( 'Go to OneDesign Settings', 'onedesign' ) }
+								/>
+							) }
+						</div>
+					}
 				>
 					<div className="onedesign-modal-content">
 						<Category
@@ -496,15 +535,6 @@ const LibraryModal = () => {
 										);
 									} }
 								</TabPanel>
-								{ /* Add icon button to redirect user to onedesign-settings page */ }
-								<IconButton
-									icon="admin-generic"
-									label={ __( 'Go to OneDesign Settings', 'onedesign' ) }
-									onClick={ () => {
-										window.location.href = '/wp-admin/admin.php?page=onedesign-settings';
-									} }
-									className="onedesign-settings-button"
-								/>
 							</div>
 						</div>
 					</div>

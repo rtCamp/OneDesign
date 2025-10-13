@@ -9,14 +9,14 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-10-09T06:42:10+00:00\n"
+"POT-Creation-Date: 2025-10-13T05:53:47+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 
 #. Plugin Name of the plugin
 #: onedesign.php
-#: inc/classes/class-settings.php:81
-#: inc/classes/class-settings.php:82
+#: inc/classes/class-settings.php:61
+#: inc/classes/class-settings.php:62
 #: onedesign.php:51
 msgid "OneDesign"
 msgstr ""
@@ -42,9 +42,9 @@ msgid "https://rtcamp.com"
 msgstr ""
 
 #: inc/classes/class-cpt-restriction.php:52
-#: inc/classes/class-settings.php:95
-#: inc/classes/class-settings.php:96
-#: inc/classes/class-settings.php:512
+#: inc/classes/class-settings.php:74
+#: inc/classes/class-settings.php:75
+#: inc/classes/class-settings.php:491
 msgid "Design Library"
 msgstr ""
 
@@ -91,133 +91,133 @@ msgstr ""
 msgid "Template part setup completed: %1$s (ID: %2$d)"
 msgstr ""
 
-#: inc/classes/class-hooks.php:241
+#: inc/classes/class-hooks.php:238
 msgid "Patterns Selection"
 msgstr ""
 
-#: inc/classes/class-hooks.php:263
-#: inc/classes/class-settings.php:103
-#: inc/classes/class-settings.php:164
+#: inc/classes/class-hooks.php:260
+#: inc/classes/class-settings.php:82
+#: inc/classes/class-settings.php:143
 msgid "Templates"
 msgstr ""
 
-#: inc/classes/class-settings.php:104
+#: inc/classes/class-settings.php:83
 #: assets/build/js/templates-library.js:7
 #: assets/src/admin/templates/components/TemplateModal.js:318
 msgid "Template Library"
 msgstr ""
 
-#: inc/classes/class-settings.php:113
-#: inc/classes/class-settings.php:114
+#: inc/classes/class-settings.php:92
+#: inc/classes/class-settings.php:93
 msgid "Settings"
 msgstr ""
 
-#: inc/classes/class-settings.php:171
+#: inc/classes/class-settings.php:150
 msgid "Error creating template post."
 msgstr ""
 
-#: inc/classes/class-settings.php:211
+#: inc/classes/class-settings.php:190
 msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 
-#: inc/classes/class-settings.php:233
+#: inc/classes/class-settings.php:212
 msgid "Site Type"
 msgstr ""
 
-#: inc/classes/class-settings.php:238
+#: inc/classes/class-settings.php:217
 msgid "Consumer Site"
 msgstr ""
 
-#: inc/classes/class-settings.php:240
+#: inc/classes/class-settings.php:219
 msgid "Dashboard Site"
 msgstr ""
 
-#: inc/classes/class-settings.php:243
+#: inc/classes/class-settings.php:222
 msgid "Choose whether this is a consumer site or dashboard site."
 msgstr ""
 
-#: inc/classes/class-settings.php:251
+#: inc/classes/class-settings.php:230
 msgid "Consumer Site Settings"
 msgstr ""
 
-#: inc/classes/class-settings.php:255
-#: inc/classes/class-settings.php:284
+#: inc/classes/class-settings.php:234
+#: inc/classes/class-settings.php:263
 #: assets/build/js/admin.js:1
 #: assets/src/js/admin.js:199
 msgid "API Key"
 msgstr ""
 
-#: inc/classes/class-settings.php:262
+#: inc/classes/class-settings.php:241
 msgid "Regenerate API Key"
 msgstr ""
 
-#: inc/classes/class-settings.php:265
+#: inc/classes/class-settings.php:244
 msgid "This API key will be used by dashboard sites to connect to this consumer site."
 msgstr ""
 
-#: inc/classes/class-settings.php:274
+#: inc/classes/class-settings.php:253
 msgid "Dashboard Site Settings"
 msgstr ""
 
-#: inc/classes/class-settings.php:275
+#: inc/classes/class-settings.php:254
 msgid "Manage child sites that this dashboard will distribute patterns to."
 msgstr ""
 
-#: inc/classes/class-settings.php:281
+#: inc/classes/class-settings.php:260
 #: assets/build/js/admin.js:1
 #: assets/src/js/admin.js:183
 msgid "Site Name"
 msgstr ""
 
-#: inc/classes/class-settings.php:282
+#: inc/classes/class-settings.php:261
 msgid "URL"
 msgstr ""
 
-#: inc/classes/class-settings.php:283
+#: inc/classes/class-settings.php:262
 msgid "Logo"
 msgstr ""
 
-#: inc/classes/class-settings.php:285
+#: inc/classes/class-settings.php:264
 msgid "Actions"
 msgstr ""
 
-#: inc/classes/class-settings.php:313
+#: inc/classes/class-settings.php:292
 #: assets/build/js/admin.js:1
 #: assets/src/js/admin.js:194
 msgid "Upload Logo"
 msgstr ""
 
-#: inc/classes/class-settings.php:315
+#: inc/classes/class-settings.php:294
 #: assets/build/js/admin.js:1
 #: assets/src/js/admin.js:195
 msgid "Remove Logo"
 msgstr ""
 
-#: inc/classes/class-settings.php:325
+#: inc/classes/class-settings.php:304
 #: assets/build/js/admin.js:1
 #: assets/src/js/admin.js:202
 msgid "Delete"
 msgstr ""
 
-#: inc/classes/class-settings.php:331
+#: inc/classes/class-settings.php:310
 #: assets/build/js/admin.js:1
 #: assets/src/js/admin.js:233
 msgid "No child sites configured yet."
 msgstr ""
 
-#: inc/classes/class-settings.php:338
+#: inc/classes/class-settings.php:317
 msgid "Add Site"
 msgstr ""
 
-#: inc/classes/class-settings.php:440
+#: inc/classes/class-settings.php:419
 msgid "Settings saved successfully."
 msgstr ""
 
-#: inc/classes/class-settings.php:449
+#: inc/classes/class-settings.php:428
 msgid "API key regenerated successfully."
 msgstr ""
 
-#: inc/classes/class-settings.php:519
+#: inc/classes/class-settings.php:498
 msgid "Error creating Design Library post."
 msgstr ""
 
@@ -339,116 +339,116 @@ msgstr ""
 msgid "No Template found in trash."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:89
+#: inc/classes/rest/class-patterns.php:81
 msgid "API key for this site is not configured. Please set it in Pattern Sync settings."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:97
+#: inc/classes/rest/class-patterns.php:89
 msgid "Authorization token not provided."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:105
+#: inc/classes/rest/class-patterns.php:97
 msgid "Invalid authorization token format. Expected \"Bearer <token>\"."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:114
+#: inc/classes/rest/class-patterns.php:106
 msgid "Invalid API token."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:286
-#: inc/classes/rest/class-patterns.php:410
-#: inc/classes/rest/class-patterns.php:624
+#: inc/classes/rest/class-patterns.php:278
+#: inc/classes/rest/class-patterns.php:401
+#: inc/classes/rest/class-patterns.php:613
 msgid "This site is not configured as a parent site."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:293
+#: inc/classes/rest/class-patterns.php:285
 msgid "Pattern name and site ID are required."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:302
-#: inc/classes/rest/class-patterns.php:691
+#: inc/classes/rest/class-patterns.php:294
+#: inc/classes/rest/class-patterns.php:680
 msgid "API key for the target site is missing in configuration."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:309
-#: inc/classes/rest/class-patterns.php:679
+#: inc/classes/rest/class-patterns.php:301
+#: inc/classes/rest/class-patterns.php:668
 msgid "Target site not found in configuration."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:332
+#: inc/classes/rest/class-patterns.php:324
 msgid "Failed to communicate with the target site."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:343
+#: inc/classes/rest/class-patterns.php:335
 msgid "Pattern removal request sent successfully."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:349
-#: inc/classes/rest/class-patterns.php:473
-#: inc/classes/rest/class-patterns.php:731
+#: inc/classes/rest/class-patterns.php:341
+#: inc/classes/rest/class-patterns.php:464
+#: inc/classes/rest/class-patterns.php:720
 msgid "Unknown error from remote site."
 msgstr ""
 
 #. translators: %1$s is the error message, %2$d is the HTTP status code.
-#: inc/classes/rest/class-patterns.php:353
+#: inc/classes/rest/class-patterns.php:345
 #, php-format
 msgid "Error removing pattern: %1$s (Status: %2$d)"
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:370
+#: inc/classes/rest/class-patterns.php:362
 msgid "Pattern names must be provided as an array."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:376
-#: inc/classes/rest/class-patterns.php:509
+#: inc/classes/rest/class-patterns.php:368
+#: inc/classes/rest/class-patterns.php:500
 msgid "No patterns found for this consumer site."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:387
+#: inc/classes/rest/class-patterns.php:379
 msgid "No patterns were removed. Please check the pattern names provided."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:395
+#: inc/classes/rest/class-patterns.php:387
 msgid "Consumer site patterns removed successfully."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:416
+#: inc/classes/rest/class-patterns.php:407
 msgid "No child sites configured to receive patterns."
 msgstr ""
 
 #. translators: %1$s is the site name, %2$s is the error message, %3$d is the HTTP status code.
-#: inc/classes/rest/class-patterns.php:477
+#: inc/classes/rest/class-patterns.php:468
 #, php-format
 msgid "Error fetching patterns from %1$s: %2$s (Status: %3$d)"
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:549
+#: inc/classes/rest/class-patterns.php:540
 msgid "Pattern categories registry not found."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:660
+#: inc/classes/rest/class-patterns.php:649
 msgid "No valid patterns selected to push."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:727
+#: inc/classes/rest/class-patterns.php:716
 msgid "Patterns pushed successfully."
 msgstr ""
 
 #. translators: %1$s is the error message, %2$d is the HTTP status code.
-#: inc/classes/rest/class-patterns.php:735
+#: inc/classes/rest/class-patterns.php:724
 #, php-format
 msgid "Error pushing patterns: %1$s (Status: %2$d)"
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:887
+#: inc/classes/rest/class-patterns.php:876
 msgid "This site is not configured as a child site to receive patterns."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:893
+#: inc/classes/rest/class-patterns.php:882
 msgid "No patterns data received."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:937
+#: inc/classes/rest/class-patterns.php:926
 msgid "Patterns processed."
 msgstr ""
 
@@ -877,53 +877,53 @@ msgid "All"
 msgstr ""
 
 #: assets/build/js/editor.js:2
-#: assets/src/patterns-popover/components/LibraryModal.js:205
-#: assets/src/patterns-popover/components/LibraryModal.js:215
+#: assets/src/patterns-popover/components/LibraryModal.js:222
+#: assets/src/patterns-popover/components/LibraryModal.js:232
 msgid "Current Site Patterns"
 msgstr ""
 
 #: assets/build/js/editor.js:2
-#: assets/src/patterns-popover/components/LibraryModal.js:314
+#: assets/src/patterns-popover/components/LibraryModal.js:331
 msgid "Failed to apply patterns to some sites:"
 msgstr ""
 
 #: assets/build/js/editor.js:2
-#: assets/src/patterns-popover/components/LibraryModal.js:330
+#: assets/src/patterns-popover/components/LibraryModal.js:347
 msgid "No patterns or sites selected"
 msgstr ""
 
 #: assets/build/js/editor.js:2
-#: assets/src/patterns-popover/components/LibraryModal.js:399
+#: assets/src/patterns-popover/components/LibraryModal.js:416
 msgid "Failed to remove patterns"
 msgstr ""
 
 #: assets/build/js/editor.js:2
 #: assets/build/js/templates-library.js:7
 #: assets/src/admin/templates/components/TemplateModal.js:314
-#: assets/src/patterns-popover/components/LibraryModal.js:420
+#: assets/src/patterns-popover/components/LibraryModal.js:437
 msgid "Loading…"
 msgstr ""
 
 #: assets/build/js/editor.js:2
-#: assets/src/patterns-popover/components/LibraryModal.js:424
+#: assets/src/patterns-popover/components/LibraryModal.js:441
 msgid "Patterns Library"
-msgstr ""
-
-#: assets/build/js/editor.js:2
-#: assets/src/patterns-popover/components/LibraryModal.js:452
-msgid "Search patterns…"
-msgstr ""
-
-#: assets/build/js/editor.js:2
-#: assets/src/patterns-popover/components/LibraryModal.js:263
-msgid "Here are patterns with"
 msgstr ""
 
 #: assets/build/js/editor.js:2
 #: assets/build/js/templates-library.js:7
 #: assets/src/admin/templates/components/TemplateModal.js:355
-#: assets/src/patterns-popover/components/LibraryModal.js:502
+#: assets/src/patterns-popover/components/LibraryModal.js:467
 msgid "Go to OneDesign Settings"
+msgstr ""
+
+#: assets/build/js/editor.js:2
+#: assets/src/patterns-popover/components/LibraryModal.js:491
+msgid "Search patterns…"
+msgstr ""
+
+#: assets/build/js/editor.js:2
+#: assets/src/patterns-popover/components/LibraryModal.js:280
+msgid "Here are patterns with"
 msgstr ""
 
 #: assets/build/js/templates-library.js:1
