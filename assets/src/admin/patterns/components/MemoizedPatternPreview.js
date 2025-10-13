@@ -7,7 +7,13 @@ import { __ } from '@wordpress/i18n';
 import { parse } from '@wordpress/blocks';
 import { BlockPreview } from '@wordpress/block-editor';
 
-// Separate memoized component for the preview
+/**
+ * Pattern content preview.
+ *
+ * @param {Object} props              - Component properties.
+ * @param {Array}  props.parsedBlocks - Parsed blocks to preview.
+ * @return {JSX.Element} Rendered component.
+ */
 const PatternPreviewContent = memo( ( { parsedBlocks } ) => {
 	return (
 		<div className="od-pattern-preview">
@@ -16,7 +22,13 @@ const PatternPreviewContent = memo( ( { parsedBlocks } ) => {
 	);
 } );
 
-// Separate memoized component for pattern categories
+/**
+ * Separate memoized component for pattern categories
+ *
+ * @param {Object} props            - Component properties.
+ * @param {Object} props.categories - Categories object.
+ * @return {JSX.Element} Rendered component.
+ */
 const PatternCategories = memo( ( { categories } ) => {
 	if ( ! categories || typeof categories !== 'object' || Array.isArray( categories ) ) {
 		return null;
@@ -40,7 +52,13 @@ const PatternCategories = memo( ( { categories } ) => {
 	);
 } );
 
-// Separate memoized component for provider site
+/**
+ * Separate memoized component for provider site info
+ *
+ * @param {Object} props              - Component properties.
+ * @param {string} props.providerSite - Provider site name.
+ * @return {JSX.Element} Rendered component.
+ */
 const ProviderSiteInfo = memo( ( { providerSite } ) => {
 	if ( ! providerSite ) {
 		return null;

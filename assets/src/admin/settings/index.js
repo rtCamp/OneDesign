@@ -18,6 +18,11 @@ import SiteSettings from '../../components/SiteSettings';
 const API_NAMESPACE = OneDesignSettings.restUrl + '/onedesign/v1';
 const NONCE = OneDesignSettings.restNonce;
 
+/**
+ * Settings page component for OneDesign plugin.
+ *
+ * @return {JSX.Element} Rendered component.
+ */
 const OneDesignSettingsPage = () => {
 	const [ siteType, setSiteType ] = useState( '' );
 	const [ showModal, setShowModal ] = useState( false );

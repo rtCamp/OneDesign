@@ -1,3 +1,6 @@
+/**
+ * WordPress dependencies
+ */
 import { useState, useMemo } from '@wordpress/element';
 import {
 	Modal,
@@ -8,8 +11,20 @@ import {
 	BaseControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
 import { isValidUrl } from '../js/utils';
 
+/**
+ * Delete Confirmation Modal component.
+ *
+ * @param {Object}   props           - Component properties.
+ * @param {Function} props.onConfirm - Function to call on confirm.
+ * @param {Function} props.onCancel  - Function to call on cancel.
+ * @return {JSX.Element} Rendered component.
+ */
 const DeleteConfirmationModal = ( { onConfirm, onCancel } ) => (
 	<Modal
 		title={ __( 'Remove Site Logo', 'onedesign' ) }
@@ -36,6 +51,18 @@ const DeleteConfirmationModal = ( { onConfirm, onCancel } ) => (
 	</Modal>
 );
 
+/**
+ * Site Modal component for adding/editing a site.
+ *
+ * @param {Object}   props              - Component properties.
+ * @param {Object}   props.formData     - Current form data.
+ * @param {Function} props.setFormData  - Function to update form data.
+ * @param {Function} props.onSubmit     - Function to call on form submission.
+ * @param {Function} props.onClose      - Function to call on modal close.
+ * @param {boolean}  props.editing      - Whether the modal is in editing mode.
+ * @param {Object}   props.originalData - Original data for comparison when editing.
+ * @return {JSX.Element} Rendered component.
+ */
 const SiteModal = ( { formData, setFormData, onSubmit, onClose, editing, originalData = {} } ) => {
 	const [ errors, setErrors ] = useState( {
 		name: '',

@@ -8,7 +8,6 @@
 
 namespace OneDesign;
 
-use OneDesign\Plugin_Configs\Constants;
 use OneDesign\Traits\Singleton;
 use OneDesign\Post_Types\{ Design_Library, Template };
 
@@ -17,6 +16,9 @@ use OneDesign\Post_Types\{ Design_Library, Template };
  */
 class Settings {
 
+	/**
+	 * Use Singleton trait.
+	 */
 	use Singleton;
 
 	/**
@@ -25,13 +27,6 @@ class Settings {
 	 * @var string
 	 */
 	const PAGE_SLUG = 'onedesign';
-
-	/**
-	 * Option name for site logo.
-	 *
-	 * @var string
-	 */
-	const OPTION_SITE_LOGO = 'onedesign_site_logo';
 
 	/**
 	 * Construct method.

@@ -1,8 +1,26 @@
+/**
+ * WordPress dependencies
+ */
 import { useState } from '@wordpress/element';
 import { Button, Card, CardHeader, CardBody, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
 import { getInitials } from '../js/utils';
 
+/**
+ * SiteTable component to display and manage brand sites.
+ *
+ * @param {Object}   props              - Component properties.
+ * @param {Array}    props.sites        - List of brand sites.
+ * @param {Function} props.onEdit       - Function to handle editing a site.
+ * @param {Function} props.onDelete     - Function to handle deleting a site.
+ * @param {Function} props.setFormData  - Function to set form data for editing.
+ * @param {Function} props.setShowModal - Function to show/hide the modal for adding/editing a site.
+ * @return {JSX.Element} Rendered component.
+ */
 const SiteTable = ( { sites, onEdit, onDelete, setFormData, setShowModal } ) => {
 	const [ showDeleteModal, setShowDeleteModal ] = useState( false );
 	const [ deleteIndex, setDeleteIndex ] = useState( null );
@@ -107,6 +125,14 @@ const SiteTable = ( { sites, onEdit, onDelete, setFormData, setShowModal } ) => 
 	);
 };
 
+/**
+ * DeleteConfirmationModal component for confirming site deletion.
+ *
+ * @param {Object}   props           - Component properties.
+ * @param {Function} props.onConfirm - Function to call on confirmation.
+ * @param {Function} props.onCancel  - Function to call on cancellation.
+ * @return {JSX.Element} Rendered component.
+ */
 const DeleteConfirmationModal = ( { onConfirm, onCancel } ) => (
 	<Modal
 		title={ __( 'Delete Brand Site', 'onedesign' ) }

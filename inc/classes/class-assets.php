@@ -44,11 +44,6 @@ class Assets {
 	 * @return void
 	 */
 	public function add_admin_scripts( $hook_suffix ): void {
-		$this->register_style( 'onedesign-admin-style', 'css/admin.css' );
-		wp_enqueue_style( 'onedesign-admin-style' );
-
-		$this->register_style( 'onedesign-admin-style', 'css/admin.css' );
-		wp_enqueue_style( 'onedesign-admin-style' );
 
 		if ( strpos( $hook_suffix, 'onedesign-settings' ) !== false ) {
 
@@ -98,6 +93,9 @@ class Assets {
 			wp_enqueue_script( 'onedesign-setup-script' );
 
 		}
+
+		$this->register_style( 'onedesign-admin-style', 'css/admin.css' );
+		wp_enqueue_style( 'onedesign-admin-style' );
 	}
 
 	/**

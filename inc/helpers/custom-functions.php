@@ -138,7 +138,7 @@ function onedesign_validate_api_key_health_check(): bool {
  *
  * @return bool
  */
-function onedesign_key_validation( $is_health_check ): bool {
+function onedesign_key_validation( bool $is_health_check ): bool {
 	// check if the request is from same site.
 	if ( Utils::is_governing_site() ) {
 		return current_user_can( 'manage_options' );

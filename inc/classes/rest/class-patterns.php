@@ -48,6 +48,10 @@ class Patterns {
 	 * Register REST routes for the plugin.
 	 */
 	public function register_rest_routes(): void {
+
+		/**
+		 * Get all local patterns both registered and user-created.
+		 */
 		register_rest_route(
 			self::NAMESPACE,
 			'/local-patterns',
@@ -58,6 +62,9 @@ class Patterns {
 			)
 		);
 
+		/**
+		 * Get consumer site patterns.
+		 */
 		register_rest_route(
 			self::NAMESPACE,
 			'/consumer-site-patterns',
@@ -68,6 +75,9 @@ class Patterns {
 			)
 		);
 
+		/**
+		 * Get all consumer site patterns from child sites.
+		 */
 		register_rest_route(
 			self::NAMESPACE,
 			'/get-all-consumer-site-patterns',
@@ -78,6 +88,9 @@ class Patterns {
 			)
 		);
 
+		/**
+		 * Route to request to consumer sites to remove patterns.
+		 */
 		register_rest_route(
 			self::NAMESPACE,
 			'/request-remove-consumer-site-patterns',
@@ -89,14 +102,14 @@ class Patterns {
 					'pattern_names' => array(
 						'required'          => true,
 						'type'              => 'array',
-						'validate_callback' => function ( $param ) {
+						'validate_callback' => function ( $param ): bool {
 							return is_array( $param ) && ! empty( $param );
 						},
 					),
 					'site_id'       => array(
 						'required'          => true,
 						'type'              => 'string',
-						'validate_callback' => function ( $param ) {
+						'validate_callback' => function ( $param ): bool {
 							return is_string( $param ) && ! empty( $param );
 						},
 					),
@@ -104,6 +117,9 @@ class Patterns {
 			)
 		);
 
+		/**
+		 * Remove patterns from consumer site patterns.
+		 */
 		register_rest_route(
 			self::NAMESPACE,
 			'/remove-consumer-site-patterns',
@@ -115,7 +131,7 @@ class Patterns {
 					'pattern_names' => array(
 						'required'          => true,
 						'type'              => 'array',
-						'validate_callback' => function ( $param ) {
+						'validate_callback' => function ( $param ): bool {
 							return is_array( $param ) && ! empty( $param );
 						},
 					),
@@ -123,6 +139,9 @@ class Patterns {
 			)
 		);
 
+		/**
+		 * Get pattern categories.
+		 */
 		register_rest_route(
 			self::NAMESPACE,
 			'/pattern-categories',
@@ -134,11 +153,11 @@ class Patterns {
 		);
 
 		/**
-		 * Get configured child sites (for a parent site type).
+		 * Get configured child sites.
 		 */
 		register_rest_route(
 			self::NAMESPACE,
-			'/configured-sites', // Renamed for clarity, was '/sites'.
+			'/configured-sites',
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_configured_child_sites' ),
@@ -146,6 +165,9 @@ class Patterns {
 			)
 		);
 
+		/**
+		 * Push patterns to target sites.
+		 */
 		register_rest_route(
 			self::NAMESPACE,
 			'/push-patterns',
@@ -158,15 +180,15 @@ class Patterns {
 						'required'          => true,
 						'type'              => 'array',
 						'items'             => array( 'type' => 'string' ),
-						'validate_callback' => function ( $param ) {
+						'validate_callback' => function ( $param ): bool {
 							return is_array( $param ) && ! empty( $param );
 						},
 					),
-					'target_site_ids' => array( // Changed from target_site_ids to reflect numeric index usage.
+					'target_site_ids' => array(
 						'required'          => true,
 						'type'              => 'array',
 						'items'             => array( 'type' => 'string' ),
-						'validate_callback' => function ( $param ) {
+						'validate_callback' => function ( $param ): bool {
 							return is_array( $param ) && ! empty( $param );
 						},
 					),
@@ -174,6 +196,9 @@ class Patterns {
 			)
 		);
 
+		/**
+		 * Receive patterns from parent site.
+		 */
 		register_rest_route(
 			self::NAMESPACE,
 			'/receive-patterns',
@@ -185,7 +210,7 @@ class Patterns {
 					'patterns_data'    => array(
 						'required'          => true,
 						'type'              => 'array',
-						'validate_callback' => function ( $param ) {
+						'validate_callback' => function ( $param ): bool {
 							return is_array( $param );
 						},
 					),
@@ -510,7 +535,7 @@ class Patterns {
 			}
 		}
 
-		return rest_ensure_response(
+		return new WP_REST_Response(
 			array(
 				'success'    => true,
 				'categories' => $categories,
@@ -867,8 +892,10 @@ class Patterns {
 
 	/**
 	 * Get child sites configured for this parent site.
+	 *
+	 * @return array List of configured child sites.
 	 */
-	public function get_compatible_sites_object() {
+	public function get_compatible_sites_object(): array {
 		$children = get_option( Constants::ONEDESIGN_SHARED_SITES, array() );
 		if ( empty( $children ) || ! is_array( $children ) ) {
 			return array(); // Return an empty array if no children configured.

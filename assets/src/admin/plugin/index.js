@@ -12,6 +12,14 @@ const API_NAMESPACE = OneDesignSettings.restUrl + '/onedesign/v1';
 const NONCE = OneDesignSettings.restNonce;
 const API_KEY = OneDesignSettings.apiKey;
 
+/**
+ * SiteTypeSelector component for selecting site type.
+ *
+ * @param {Object}   props             - Component properties.
+ * @param {string}   props.value       - Current selected site type.
+ * @param {Function} props.setSiteType - Function to update the selected site type.
+ * @return {JSX.Element} Rendered component.
+ */
 const SiteTypeSelector = ( { value, setSiteType } ) => (
 	<SelectControl
 		label={ __( 'Site Type', 'onedesign' ) }
@@ -28,6 +36,11 @@ const SiteTypeSelector = ( { value, setSiteType } ) => (
 	/>
 );
 
+/**
+ * Site type selection component for OneDesign setup.
+ *
+ * @return {JSX.Element} Rendered component.
+ */
 const OneDesignSiteTypeSelection = () => {
 	const [ siteType, setSiteType ] = useState( '' );
 	const [ notice, setNotice ] = useState( null );

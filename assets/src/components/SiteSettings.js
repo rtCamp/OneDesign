@@ -1,3 +1,6 @@
+/**
+ * WordPress dependencies
+ */
 import { useEffect, useState, useCallback } from '@wordpress/element';
 import {
 	TextareaControl,
@@ -12,10 +15,18 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
+/**
+ * Global variable from PHP
+ */
 const API_NAMESPACE = OneDesignSettings.restUrl + '/onedesign/v1';
 const NONCE = OneDesignSettings.restNonce;
 const API_KEY = OneDesignSettings.apiKey;
 
+/**
+ * SiteSettings component for managing API key and governing site connection.
+ *
+ * @return {JSX.Element} Rendered component.
+ */
 const SiteSettings = () => {
 	const [ apiKey, setApiKey ] = useState( '' );
 	const [ isLoading, setIsLoading ] = useState( false );

@@ -39,6 +39,13 @@ const getInitials = ( name ) => {
 	).toUpperCase();
 };
 
+/**
+ * Helper function to validate if a string is a well-formed URL.
+ *
+ * @param {string} str - The string to validate as a URL.
+ *
+ * @return {boolean} True if the string is a valid URL, false otherwise.
+ */
 const isURL = ( str ) => {
 	const pattern = new RegExp(
 		'^https?:\\/\\/' +
@@ -52,6 +59,13 @@ const isURL = ( str ) => {
 	return pattern.test( str );
 };
 
+/**
+ * Validates if a given string is a valid URL.
+ *
+ * @param {string} url - The URL string to validate.
+ *
+ * @return {boolean} True if the URL is valid, false otherwise.
+ */
 const isValidUrl = ( url ) => {
 	try {
 		const parsedUrl = new URL( url );
@@ -61,6 +75,13 @@ const isValidUrl = ( url ) => {
 	}
 };
 
+/**
+ * Sanitizes a given string by removing all HTML tags.
+ *
+ * @param {string} item - The string to sanitize.
+ *
+ * @return {string} The sanitized string with all HTML tags removed.
+ */
 const PurifyElement = ( item ) => {
 	return DOMPurify.sanitize( item, { ALLOWED_TAGS: [] } );
 };

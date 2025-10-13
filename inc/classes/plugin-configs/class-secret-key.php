@@ -59,7 +59,7 @@ class Secret_Key {
 	 *
 	 * @return string The generated key.
 	 */
-	private static function generate_key() {
+	private static function generate_key(): string {
 		return wp_generate_password( 128, false, false );
 	}
 

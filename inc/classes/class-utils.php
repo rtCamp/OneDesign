@@ -93,7 +93,7 @@ class Utils {
 		$sites    = self::get_sites_info();
 		$filtered = array_filter(
 			$sites,
-			function ( $site ) use ( $site_id ) {
+			function ( $site ) use ( $site_id ): bool {
 				return $site['id'] === $site_id;
 			}
 		);
@@ -131,7 +131,7 @@ class Utils {
 	 *
 	 * @return string Unique slug combining current site name, sharing site name, and base slug.
 	 */
-	public static function generate_unique_slug_for_template_patterns_template_parts( $base_slug, $sharing_site_name, bool $is_slug = true ) {
+	public static function generate_unique_slug_for_template_patterns_template_parts( string $base_slug, string $sharing_site_name, bool $is_slug = true ): string {
 		// Sanitize the base slug to ensure it's URL-friendly.
 		$sanitized_slug = sanitize_title( $base_slug );
 
@@ -157,7 +157,7 @@ class Utils {
 	 *
 	 * @return string Modified content with updated slugs and themes.
 	 */
-	public static function modify_content_references( $content, $shared_site_name ) {
+	public static function modify_content_references( string $content, string $shared_site_name ): array|string|null {
 
 		$content_string = '';
 
@@ -191,7 +191,7 @@ class Utils {
 
 		return preg_replace_callback(
 			$pattern,
-			function ( $matches ) use ( $shared_site_name ) {
+			function ( $matches ) use ( $shared_site_name ): string|null {
 				$block_type      = $matches[1];
 				$attributes_json = $matches[2];
 
@@ -229,7 +229,7 @@ class Utils {
 	 *
 	 * @return array The modified template array with unique slugs, ids, and updated content references.
 	 */
-	public static function modify_template_template_part_pattern_slug( $templates, $shared_site_name ) {
+	public static function modify_template_template_part_pattern_slug( array $templates, string $shared_site_name ): array {
 		foreach ( $templates as $index => $template ) {
 
 			// set original slug field to keep track of original slugs.
@@ -279,7 +279,7 @@ class Utils {
 
 				$content = preg_replace_callback(
 					$pattern,
-					function ( $matches ) {
+					function ( $matches ): string|null {
 						$block_type      = $matches[1];
 						$attributes_json = $matches[2];
 
@@ -341,7 +341,7 @@ class Utils {
 	 * @param string $content_key  Key for the content field (default: 'content').
 	 * @return array Modified items with updated block refs.
 	 */
-	public static function replace_block_refs( $items, $id_map = array(), $content_key = 'content' ): array {
+	public static function replace_block_refs( array $items, array $id_map = array(), string $content_key = 'content' ): array {
 		if ( empty( $id_map ) || ! is_array( $items ) ) {
 			return $items;
 		}
