@@ -69,7 +69,10 @@ class Assets {
 			$this->register_style( 'onedesign-settings-style', 'css/settings.css' );
 			wp_enqueue_style( 'onedesign-settings-style' );
 
-			wp_enqueue_media();
+			// only load media uploader in governing site settings page.
+			if ( Utils::is_governing_site() ) {
+				wp_enqueue_media();
+			}
 		}
 
 		if ( strpos( $hook_suffix, 'plugins' ) !== false ) {
