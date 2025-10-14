@@ -307,9 +307,10 @@ class Hooks {
 	 *
 	 * @param bool|array               $allowed_block_types Array of allowed block types or boolean to allow all or disallow all.
 	 * @param \WP_Block_Editor_Context $editor_context               The post being edited, provided by the 'allowed_block_types_all' filter.
-	 * @return array
+	 *
+	 * @return array|bool
 	 */
-	public function allowed_block_types( $allowed_block_types, $editor_context ) {
+	public function allowed_block_types( bool|array $allowed_block_types, \WP_Block_Editor_Context $editor_context ): array|bool {
 		// Allow all block types in the Design Library post type.
 		if ( isset( $editor_context->post->post_type ) && ( Template::SLUG === $editor_context->post->post_type ) ) {
 			return array();

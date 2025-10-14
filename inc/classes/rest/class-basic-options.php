@@ -96,7 +96,7 @@ class Basic_Options {
 						'sites_data' => array(
 							'required'          => true,
 							'type'              => 'array',
-							'sanitize_callback' => function ( $value ): bool {
+							'validate_callback' => function ( $value ): bool {
 								return is_array( $value );
 							},
 						),
