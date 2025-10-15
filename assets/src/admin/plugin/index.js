@@ -6,11 +6,9 @@ import { __ } from '@wordpress/i18n';
 import { Card, CardHeader, CardBody, Notice, Button, SelectControl } from '@wordpress/components';
 
 /**
- * Global variable from PHP
+ * Internal dependencies
  */
-const API_NAMESPACE = OneDesignSettings.restUrl + '/onedesign/v1';
-const NONCE = OneDesignSettings.restNonce;
-const API_KEY = OneDesignSettings.apiKey;
+import { API_NAMESPACE, NONCE, API_KEY, SETTINGS_LINK } from '../../js/constants';
 
 /**
  * SiteTypeSelector component for selecting site type.
@@ -106,7 +104,7 @@ const OneDesignSiteTypeSelection = () => {
 				setSiteType( data.site_type );
 
 				// redirect user to setup page.
-				window.location.href = OneDesignSettings.setupUrl;
+				window.location.href = SETTINGS_LINK;
 			}
 		} catch {
 			setNotice( {

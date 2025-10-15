@@ -11,12 +11,7 @@ import { Snackbar } from '@wordpress/components';
 import SiteTable from '../../components/SiteTable';
 import SiteModal from '../../components/SiteModal';
 import SiteSettings from '../../components/SiteSettings';
-
-/**
- * Global variable from PHP
- */
-const API_NAMESPACE = OneDesignSettings.restUrl + '/onedesign/v1';
-const NONCE = OneDesignSettings.restNonce;
+import { API_NAMESPACE, NONCE } from '../../js/constants';
 
 /**
  * Settings page component for OneDesign plugin.

@@ -13,10 +13,7 @@ import { useCallback, useState } from '@wordpress/element';
  * Internal dependencies
  */
 import MemoizedTemplatePreview from './MemoizedTemplatePreview';
-
-// Global variable from PHP
-const REST_NAMESPACE = TemplateLibraryData?.restUrl;
-const NONCE = TemplateLibraryData?.nonce;
+import { API_NAMESPACE as REST_NAMESPACE, NONCE } from '../../../js/constants';
 
 /**
  * BrandSiteTemplates component.
@@ -61,6 +58,9 @@ const BrandSiteTemplates = ( { filteredTemplates, currentPage, PER_PAGE, selecte
 			const data = await response.json();
 			if ( data.success ) {
 				fetchConnectedSitesTemplates();
+
+				const count = selectedTemplates.length;
+
 				setNotice( {
 					type: 'success',
 					message: sprintf(
@@ -68,10 +68,10 @@ const BrandSiteTemplates = ( { filteredTemplates, currentPage, PER_PAGE, selecte
 						_n(
 							'%d template removed successfully.',
 							'%d templates removed successfully.',
-							selectedTemplates.length,
+							count,
 							'onedesign',
 						),
-						selectedTemplates.length,
+						count,
 					),
 				} );
 				setSelectedTemplates( [] );
@@ -168,7 +168,7 @@ const BrandSiteTemplates = ( { filteredTemplates, currentPage, PER_PAGE, selecte
 			{ renderPagination() }
 			{ isRemoveModalOpen && (
 				<Modal
-					title={ __( 'Remove Template' ) }
+					title={ __( 'Remove Template', 'onedesign' ) }
 					onRequestClose={ () => {
 						setIsRemoveModalOpen( false );
 					} }

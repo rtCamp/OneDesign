@@ -102,7 +102,7 @@ const MemoizedTemplatePreview = memo(
 				role="button"
 				tabIndex={ 0 }
 				onKeyDown={ ( e ) => {
-					if ( e.key === 'Enter' || e.key === ' ' ) {
+					if ( e.code === 'Enter' || e.code === 'Space' ) {
 						e.preventDefault();
 						onSelect( template );
 					}

@@ -59,12 +59,13 @@ class Hooks {
 		add_filter( 'plugin_action_links_' . ONEDESIGN_PLUGIN_LOADER_PLUGIN_BASENAME, array( $this, 'add_setup_page_link' ) );
 	}
 
-		/**
-		 * Add setup page link to plugins page.
-		 *
-		 * @param array $links Existing plugin action links.
-		 * @return array Modified plugin action links.
-		 */
+	/**
+	 * Add setup page link to plugins page.
+	 *
+	 * @param array $links Existing plugin action links.
+	 *
+	 * @return array Modified plugin action links.
+	 */
 	public function add_setup_page_link( $links ): array {
 		$setup_link = sprintf(
 			'<a href="%s">%s</a>',
@@ -75,11 +76,11 @@ class Hooks {
 		return $links;
 	}
 
-		/**
-		 * Add site selection modal to admin footer.
-		 *
-		 * @return void
-		 */
+	/**
+	 * Add site selection modal to admin footer.
+	 *
+	 * @return void
+	 */
 	public function add_site_selection_modal(): void {
 		$current_screen = get_current_screen();
 		if ( ! $current_screen || 'plugins' !== $current_screen->base ) {
@@ -99,13 +100,13 @@ class Hooks {
 		<?php
 	}
 
-		/**
-		 * Create global variable onedesign_sites with site info.
-		 *
-		 * @param string $classes Existing body classes.
-		 *
-		 * @return string
-		 */
+	/**
+	 * Create global variable onedesign_sites with site info.
+	 *
+	 * @param string $classes Existing body classes.
+	 *
+	 * @return string
+	 */
 	public function add_body_class_for_modal( $classes ): string {
 		$current_screen = get_current_screen();
 		if ( ! $current_screen || 'plugins' !== $current_screen->base ) {
@@ -124,13 +125,13 @@ class Hooks {
 		return $classes;
 	}
 
-		/**
-		 * Add body class for missing sites.
-		 *
-		 * @param string $classes Existing body classes.
-		 *
-		 * @return string
-		 */
+	/**
+	 * Add body class for missing sites.
+	 *
+	 * @param string $classes Existing body classes.
+	 *
+	 * @return string
+	 */
 	public function add_body_class_for_missing_sites( $classes ): string {
 		$current_screen = get_current_screen();
 

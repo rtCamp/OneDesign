@@ -1,4 +1,9 @@
 /**
+ * WordPress dependencies
+ */
+import { __ } from '@wordpress/i18n';
+
+/**
  * This File contains the code to add the Design Library Button.
  */
 
@@ -46,7 +51,7 @@ window.addEventListener( 'DOMContentLoaded', function() {
 			this.libraryCache.switchModeButton.addEventListener( 'click', () => {
 				window.console.log( 'Firing Custom Event' );
 				const designLibraryModalOpenEvent = new CustomEvent( 'designLibraryModalOpen', {
-					detail: { message: 'Open the Design Library Modal!' },
+					detail: { message: __( 'Open the Design Library Modal!', 'onedesign' ) },
 				} );
 
 				document.dispatchEvent( designLibraryModalOpenEvent );

@@ -25,11 +25,7 @@ import { cog } from '@wordpress/icons';
 import BasePatternsTab from './BasePatternsTab';
 import AppliedPatternsTab from './AppliedPatternsTab';
 import Category from './Category';
-
-/**
- * Global data
- */
-const SettingLink = patternSyncData?.settingsLink;
+import { SETTINGS_LINK as SettingLink } from '../../../js/constants';
 
 /**
  * Fetch all brand site patterns

@@ -16,11 +16,9 @@ import {
 import { __ } from '@wordpress/i18n';
 
 /**
- * Global variable from PHP
+ * internal dependencies
  */
-const API_NAMESPACE = OneDesignSettings.restUrl + '/onedesign/v1';
-const NONCE = OneDesignSettings.restNonce;
-const API_KEY = OneDesignSettings.apiKey;
+import { API_NAMESPACE, NONCE, API_KEY } from '../js/constants';
 
 /**
  * SiteSettings component for managing API key and governing site connection.

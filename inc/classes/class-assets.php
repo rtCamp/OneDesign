@@ -63,6 +63,7 @@ class Assets {
 					'restNonce' => wp_create_nonce( 'wp_rest' ),
 				)
 			);
+
 			wp_enqueue_script( 'onedesign-settings-script' );
 
 			// Enqueue the settings page styles.
@@ -75,8 +76,11 @@ class Assets {
 			}
 		}
 
-		if ( strpos( $hook_suffix, 'plugins' ) !== false ) {
+		if ( strpos( $hook_suffix, 'plugins' ) !== false && empty( Utils::get_current_site_type() ) ) {
+
+			// remove all notices.
 			remove_all_actions( 'admin_notices' );
+
 			$this->register_script(
 				'onedesign-setup-script',
 				'js/plugin.js',
@@ -86,10 +90,10 @@ class Assets {
 				'onedesign-setup-script',
 				'OneDesignSettings',
 				array(
-					'restUrl'   => esc_url( home_url( '/wp-json' ) ),
-					'apiKey'    => get_option( Constants::ONEDESIGN_API_KEY, 'default_api_key' ),
-					'restNonce' => wp_create_nonce( 'wp_rest' ),
-					'setupUrl'  => admin_url( 'admin.php?page=onedesign-settings' ),
+					'restUrl'      => esc_url( home_url( '/wp-json' ) ),
+					'apiKey'       => get_option( Constants::ONEDESIGN_API_KEY, 'default_api_key' ),
+					'restNonce'    => wp_create_nonce( 'wp_rest' ),
+					'settingsLink' => esc_url( admin_url( 'admin.php?page=onedesign-settings' ) ),
 				)
 			);
 
@@ -116,6 +120,7 @@ class Assets {
 				'onedesign-patterns-library-script',
 				'js/patterns-library.js'
 			);
+
 			wp_localize_script(
 				'onedesign-patterns-library-script',
 				'patternSyncData',
@@ -125,8 +130,11 @@ class Assets {
 					'siteUrl'      => home_url(),
 					'adminUrl'     => admin_url(),
 					'settingsLink' => esc_url( admin_url( 'admin.php?page=onedesign-settings' ) ),
+					'restUrl'      => esc_url( home_url( '/wp-json' ) ),
+					'restNonce'    => wp_create_nonce( 'wp_rest' ),
 				)
 			);
+
 			wp_enqueue_script( 'onedesign-patterns-library-script' );
 
 			$this->register_style( 'onedesign-editor-style', 'css/editor.css' );
@@ -134,22 +142,25 @@ class Assets {
 		}
 
 		if ( Template::SLUG === $current_screen->id ) {
+
 			$this->register_script(
 				'onedesign-templates-library-script',
 				'js/templates-library.js'
 			);
+
 			wp_localize_script(
 				'onedesign-templates-library-script',
 				'TemplateLibraryData',
 				array(
 					'ajaxUrl'      => admin_url( 'admin-ajax.php' ),
-					'nonce'        => wp_create_nonce( 'wp_rest' ),
+					'restNonce'    => wp_create_nonce( 'wp_rest' ),
 					'siteUrl'      => home_url(),
 					'adminUrl'     => admin_url(),
-					'restUrl'      => esc_url( rest_url( 'onedesign/v1' ) ),
+					'restUrl'      => esc_url( home_url( '/wp-json' ) ),
 					'settingsLink' => esc_url( admin_url( 'admin.php?page=onedesign-settings' ) ),
 				)
 			);
+
 			wp_enqueue_script( 'onedesign-templates-library-script' );
 
 			$this->register_style( 'onedesign-template-style', 'css/template.css' );

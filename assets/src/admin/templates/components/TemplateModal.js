@@ -18,12 +18,7 @@ import { cog } from '@wordpress/icons';
 import BaseSiteTemplates from './BaseSiteTemplates';
 import SiteSelection from './SiteSelection';
 import BrandSiteTemplates from './BrandSiteTemplates';
-
-// Global variable from PHP
-const REST_NAMESPACE = TemplateLibraryData?.restUrl;
-const NONCE = TemplateLibraryData?.nonce;
-const SettingLink = TemplateLibraryData?.settingsLink;
-const PER_PAGE = 9;
+import { API_NAMESPACE as REST_NAMESPACE, NONCE, SETTINGS_LINK as SettingLink, PER_PAGE } from '../../../js/constants';
 
 /**
  * TemplateModal component.
