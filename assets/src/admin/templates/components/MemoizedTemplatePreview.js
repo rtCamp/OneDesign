@@ -133,10 +133,10 @@ const MemoizedTemplatePreview = memo(
 		// Only re-render if these specific properties change
 		return (
 			prevProps.template.name === nextProps.template.name &&
-            prevProps.template.content === nextProps.template.content &&
-            prevProps.isSelected === nextProps.isSelected &&
-            prevProps.isCheckBoxRequired === nextProps.isCheckBoxRequired &&
-            prevProps.providerSite === nextProps.providerSite
+			prevProps.template.content === nextProps.template.content &&
+			prevProps.isSelected === nextProps.isSelected &&
+			prevProps.isCheckBoxRequired === nextProps.isCheckBoxRequired &&
+			prevProps.providerSite === nextProps.providerSite
 		);
 	},
 );
