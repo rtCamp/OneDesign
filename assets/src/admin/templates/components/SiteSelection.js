@@ -15,17 +15,18 @@ import { getInitials } from '../../../js/utils';
 /**
  * SiteSelection component.
  *
- * @param {Object}   props                     - Component props.
- * @param {Array}    props.siteInfo            - Array of connected site information.
- * @param {boolean}  props.isApplying          - Boolean indicating if templates are being applied.
- * @param {Function} props.setIsApplying       - Function to set the isApplying state.
- * @param {Function} props.onApply             - Function to handle applying templates to selected sites.
- * @param {Function} props.setIsApplyModalOpen - Function to control the visibility of the apply modal.
- * @param {Function} props.setSelectedSites    - Function to set the selected site IDs.
- * @param {Array}    props.selectedSites       - Array of selected site IDs.
- * @param {Object}   props.notice              - Notice object containing type and message.
- * @param {Array}    props.brandSiteTemplates  - Array of templates available for brand sites.
- * @param {Array}    props.selectedTemplates   - Array of selected template IDs.
+ * @param {Object}   props                        - Component props.
+ * @param {Array}    props.siteInfo               - Array of connected site information.
+ * @param {boolean}  props.isApplying             - Boolean indicating if templates are being applied.
+ * @param {Function} props.setIsApplying          - Function to set the isApplying state.
+ * @param {Function} props.onApply                - Function to handle applying templates to selected sites.
+ * @param {Function} props.setIsApplyModalOpen    - Function to control the visibility of the apply modal.
+ * @param {Function} props.setSelectedSites       - Function to set the selected site IDs.
+ * @param {Array}    props.selectedSites          - Array of selected site IDs.
+ * @param {Object}   props.notice                 - Notice object containing type and message.
+ * @param {Array}    props.brandSiteTemplates     - Array of templates available for brand sites.
+ * @param {Array}    props.selectedTemplates      - Array of selected template IDs.
+ * @param {Object}   props.sitesHealthCheckResult - Object containing health check results for sites.
  * @return {JSX.Element} The rendered component.
  */
 const SiteSelection = ( {
@@ -39,6 +40,7 @@ const SiteSelection = ( {
 	notice,
 	brandSiteTemplates,
 	selectedTemplates,
+	sitesHealthCheckResult,
 } ) => {
 	const handleSiteSelection = ( siteId ) => {
 		setSelectedSites( ( prevSelected ) => {
@@ -145,7 +147,7 @@ const SiteSelection = ( {
 										onClick={ selectAllSites }
 										disabled={
 											selectedSelectableSiteCount === selectableSiteCount ||
-									selectableSiteCount === 0
+											selectableSiteCount === 0
 										}
 										className="od-bulk-action"
 									>
@@ -185,7 +187,7 @@ const SiteSelection = ( {
 						<div className="od-sites-list od-sites-grid">
 							{ siteInfo.map( ( { id, name, url, logo } ) => {
 								const isSelected = selectedSites.includes( id );
-								const isDisabled = areAllTemplatesPresent( id ) && ! isSelected;
+								const isDisabled = ( ( areAllTemplatesPresent( id ) && ! isSelected ) || ( sitesHealthCheckResult[ id ] && ! sitesHealthCheckResult[ id ].success ) );
 
 								return (
 									<div
@@ -205,7 +207,9 @@ const SiteSelection = ( {
 										<div className="od-site-inner">
 											{ isSelected && (
 												<div className="od-site-selected-indicator">
-													<span className="dashicons dashicons-yes-alt"></span>
+													{
+														renderIcon( { sitesHealthCheckResult, id } )
+													}
 												</div>
 											) }
 											{ isDisabled && ! isSelected && (
@@ -216,7 +220,7 @@ const SiteSelection = ( {
 														'onedesign',
 													) }
 												>
-													<span className="dashicons dashicons-yes"></span>
+													{ renderIcon( { sitesHealthCheckResult, id } ) }
 												</div>
 											) }
 											<div className="od-site-logo">
@@ -311,6 +315,24 @@ const SiteSelection = ( {
 				</div>
 			</div>
 		</>
+	);
+};
+
+/**
+ * Render the appropriate dashicon based on health check result.
+ *
+ * @param {Object} props                        - Component props.
+ * @param {Object} props.sitesHealthCheckResult - Object containing health check results for sites.
+ * @param {number} props.id                     - Site ID.
+ * @return {JSX.Element} The rendered dashicon element.
+ */
+const renderIcon = ( { sitesHealthCheckResult, id } ) => {
+	return (
+		sitesHealthCheckResult[ id ] && ! sitesHealthCheckResult[ id ].success ? (
+			<span className="dashicons dashicons-warning"></span>
+		) : (
+			<span className="dashicons dashicons-yes-alt"></span>
+		)
 	);
 };
 

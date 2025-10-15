@@ -786,6 +786,10 @@
 		width: 16px;
 		height: 16px;
 	}
+
+	&:has(.dashicons.dashicons-warning) {
+		background: #d63638;
+	}
 }
 
 .od-site-label {

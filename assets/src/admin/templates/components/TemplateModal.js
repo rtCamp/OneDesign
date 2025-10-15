@@ -43,6 +43,7 @@ const TemplateModal = () => {
 	const [ connectedSitesTemplates, setConnectedSitesTemplates ] = useState( {} );
 	const [ notice, setNotice ] = useState( null );
 	const [ isReSyncing, setIsReSyncing ] = useState( false );
+	const [ sitesHealthCheckResult, setSitesHealthCheckResult ] = useState( {} );
 	const [ tabs, setTabs ] = useState( [
 		{
 			name: 'baseTemplate',
@@ -53,6 +54,50 @@ const TemplateModal = () => {
 	] );
 	const [ isApplyModalOpen, setIsApplyModalOpen ] = useState( false );
 	const [ isApplying, setIsApplying ] = useState( false );
+
+	const PerformHealthCheckOnSites = useCallback( async () => {
+		setIsLoading( true );
+		try {
+			for ( const siteId of Object.keys( siteInfo ) ) {
+				const siteUrl = siteInfo[ siteId ]?.url;
+				const siteApiKey = siteInfo[ siteId ]?.api_key;
+				if ( siteUrl ) {
+					try {
+						const response = await fetch(
+							`${ siteUrl }/wp-json/onedesign/v1/health-check?timestamp=${ Date.now() }`,
+							{
+								method: 'GET',
+								headers: {
+									'Content-Type': 'application/json',
+									'X-OneDesign-Token': siteApiKey,
+								},
+							},
+						);
+						const data = await response.json();
+						if ( ! data.success ) {
+							setSitesHealthCheckResult( ( prevResults ) => ( {
+								...prevResults,
+								[ siteInfo[ siteId ]?.id ]: { success: false, message: data.message || __( 'Health check failed.', 'onedesign' ) },
+							} ) );
+							continue;
+						}
+						setSitesHealthCheckResult( ( prevResults ) => ( {
+							...prevResults,
+							[ siteInfo[ siteId ]?.id ]: data,
+						} ) );
+					} catch ( error ) {
+						setSitesHealthCheckResult( ( prevResults ) => ( {
+							...prevResults,
+							[ siteInfo[ siteId ]?.id ]: { success: false, message: 'Failed to reach the site.' },
+						} ) );
+					}
+				}
+			}
+		} catch ( error ) {
+		} finally {
+			setIsLoading( false );
+		}
+	}, [ siteInfo ] );
 
 	const fetchConnectedSitesTemplates = useCallback( async () => {
 		try {
@@ -219,6 +264,11 @@ const TemplateModal = () => {
 		fetchConnectedSitesTemplates();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
+
+	// to check if the connected sites are reachable or not
+	useEffect( () => {
+		PerformHealthCheckOnSites();
+	}, [ PerformHealthCheckOnSites ] );
 
 	// clear notice on tab change
 	useEffect( () => {
@@ -432,6 +482,7 @@ const TemplateModal = () => {
 										notice={ notice }
 										brandSiteTemplates={ connectedSitesTemplates }
 										selectedTemplates={ selectedTemplates }
+										sitesHealthCheckResult={ sitesHealthCheckResult }
 									/>
 								</Modal>
 							) }
