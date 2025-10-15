@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-10-15T08:24:47+00:00\n"
+"POT-Creation-Date: 2025-10-15T08:55:01+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 
@@ -507,7 +507,7 @@ msgstr ""
 #: assets/build/js/patterns-library.js:1
 #: assets/build/js/templates-library.js:1
 #: assets/src/admin/patterns/components/SiteSelection.js:216
-#: assets/src/admin/templates/components/SiteSelection.js:125
+#: assets/src/admin/templates/components/SiteSelection.js:142
 msgid "Select Brand Sites"
 msgstr ""
 
@@ -515,7 +515,7 @@ msgstr ""
 #: assets/build/js/patterns-library.js:2
 #: assets/build/js/templates-library.js:2
 #: assets/src/admin/patterns/components/SiteSelection.js:221
-#: assets/src/admin/templates/components/SiteSelection.js:130
+#: assets/src/admin/templates/components/SiteSelection.js:147
 #, js-format
 msgid "%1$d of %2$d selected"
 msgstr ""
@@ -524,7 +524,7 @@ msgstr ""
 #: assets/build/js/patterns-library.js:3
 #: assets/build/js/templates-library.js:3
 #: assets/src/admin/patterns/components/SiteSelection.js:227
-#: assets/src/admin/templates/components/SiteSelection.js:136
+#: assets/src/admin/templates/components/SiteSelection.js:153
 #, js-format
 msgid "%1$d of %2$d sites available"
 msgstr ""
@@ -532,14 +532,14 @@ msgstr ""
 #: assets/build/js/patterns-library.js:3
 #: assets/build/js/templates-library.js:3
 #: assets/src/admin/patterns/components/SiteSelection.js:245
-#: assets/src/admin/templates/components/SiteSelection.js:154
+#: assets/src/admin/templates/components/SiteSelection.js:171
 msgid "Select All"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:3
 #: assets/build/js/templates-library.js:3
 #: assets/src/admin/patterns/components/SiteSelection.js:254
-#: assets/src/admin/templates/components/SiteSelection.js:163
+#: assets/src/admin/templates/components/SiteSelection.js:180
 msgid "Deselect All"
 msgstr ""
 
@@ -670,7 +670,7 @@ msgstr ""
 #: assets/src/admin/patterns/components/BasePatternsTab.js:243
 #: assets/src/admin/templates/components/BrandSiteTemplates.js:197
 #: assets/src/admin/templates/components/BrandSiteTemplates.js:199
-#: assets/src/admin/templates/components/SiteSelection.js:302
+#: assets/src/admin/templates/components/SiteSelection.js:320
 #: assets/src/components/SiteModal.js:41
 #: assets/src/components/SiteSettings.js:266
 #: assets/src/components/SiteTable.js:148
@@ -701,7 +701,7 @@ msgstr ""
 #: assets/build/js/patterns-library.js:4
 #: assets/build/js/templates-library.js:5
 #: assets/src/admin/patterns/components/BasePatternsTab.js:261
-#: assets/src/admin/templates/components/SiteSelection.js:313
+#: assets/src/admin/templates/components/SiteSelection.js:331
 msgid "Applying…"
 msgstr ""
 
@@ -1211,46 +1211,51 @@ msgid "No templates found."
 msgstr ""
 
 #: assets/build/js/templates-library.js:1
-#: assets/src/admin/templates/components/SiteSelection.js:95
+#: assets/src/admin/templates/components/SiteSelection.js:112
 msgid "No connected sites found."
 msgstr ""
 
 #: assets/build/js/templates-library.js:1
-#: assets/src/admin/templates/components/SiteSelection.js:97
+#: assets/src/admin/templates/components/SiteSelection.js:114
 msgid "Please configure brand sites first to apply templates."
 msgstr ""
 
-#. translators: %1$d: Number of sites that already have all selected templates. %2$d: Total number of sites.
+#. translators: %1$d: Number of sites that already have all selected templates or are unreachable. %2$d: Total number of sites.
 #: assets/build/js/templates-library.js:4
-#: assets/src/admin/templates/components/SiteSelection.js:176
+#: assets/src/admin/templates/components/SiteSelection.js:193
 #, js-format
-msgid "%1$d of %2$d sites already have all selected templates and are disabled."
+msgid "%1$d of %2$d sites are disabled (already have all templates or unreachable)."
 msgstr ""
 
 #: assets/build/js/templates-library.js:4
-#: assets/src/admin/templates/components/SiteSelection.js:218
+#: assets/src/admin/templates/components/SiteSelection.js:237
+msgid "This site is unreachable"
+msgstr ""
+
+#: assets/build/js/templates-library.js:4
+#: assets/src/admin/templates/components/SiteSelection.js:238
 msgid "This site already has all selected templates"
 msgstr ""
 
 #: assets/build/js/templates-library.js:4
-#: assets/src/admin/templates/components/SiteSelection.js:255
+#: assets/src/admin/templates/components/SiteSelection.js:273
 msgid "All templates will be synced"
 msgstr ""
 
 #: assets/build/js/templates-library.js:4
-#: assets/src/admin/templates/components/SiteSelection.js:263
+#: assets/src/admin/templates/components/SiteSelection.js:281
 msgid "All selected templates are already present"
 msgstr ""
 
 #. translators: %1$d: Number of selected templates already present. %2$d: Total number of selected templates.
 #: assets/build/js/templates-library.js:5
-#: assets/src/admin/templates/components/SiteSelection.js:276
+#: assets/src/admin/templates/components/SiteSelection.js:294
 #, js-format
 msgid "%1$d of %2$d selected templates are already present"
 msgstr ""
 
 #: assets/build/js/templates-library.js:5
-#: assets/src/admin/templates/components/SiteSelection.js:313
+#: assets/src/admin/templates/components/SiteSelection.js:331
 msgid "Apply Templates"
 msgstr ""
 

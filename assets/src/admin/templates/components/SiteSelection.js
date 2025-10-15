@@ -42,15 +42,6 @@ const SiteSelection = ( {
 	selectedTemplates,
 	sitesHealthCheckResult,
 } ) => {
-	const handleSiteSelection = ( siteId ) => {
-		setSelectedSites( ( prevSelected ) => {
-			if ( prevSelected.includes( siteId ) ) {
-				return prevSelected.filter( ( id ) => id !== siteId );
-			}
-			return [ ...prevSelected, siteId ];
-		} );
-	};
-
 	// Helper function to check if all templates are already present
 	const areAllTemplatesPresent = ( siteId ) => {
 		if ( selectedTemplates.length === 0 || brandSiteTemplates[ siteId ] === undefined ) {
@@ -64,10 +55,34 @@ const SiteSelection = ( {
 		return selectedTemplates.every( ( templateId ) => availableTemplateIds.includes( templateId ) );
 	};
 
+	// Helper function to check if a site is unreachable
+	const isSiteUnreachable = ( siteId ) => {
+		return sitesHealthCheckResult[ siteId ] && ! sitesHealthCheckResult[ siteId ]?.success;
+	};
+
+	// Helper function to check if a site should be disabled
+	const isSiteDisabled = ( siteId ) => {
+		return areAllTemplatesPresent( siteId ) || isSiteUnreachable( siteId );
+	};
+
+	const handleSiteSelection = ( siteId ) => {
+		// Prevent selection/deselection of disabled sites
+		if ( isSiteDisabled( siteId ) ) {
+			return;
+		}
+
+		setSelectedSites( ( prevSelected ) => {
+			if ( prevSelected.includes( siteId ) ) {
+				return prevSelected.filter( ( id ) => id !== siteId );
+			}
+			return [ ...prevSelected, siteId ];
+		} );
+	};
+
 	const selectAllSites = () => {
-		// Get IDs of sites that don't already have all templates (not disabled)
+		// Get IDs of sites that are selectable (not disabled)
 		const selectableSiteIds = siteInfo
-			.filter( ( site ) => ! areAllTemplatesPresent( site.id ) )
+			.filter( ( site ) => ! isSiteDisabled( site.id ) )
 			.map( ( site ) => site.id );
 
 		setSelectedSites( selectableSiteIds );
@@ -79,9 +94,11 @@ const SiteSelection = ( {
 
 	const totalCount = siteInfo.length;
 
-	// Calculate the number of sites that don't have all templates already
-	const selectableSites = siteInfo.filter( ( site ) => ! areAllTemplatesPresent( site.id ) );
+	// Calculate the number of selectable sites
+	const selectableSites = siteInfo.filter( ( site ) => ! isSiteDisabled( site.id ) );
 	const selectableSiteCount = selectableSites.length;
+
+	// Count only selected sites that are still selectable
 	const selectedSelectableSiteCount = selectedSites.filter( ( siteId ) =>
 		selectableSites.some( ( site ) => site.id === siteId ),
 	).length;
@@ -172,9 +189,9 @@ const SiteSelection = ( {
 								<p>
 									<span className="dashicons dashicons-info"></span>
 									{ sprintf(
-										/* translators: %1$d: Number of sites that already have all selected templates. %2$d: Total number of sites. */
+										/* translators: %1$d: Number of sites that already have all selected templates or are unreachable. %2$d: Total number of sites. */
 										__(
-											'%1$d of %2$d sites already have all selected templates and are disabled.',
+											'%1$d of %2$d sites are disabled (already have all templates or unreachable).',
 											'onedesign',
 										),
 										totalCount - selectableSiteCount,
@@ -187,7 +204,7 @@ const SiteSelection = ( {
 						<div className="od-sites-list od-sites-grid">
 							{ siteInfo.map( ( { id, name, url, logo } ) => {
 								const isSelected = selectedSites.includes( id );
-								const isDisabled = ( ( areAllTemplatesPresent( id ) && ! isSelected ) || ( sitesHealthCheckResult[ id ] && ! sitesHealthCheckResult[ id ].success ) );
+								const isDisabled = isSiteDisabled( id );
 
 								return (
 									<div
@@ -215,10 +232,11 @@ const SiteSelection = ( {
 											{ isDisabled && ! isSelected && (
 												<div
 													className="od-site-disabled-indicator"
-													title={ __(
-														'This site already has all selected templates',
-														'onedesign',
-													) }
+													title={
+														isSiteUnreachable( id )
+															? __( 'This site is unreachable', 'onedesign' )
+															: __( 'This site already has all selected templates', 'onedesign' )
+													}
 												>
 													{ renderIcon( { sitesHealthCheckResult, id } ) }
 												</div>
