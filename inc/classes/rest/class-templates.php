@@ -750,7 +750,7 @@ class Templates {
 		$sites_response  = array();
 		$error_log       = array();
 		foreach ( $connected_sites as $site ) {
-			$request_url      = Utils::build_api_endpoint( $site['url'], 'shared', self::NAMESPACE ) . '?timestamp=' . time();
+			$request_url      = Utils::build_api_endpoint( $site['url'], 'shared', self::NAMESPACE ) . '?timestamp=' . time(); // Add timestamp to avoid caching issues.
 			$api_key          = $site['api_key'];
 			$response         = wp_safe_remote_get(
 				$request_url,

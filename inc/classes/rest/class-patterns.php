@@ -370,7 +370,7 @@ class Patterns {
 		foreach ( $child_sites as $site ) {
 			$site_patterns  = array();
 			$remote_api_key = $site['api_key'] ?? '';
-			$remote_url     = Utils::build_api_endpoint( $site['url'], 'brand-site-patterns?timestamp=' . time() ); // Add timestamp to avoid caching issues.
+			$remote_url     = Utils::build_api_endpoint( $site['url'], 'brand-site-patterns' ) . '?timestamp=' . time(); // Add timestamp to avoid caching issues.
 
 			if ( empty( $remote_api_key ) ) {
 				continue; // Skip sites without API key.
