@@ -45,15 +45,21 @@ class CPT_Restriction {
 		add_filter( 'register_post_type_args', array( $this, 'modify_design_library_labels' ), 10, 2 );
 		add_action( 'admin_menu', array( $this, 'modify_design_library_admin_menu' ), 999 );
 		add_filter( 'default_content', array( $this, 'add_default_content_to_editor' ), 10, 2 );
-		add_filter(
-			'default_title',
-			function ( $title ) {
-				if ( Design_Library::SLUG === get_current_screen()->post_type ) {
-					return esc_html__( 'Design Library', 'onedesign' );
-				}
-				return $title;
-			}
-		);
+		add_filter( 'default_title', array( $this, 'add_default_title_to_editor' ), 10, 2 );
+	}
+
+	/**
+	 * Callback function to add default title to the editor.
+	 *
+	 * @param string $title The default title.
+	 *
+	 * @return string Modified title.
+	 */
+	public function add_default_title_to_editor( string $title ): string {
+		if ( Design_Library::SLUG === get_current_screen()->post_type ) {
+			return esc_html__( 'Design Library', 'onedesign' );
+		}
+		return $title;
 	}
 
 	/**
@@ -167,7 +173,13 @@ class CPT_Restriction {
 
 		// Count existing design library posts.
 		$existing_posts = wp_count_posts( Template::SLUG );
-		$post_count     = $existing_posts->publish + $existing_posts->draft + $existing_posts->pending + $existing_posts->private;
+
+		// check if $existing_posts is not null to avoid errors.
+		if ( ! $existing_posts ) {
+			return;
+		}
+
+		$post_count = $existing_posts->publish + $existing_posts->draft + $existing_posts->pending + $existing_posts->private;
 
 		// If a post already exists, redirect to edit screen.
 		if ( $post_count > 0 ) {
@@ -236,7 +248,13 @@ class CPT_Restriction {
 
 		// Count existing design library posts.
 		$existing_posts = wp_count_posts( Design_Library::SLUG );
-		$post_count     = $existing_posts->publish + $existing_posts->draft + $existing_posts->pending + $existing_posts->private;
+
+		// check if $existing_posts is not null to avoid errors.
+		if ( ! $existing_posts ) {
+			return;
+		}
+
+		$post_count = $existing_posts->publish + $existing_posts->draft + $existing_posts->pending + $existing_posts->private;
 
 		if ( $post_count > 0 ) {
 			// Find the "Add New" menu item.

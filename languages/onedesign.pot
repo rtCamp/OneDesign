@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-10-15T08:55:01+00:00\n"
+"POT-Creation-Date: 2025-10-16T04:45:50+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 
@@ -17,7 +17,7 @@ msgstr ""
 #: onedesign.php
 #: inc/classes/class-settings.php:54
 #: inc/classes/class-settings.php:55
-#: onedesign.php:51
+#: inc/templates/notices/no-assets.php:16
 #: assets/build/js/plugin.js:1
 #: assets/src/admin/plugin/index.js:134
 msgid "OneDesign"
@@ -43,16 +43,16 @@ msgstr ""
 msgid "https://rtcamp.com"
 msgstr ""
 
-#: inc/classes/class-cpt-restriction.php:52
+#: inc/classes/class-cpt-restriction.php:60
 #: inc/classes/class-settings.php:67
 #: inc/classes/class-settings.php:68
 #: inc/classes/class-settings.php:219
 msgid "Design Library"
 msgstr ""
 
-#: inc/classes/class-cpt-restriction.php:218
-#: inc/classes/class-cpt-restriction.php:219
-#: inc/classes/class-cpt-restriction.php:258
+#: inc/classes/class-cpt-restriction.php:230
+#: inc/classes/class-cpt-restriction.php:231
+#: inc/classes/class-cpt-restriction.php:276
 #: inc/classes/post-type/class-design-library.php:43
 msgid "Edit Design Library"
 msgstr ""
@@ -100,11 +100,11 @@ msgstr ""
 msgid "Template part setup completed: %1$s (ID: %2$d)"
 msgstr ""
 
-#: inc/classes/class-hooks.php:346
+#: inc/classes/class-hooks.php:340
 msgid "Patterns Selection"
 msgstr ""
 
-#: inc/classes/class-hooks.php:368
+#: inc/classes/class-hooks.php:362
 #: inc/classes/class-settings.php:75
 #: inc/classes/class-settings.php:136
 msgid "Templates"
@@ -264,7 +264,7 @@ msgstr ""
 
 #: inc/classes/rest/class-patterns.php:236
 #: inc/classes/rest/class-patterns.php:359
-#: inc/classes/rest/class-patterns.php:573
+#: inc/classes/rest/class-patterns.php:569
 msgid "This site is not configured as a parent site."
 msgstr ""
 
@@ -273,12 +273,12 @@ msgid "Pattern name and site ID are required."
 msgstr ""
 
 #: inc/classes/rest/class-patterns.php:252
-#: inc/classes/rest/class-patterns.php:640
+#: inc/classes/rest/class-patterns.php:636
 msgid "API key for the target site is missing in configuration."
 msgstr ""
 
 #: inc/classes/rest/class-patterns.php:259
-#: inc/classes/rest/class-patterns.php:628
+#: inc/classes/rest/class-patterns.php:624
 msgid "Target site not found in configuration."
 msgstr ""
 
@@ -291,8 +291,8 @@ msgid "Pattern removal request sent successfully."
 msgstr ""
 
 #: inc/classes/rest/class-patterns.php:299
-#: inc/classes/rest/class-patterns.php:422
-#: inc/classes/rest/class-patterns.php:680
+#: inc/classes/rest/class-patterns.php:423
+#: inc/classes/rest/class-patterns.php:676
 msgid "Unknown error from remote site."
 msgstr ""
 
@@ -307,7 +307,7 @@ msgid "Pattern names must be provided as an array."
 msgstr ""
 
 #: inc/classes/rest/class-patterns.php:326
-#: inc/classes/rest/class-patterns.php:460
+#: inc/classes/rest/class-patterns.php:456
 msgid "No patterns found for this brand site."
 msgstr ""
 
@@ -323,43 +323,37 @@ msgstr ""
 msgid "No child sites configured to receive patterns."
 msgstr ""
 
-#. translators: %1$s is the site name, %2$s is the error message, %3$d is the HTTP status code.
-#: inc/classes/rest/class-patterns.php:427
-#, php-format
-msgid "Error fetching patterns from %1$s: %2$s (Status: %3$d)"
-msgstr ""
-
-#: inc/classes/rest/class-patterns.php:428
+#: inc/classes/rest/class-patterns.php:425
 msgid "Unknown Site"
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:500
+#: inc/classes/rest/class-patterns.php:496
 msgid "Pattern categories registry not found."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:609
+#: inc/classes/rest/class-patterns.php:605
 msgid "No valid patterns selected to push."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:676
+#: inc/classes/rest/class-patterns.php:672
 msgid "Patterns pushed successfully."
 msgstr ""
 
 #. translators: %1$s is the error message, %2$d is the HTTP status code.
-#: inc/classes/rest/class-patterns.php:684
+#: inc/classes/rest/class-patterns.php:680
 #, php-format
 msgid "Error pushing patterns: %1$s (Status: %2$d)"
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:836
+#: inc/classes/rest/class-patterns.php:832
 msgid "This site is not configured as a child site to receive patterns."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:842
+#: inc/classes/rest/class-patterns.php:838
 msgid "No patterns data received."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:886
+#: inc/classes/rest/class-patterns.php:882
 msgid "Patterns processed."
 msgstr ""
 
@@ -439,24 +433,24 @@ msgid "JSON decode error: %s"
 msgstr ""
 
 #. translators: %s is the plugin name.
-#: onedesign.php:50
+#: inc/templates/notices/no-assets.php:15
 #, php-format
 msgid "You are running the %s plugin from the GitHub repository. Please build the assets and install composer dependencies to use the plugin."
 msgstr ""
 
 #. translators: %s is the command to run.
-#: onedesign.php:59
+#: inc/templates/notices/no-assets.php:24
 #, php-format
 msgid "Run the following commands in the plugin directory: %s"
 msgstr ""
 
 #. translators: %s is the plugin name.
-#: onedesign.php:67
+#: inc/templates/notices/no-assets.php:32
 #, php-format
 msgid "Please refer to the %s for more information."
 msgstr ""
 
-#: onedesign.php:71
+#: inc/templates/notices/no-assets.php:36
 msgid "OneDesign GitHub repository"
 msgstr ""
 

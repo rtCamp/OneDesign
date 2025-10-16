@@ -22,10 +22,18 @@ class Assets {
 	use Singleton;
 
 	/**
+	 * Localized data for scripts.
+	 *
+	 * @var array
+	 */
+	private static array $localized_data = array();
+
+	/**
 	 * Protected class constructor
 	 */
 	protected function __construct() {
 		$this->setup_hooks();
+		self::build_localized_data();
 	}
 
 	/**
@@ -34,6 +42,20 @@ class Assets {
 	public function setup_hooks(): void {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_scripts' ), 20, 1 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'add_admin_scripts' ), 20, 1 );
+	}
+
+	/**
+	 * Prepare localized data.
+	 *
+	 * @return void
+	 */
+	private static function build_localized_data(): void {
+		self::$localized_data = array(
+			'restUrl'      => esc_url( home_url( '/wp-json' ) ),
+			'restNonce'    => wp_create_nonce( 'wp_rest' ),
+			'apiKey'       => get_option( Constants::ONEDESIGN_API_KEY, 'default_api_key' ),
+			'settingsLink' => esc_url( admin_url( 'admin.php?page=onedesign-settings' ) ),
+		);
 	}
 
 	/**
@@ -58,10 +80,7 @@ class Assets {
 			wp_localize_script(
 				'onedesign-settings-script',
 				'OneDesignSettings',
-				array(
-					'restUrl'   => esc_url( home_url( '/wp-json' ) ),
-					'restNonce' => wp_create_nonce( 'wp_rest' ),
-				)
+				self::$localized_data
 			);
 
 			wp_enqueue_script( 'onedesign-settings-script' );
@@ -89,12 +108,7 @@ class Assets {
 			wp_localize_script(
 				'onedesign-setup-script',
 				'OneDesignSettings',
-				array(
-					'restUrl'      => esc_url( home_url( '/wp-json' ) ),
-					'apiKey'       => get_option( Constants::ONEDESIGN_API_KEY, 'default_api_key' ),
-					'restNonce'    => wp_create_nonce( 'wp_rest' ),
-					'settingsLink' => esc_url( admin_url( 'admin.php?page=onedesign-settings' ) ),
-				)
+				self::$localized_data
 			);
 
 			wp_enqueue_script( 'onedesign-setup-script' );
@@ -124,15 +138,7 @@ class Assets {
 			wp_localize_script(
 				'onedesign-patterns-library-script',
 				'patternSyncData',
-				array(
-					'ajaxurl'      => admin_url( 'admin-ajax.php' ),
-					'nonce'        => wp_create_nonce( 'onedesign_nonce' ),
-					'siteUrl'      => home_url(),
-					'adminUrl'     => admin_url(),
-					'settingsLink' => esc_url( admin_url( 'admin.php?page=onedesign-settings' ) ),
-					'restUrl'      => esc_url( home_url( '/wp-json' ) ),
-					'restNonce'    => wp_create_nonce( 'wp_rest' ),
-				)
+				self::$localized_data
 			);
 
 			wp_enqueue_script( 'onedesign-patterns-library-script' );
@@ -151,14 +157,7 @@ class Assets {
 			wp_localize_script(
 				'onedesign-templates-library-script',
 				'TemplateLibraryData',
-				array(
-					'ajaxUrl'      => admin_url( 'admin-ajax.php' ),
-					'restNonce'    => wp_create_nonce( 'wp_rest' ),
-					'siteUrl'      => home_url(),
-					'adminUrl'     => admin_url(),
-					'restUrl'      => esc_url( home_url( '/wp-json' ) ),
-					'settingsLink' => esc_url( admin_url( 'admin.php?page=onedesign-settings' ) ),
-				)
+				self::$localized_data
 			);
 
 			wp_enqueue_script( 'onedesign-templates-library-script' );
@@ -256,7 +255,7 @@ class Assets {
 	 * @param string             $file File path.
 	 * @param int|string|boolean $ver  File version.
 	 *
-	 * @return bool|false|int
+	 * @return bool|int|string
 	 */
 	public function get_file_version( $file, $ver = false ): bool|int|string {
 		if ( ! empty( $ver ) ) {

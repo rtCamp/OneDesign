@@ -37,6 +37,13 @@ class Utils {
 	}
 
 	/**
+	 * Build OneDesign REST namespace.
+	 *
+	 * @var string
+	 */
+	const NAMESPACE = Constants::ONEDESIGN_REST_NAMESPACE . '/' . Constants::ONEDESIGN_REST_VERSION;
+
+	/**
 	 * Get the current site type.
 	 *
 	 * @return string
@@ -62,6 +69,19 @@ class Utils {
 	 */
 	public static function is_governing_site(): bool {
 		return hash_equals( 'governing-site', self::get_current_site_type() );
+	}
+
+	/**
+	 * Build API endpoint URL.
+	 *
+	 * @param string $site_url The base URL of the site.
+	 * @param string $endpoint The specific endpoint path.
+	 * @param string $rest_namespace The REST namespace (default: self::NAMESPACE).
+	 *
+	 * @return string Full API endpoint URL.
+	 */
+	public static function build_api_endpoint( string $site_url, string $endpoint, string $rest_namespace = self::NAMESPACE ): string {
+		return esc_url_raw( trailingslashit( $site_url ) ) . '/wp-json/' . $rest_namespace . '/' . ltrim( $endpoint, '/' );
 	}
 
 	/**
@@ -155,7 +175,7 @@ class Utils {
 	 * @param string|array|\WP_Block_Template $content The block content containing WordPress block markup.
 	 * @param string                          $shared_site_name The name of the site to which template is going to be shared.
 	 *
-	 * @return string Modified content with updated slugs and themes.
+	 * @return array|string|null Modified content with updated slugs and themes.
 	 */
 	public static function modify_content_references( string|array|\WP_Block_Template $content, string $shared_site_name ): array|string|null {
 

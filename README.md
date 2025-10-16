@@ -1,7 +1,7 @@
-![Banner V3](https://rtcamp.com/wp-content/uploads/sites/2/2024/09/OneDesign-Banner.png)
+![Banner V3](./assets/images/banner.webp)
 
 # OneDesign
-Contributors: [rtcamp](https://profiles.wordpress.org/rtcamp), [parthnvaswani](https://github.com/parthnvaswani), [up1512001](https://github.com/up1512001), [singhakanshu00](https://github.com/singhakanshu00), [danish17](https://github.com/danish17), [aviral-mittal](https://github.com/aviral-mittal), [vaishaliagola27](https://github.com/vaishaliagola27), [rishavjeet](https://github.com/rishavjeet), [vishal4669](https://github.com/vishal4669), [iamimmanuelraj](https://github.com/iamimmanuelraj)
+Contributors: [rtcamp](https://profiles.wordpress.org/rtcamp), [parthnvaswani](https://github.com/parthnvaswani), [up1512001](https://github.com/up1512001), [singhakanshu00](https://github.com/singhakanshu00), [danish17](https://github.com/danish17), [aviral-mittal](https://github.com/aviral-mittal), [vaishaliagola27](https://github.com/vaishaliagola27), [rishavjeet](https://github.com/rishavjeet), [vishal4669](https://github.com/vishal4669), [iamimmanuelraj](https://github.com/iamimmanuelraj) [vishalkakadiya](https://github.com/vishalkakadiya)
 
 Tags: OnePress, Pattern distribution, Pattern sync, OneDesign, WordPress multisite, WordPress network, Gutenberg, WordPress Site Editor, Block Patterns, Pattern management, WordPress plugin, Design consistency, Pattern library
 

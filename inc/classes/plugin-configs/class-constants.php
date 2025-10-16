@@ -109,6 +109,20 @@ class Constants {
 	public const ONEDESIGN_SHARED_SYNCED_PATTERNS = 'onedesign_shared_synced_patterns';
 
 	/**
+	 * OneDesign rest namespace.
+	 *
+	 * @var string
+	 */
+	public const ONEDESIGN_REST_NAMESPACE = 'onedesign';
+
+	/**
+	 * OneDesign rest version.
+	 *
+	 * @var string
+	 */
+	public const ONEDESIGN_REST_VERSION = 'v1';
+
+	/**
 	 * Use Singleton trait.
 	 */
 	use Singleton;

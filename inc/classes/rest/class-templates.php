@@ -19,7 +19,7 @@ class Templates {
 	/**
 	 * REST namespace.
 	 */
-	const NAMESPACE = 'onedesign/v1/templates';
+	const NAMESPACE = Utils::NAMESPACE . '/templates';
 
 	/**
 	 * Use singleton trait.
@@ -469,7 +469,7 @@ class Templates {
 			);
 		}
 
-		$request_url = esc_url_raw( trailingslashit( $site_info['url'] ) ) . '/wp-json/' . self::NAMESPACE . '/remove-site-templates';
+		$request_url = Utils::build_api_endpoint( $site_info['url'], 'remove-site-templates', self::NAMESPACE );
 		$api_key     = $site_info['api_key'] ?? '';
 
 		$response = wp_safe_remote_request(
@@ -643,14 +643,14 @@ class Templates {
 			$site_api_key = $site['api_key'];
 			$site_id      = $site['id'];
 			if ( in_array( $site_id, $sites, true ) ) {
-				$request_url         = $site_url . 'wp-json/' . self::NAMESPACE . '/shared';
+				$request_url         = Utils::build_api_endpoint( $site['url'], 'shared', self::NAMESPACE );
 				$new_templates       = Utils::modify_template_template_part_pattern_slug( $shared_templates, $site['name'] );
 				$new_patterns        = Utils::modify_template_template_part_pattern_slug( $patterns, $site['name'] );
 				$new_template_parts  = Utils::modify_template_template_part_pattern_slug( $template_parts, $site['name'] );
 				$new_synced_patterns = Utils::modify_template_template_part_pattern_slug( $synced_patterns, $site['name'] );
 
 				// first make a request to create synced patterns to brand site.
-				$synced_patterns_request_url = $site_url . 'wp-json/' . self::NAMESPACE . '/create-synced-patterns';
+				$synced_patterns_request_url = Utils::build_api_endpoint( $site['url'], 'create-synced-patterns', self::NAMESPACE );
 				$synced_patterns_response    = wp_safe_remote_post(
 					$synced_patterns_request_url,
 					array(
@@ -750,7 +750,7 @@ class Templates {
 		$sites_response  = array();
 		$error_log       = array();
 		foreach ( $connected_sites as $site ) {
-			$request_url      = esc_url_raw( trailingslashit( $site['url'] ) ) . '/wp-json/' . self::NAMESPACE . '/shared?timestamp=' . time();
+			$request_url      = Utils::build_api_endpoint( $site['url'], 'shared', self::NAMESPACE ) . '?timestamp=' . time();
 			$api_key          = $site['api_key'];
 			$response         = wp_safe_remote_get(
 				$request_url,

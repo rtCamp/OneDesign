@@ -295,12 +295,6 @@ class Hooks {
 			);
 		}
 		update_option( Constants::ONEDESIGN_BRAND_SITE_POST_IDS, array_unique( $brand_site_post_ids ), false );
-
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			foreach ( $logs as $log_entry ) {
-				error_log( $log_entry ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- only adding logs in debug mode.
-			}
-		}
 	}
 
 	/**

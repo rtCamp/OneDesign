@@ -28,7 +28,7 @@ class Patterns {
 	/**
 	 * REST namespace.
 	 */
-	const NAMESPACE = 'onedesign/v1';
+	const NAMESPACE = Utils::NAMESPACE;
 
 	/**
 	 * Constructor.
@@ -259,7 +259,7 @@ class Patterns {
 			return new WP_Error( 'site_not_found', __( 'Target site not found in configuration.', 'onedesign' ), array( 'status' => 404 ) );
 		}
 
-		$remote_url = trailingslashit( $site['url'] ) . 'wp-json/onedesign/v1/remove-brand-site-patterns';
+		$remote_url = Utils::build_api_endpoint( $site['url'], 'remove-brand-site-patterns' );
 
 		$response = wp_safe_remote_request(
 			$remote_url,
@@ -366,10 +366,11 @@ class Patterns {
 		}
 
 		$all_patterns = array();
+		$error_logs   = array();
 		foreach ( $child_sites as $site ) {
 			$site_patterns  = array();
 			$remote_api_key = $site['api_key'] ?? '';
-			$remote_url     = trailingslashit( $site['url'] ) . 'wp-json/onedesign/v1/brand-site-patterns?timestamp=' . time(); // Add timestamp to avoid caching issues.
+			$remote_url     = Utils::build_api_endpoint( $site['url'], 'brand-site-patterns?timestamp=' . time() ); // Add timestamp to avoid caching issues.
 
 			if ( empty( $remote_api_key ) ) {
 				continue; // Skip sites without API key.
@@ -420,25 +421,20 @@ class Patterns {
 			} else {
 				// Log or handle error response from a child site.
 				$error_message = $decoded_body['message'] ?? __( 'Unknown error from remote site.', 'onedesign' );
-				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-					error_log( // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- showing in dev mode only.
-						sprintf(
-							// translators: %1$s is the site name, %2$s is the error message, %3$d is the HTTP status code.
-							__( 'Error fetching patterns from %1$s: %2$s (Status: %3$d)', 'onedesign' ),
-							$site['name'] ?? __( 'Unknown Site', 'onedesign' ),
-							$error_message,
-							$status_code
-						)
-					);
-				}
+				$error_logs[]  = array(
+					'site'        => $site['name'] ?? __( 'Unknown Site', 'onedesign' ),
+					'status_code' => $status_code,
+					'message'     => $error_message,
+				);
 			}
 			$all_patterns[ $site['id'] ] = $site_patterns; // Store patterns by site ID.
 		}
 
 		return new WP_REST_Response(
 			array(
-				'success'  => true,
-				'patterns' => $all_patterns,
+				'success'    => true,
+				'patterns'   => $all_patterns,
+				'error_logs' => $error_logs,
 			),
 			200
 		);
@@ -632,7 +628,7 @@ class Patterns {
 
 			// The 'api_key' in $target_site is the token for the remote child site.
 			$remote_api_key = $target_site['api_key'] ?? '';
-			$remote_url     = trailingslashit( $target_site['url'] ) . 'wp-json/onedesign/v1/receive-patterns';
+			$remote_url     = Utils::build_api_endpoint( $target_site['url'], 'receive-patterns' );
 
 			if ( empty( $remote_api_key ) ) {
 				$results[ $site_id ] = array(
