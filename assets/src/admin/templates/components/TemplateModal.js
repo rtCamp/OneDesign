@@ -83,7 +83,7 @@ const TemplateModal = () => {
 					} catch ( error ) {
 						setSitesHealthCheckResult( ( prevResults ) => ( {
 							...prevResults,
-							[ siteInfo[ siteId ]?.id ]: { success: false, message: 'Failed to reach the site.' },
+							[ siteInfo[ siteId ]?.id ]: { success: false, message: __( 'Failed to reach the site.', 'onedesign' ) },
 						} ) );
 					}
 				}

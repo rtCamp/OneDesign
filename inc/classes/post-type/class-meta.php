@@ -76,7 +76,7 @@ class Meta {
 	private function get_post_meta_array(): array {
 		$post_meta_array = array(
 			array(
-				'post_type'    => array( Design_Library::SLUG ),
+				'post_type'    => array( Pattern::SLUG ),
 				'meta'         => 'brand_site',
 				'type'         => 'array',
 				'show_in_rest' => array(

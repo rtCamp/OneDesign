@@ -9,7 +9,7 @@ namespace OneDesign;
 
 use OneDesign\Plugin_Configs\Constants;
 use OneDesign\Traits\Singleton;
-use OneDesign\Post_Types\{ Design_Library, Template };
+use OneDesign\Post_Types\{ Pattern, Template };
 
 /**
  * Class Hooks
@@ -36,7 +36,7 @@ class Hooks {
 	 * @return void
 	 */
 	public function setup_hooks(): void {
-		add_action( 'admin_footer', array( $this, 'print_design_library_button_in_editor_js_template' ) );
+		add_action( 'admin_footer', array( $this, 'print_pattern_library_button_in_editor_js_template' ) );
 		add_action( 'admin_footer', array( $this, 'add_templates_button_to_editor' ) );
 		add_action( 'wp_ajax_register_block_patterns', array( $this, 'ajax_register_block_patterns' ) );
 		add_action( 'wp_ajax_nopriv_register_block_patterns', array( $this, 'ajax_register_block_patterns' ) );
@@ -147,8 +147,8 @@ class Hooks {
 			$classes .= ' onedesign-missing-brand-sites ';
 
 			// remove submenu pages.
-			remove_submenu_page( 'onedesign', 'design-library' );
-			remove_submenu_page( 'onedesign', 'onedesign-templates' );
+			remove_submenu_page( 'onedesign', 'onedesign-pattern-library' );
+			remove_submenu_page( 'onedesign', 'onedesign-template-library' );
 
 			return $classes;
 		}
@@ -306,7 +306,7 @@ class Hooks {
 	 * @return array|bool
 	 */
 	public function allowed_block_types( bool|array $allowed_block_types, \WP_Block_Editor_Context $editor_context ): array|bool {
-		// Allow all block types in the Design Library post type.
+		// Allow all block types in the Pattern Library post type.
 		if ( isset( $editor_context->post->post_type ) && ( Template::SLUG === $editor_context->post->post_type ) ) {
 			return array();
 		}
@@ -323,20 +323,20 @@ class Hooks {
 	}
 
 	/**
-	 * Prints the Design Library Button Template.
+	 * Prints the Pattern Library Button Template.
 	 *
 	 * @return void
 	 */
-	public function print_design_library_button_in_editor_js_template(): void {
+	public function print_pattern_library_button_in_editor_js_template(): void {
 		$current_screen = get_current_screen();
-		if ( ! $current_screen || Design_Library::SLUG !== $current_screen->post_type ) {
+		if ( ! $current_screen || Pattern::SLUG !== $current_screen->post_type ) {
 			return;
 		}
 		?>
-		<script id="design-library-gutenberg-button" type="text/html">
-			<div id="design-library-button">
-				<button id="design-library-main-button" type="button" class="button button-primary button-large">
-					<span class="design-library-main-button-active">
+		<script id="pattern-library-gutenberg-button" type="text/html">
+			<div id="pattern-library-button">
+				<button id="pattern-library-main-button" type="button" class="button button-primary button-large">
+					<span class="pattern-library-main-button-active">
 					<?php esc_html_e( 'Patterns Selection', 'onedesign' ); ?>
 				</button>
 			</div>

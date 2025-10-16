@@ -77,7 +77,7 @@ Patterns are transferred securely via WordPress REST API with unique authenticat
 
 = Can I customize which patterns are available to specific sites? =
 
-Yes, you can control which patterns are applied to each brand site by managing the selections in the Design Library interface.
+Yes, you can control which patterns are applied to each brand site by managing the selections in the Pattern Library interface.
 
 = Are there any limits to how many patterns I can sync? =
 

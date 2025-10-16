@@ -24,7 +24,7 @@ class Template extends Base {
 	 *
 	 * @var string
 	 */
-	const LABEL = 'Template';
+	const LABEL = 'Template Library';
 
 	/**
 	 * To get a list of labels for template post type.
@@ -33,20 +33,20 @@ class Template extends Base {
 	 */
 	public function get_labels(): array {
 		return array(
-			'name'               => _x( 'Template', 'post type general name', 'onedesign' ),
-			'singular_name'      => _x( 'Template', 'post type singular name', 'onedesign' ),
-			'menu_name'          => _x( 'Template', 'admin menu', 'onedesign' ),
-			'name_admin_bar'     => _x( 'Template', 'add new on admin bar', 'onedesign' ),
-			'add_new'            => _x( 'Add New', 'Template', 'onedesign' ),
-			'add_new_item'       => __( 'Add New Template', 'onedesign' ),
-			'new_item'           => __( 'New Template', 'onedesign' ),
-			'edit_item'          => __( 'Edit Template', 'onedesign' ),
-			'view_item'          => __( 'View Template', 'onedesign' ),
-			'all_items'          => __( 'All Template', 'onedesign' ),
-			'search_items'       => __( 'Search Template', 'onedesign' ),
-			'parent_item_colon'  => __( 'Parent Template:', 'onedesign' ),
-			'not_found'          => __( 'No Template found.', 'onedesign' ),
-			'not_found_in_trash' => __( 'No Template found in trash.', 'onedesign' ),
+			'name'               => _x( 'Template Library', 'post type general name', 'onedesign' ),
+			'singular_name'      => _x( 'Template Library', 'post type singular name', 'onedesign' ),
+			'menu_name'          => _x( 'Template Library', 'admin menu', 'onedesign' ),
+			'name_admin_bar'     => _x( 'Template Library', 'add new on admin bar', 'onedesign' ),
+			'add_new'            => _x( 'Add New', 'Template Library', 'onedesign' ),
+			'add_new_item'       => __( 'Add New Template Library', 'onedesign' ),
+			'new_item'           => __( 'New Template Library', 'onedesign' ),
+			'edit_item'          => __( 'Edit Template Library', 'onedesign' ),
+			'view_item'          => __( 'View Template Library', 'onedesign' ),
+			'all_items'          => __( 'All Template Library', 'onedesign' ),
+			'search_items'       => __( 'Search Template Library', 'onedesign' ),
+			'parent_item_colon'  => __( 'Parent Template Library:', 'onedesign' ),
+			'not_found'          => __( 'No Template Library found.', 'onedesign' ),
+			'not_found_in_trash' => __( 'No Template Library found in trash.', 'onedesign' ),
 		);
 	}
 

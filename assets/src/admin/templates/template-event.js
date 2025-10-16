@@ -4,7 +4,7 @@
 import { __ } from '@wordpress/i18n';
 
 /**
- * This File contains the code to add the Design Library Button.
+ * This File contains the code to add the Pattern Library Button.
  */
 
 window.addEventListener( 'DOMContentLoaded', function() {
@@ -51,7 +51,7 @@ window.addEventListener( 'DOMContentLoaded', function() {
 			this.libraryCache.switchModeButton.addEventListener( 'click', () => {
 				window.console.log( 'Template event fired...' );
 				const TemplateLibraryOpenEvent = new CustomEvent( 'TemplateLibraryOpen', {
-					detail: { message: __( 'Open the Design Library Modal!', 'onedesign' ) },
+					detail: { message: __( 'Open the Pattern Library Modal!', 'onedesign' ) },
 				} );
 
 				document.dispatchEvent( TemplateLibraryOpenEvent );

@@ -8,7 +8,7 @@
 namespace OneDesign;
 
 use OneDesign\Plugin_Configs\Constants;
-use OneDesign\Post_Types\{ Design_Library, Template };
+use OneDesign\Post_Types\{ Pattern, Template };
 use OneDesign\Traits\Singleton;
 
 /**
@@ -128,7 +128,7 @@ class Assets {
 
 		$current_screen = get_current_screen();
 
-		if ( Design_Library::SLUG === $current_screen->id ) {
+		if ( Pattern::SLUG === $current_screen->id ) {
 
 			$this->register_script(
 				'onedesign-patterns-library-script',

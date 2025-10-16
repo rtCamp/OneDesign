@@ -94,7 +94,7 @@ Code contributions, bug reports, and feature requests are welcome! The following
 │   │   │   └── class-secret-key.php
 │   │   ├── post-type
 │   │   │   ├── class-base.php
-│   │   │   ├── class-design-library.php
+│   │   │   ├── class-pattern-library.php
 │   │   │   ├── class-meta.php
 │   │   │   └── class-template.php
 │   │   └── rest

@@ -76,7 +76,7 @@ Built for enterprise teams, OneDesign unifies your design, editorial, and develo
    - API key
 
 ### Accessing the Pattern Library
-1. On your Governing Site, access the Design Library from the sidebar menu
+1. On your Governing Site, access the Pattern Library from the sidebar menu
 2. This opens a full-page interface showing all available patterns
 3. Patterns are organized by categories with vertical tabs for your registered sites
 
@@ -113,7 +113,7 @@ For development guidelines, please refer to our [Development Guide](./docs/DEVEL
 ### How are patterns transferred between sites?
 Patterns are transferred securely via WordPress REST API, ensuring that all pattern data, including blocks and settings, are properly synchronized.
 ### Can I customize which patterns are available to specific sites?
-Yes, you can control which patterns are applied to each brand site by managing the selections in the Design Library.
+Yes, you can control which patterns are applied to each brand site by managing the selections in the Pattern Library.
 ### Are there any limits to how many patterns I can sync?
 There are no hard limits on the number of patterns you can sync, but performance may vary depending on your server resources and the complexity of the patterns.
 ### Can I also remove patterns from specific sites?

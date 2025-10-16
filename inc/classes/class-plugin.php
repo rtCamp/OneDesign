@@ -8,7 +8,7 @@
 namespace OneDesign;
 
 use OneDesign\Plugin_Configs\{ Secret_Key, Constants };
-use OneDesign\Post_Types\{ Template, Design_Library, Meta };
+use OneDesign\Post_Types\{ Template, Pattern, Meta };
 use OneDesign\Traits\Singleton;
 
 /**
@@ -59,7 +59,7 @@ class Plugin {
 	 * @return void
 	 */
 	private function load_post_types(): void {
-		Design_Library::get_instance();
+		Pattern::get_instance();
 		Template::get_instance();
 		Meta::get_instance();
 	}
