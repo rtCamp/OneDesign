@@ -11,6 +11,7 @@ import {
  * Internal dependencies
  */
 import { getInitials } from '../../../js/utils';
+import { renderIcon } from '../../../components/Dashicons';
 
 /**
  * SiteSelection component.
@@ -57,7 +58,7 @@ const SiteSelection = ( {
 
 	// Helper function to check if a site is unreachable
 	const isSiteUnreachable = ( siteId ) => {
-		return sitesHealthCheckResult[ siteId ] && ! sitesHealthCheckResult[ siteId ]?.success;
+		return sitesHealthCheckResult?.[ siteId ] && ! sitesHealthCheckResult[ siteId ]?.success;
 	};
 
 	// Helper function to check if a site should be disabled
@@ -333,24 +334,6 @@ const SiteSelection = ( {
 				</div>
 			</div>
 		</>
-	);
-};
-
-/**
- * Render the appropriate dashicon based on health check result.
- *
- * @param {Object} props                        - Component props.
- * @param {Object} props.sitesHealthCheckResult - Object containing health check results for sites.
- * @param {number} props.id                     - Site ID.
- * @return {JSX.Element} The rendered dashicon element.
- */
-const renderIcon = ( { sitesHealthCheckResult, id } ) => {
-	return (
-		sitesHealthCheckResult[ id ] && ! sitesHealthCheckResult[ id ].success ? (
-			<span className="dashicons dashicons-warning"></span>
-		) : (
-			<span className="dashicons dashicons-yes-alt"></span>
-		)
 	);
 };
 

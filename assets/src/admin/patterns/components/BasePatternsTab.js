@@ -104,10 +104,6 @@ const BasePatternsTab = memo(
 
 		const handleApplyPatterns = async () => {
 			setIsApplying( true );
-			setApplicationStatus( {
-				type: 'info',
-				message: __( 'Applying patterns to selected sites…', 'onedesign' ),
-			} );
 
 			try {
 				const result = await applySelectedPatterns();
@@ -122,7 +118,8 @@ const BasePatternsTab = memo(
 					// Close modal after success with slightly longer delay for better user feedback
 					setTimeout( () => {
 						CloseBrandSiteModal();
-					}, 2000 );
+						setSelectedPatterns( [] );
+					}, 3000 );
 				} else {
 					setApplicationStatus( {
 						type: 'error',
@@ -181,6 +178,34 @@ const BasePatternsTab = memo(
 		const BrandSiteSelection = () => {
 			return (
 				<div className="od-brand-site-modal-content">
+
+					{ applicationStatus && (
+						<Notice
+							status={ applicationStatus?.type ?? 'info' }
+							isDismissible={ true }
+							className="od-application-notice od-error-notice"
+						>
+							<div className="od-error-notice-summary">
+								<div className="od-notice-message">
+									{ applicationStatus?.message }
+								</div>
+							</div>
+
+							{ showDetailedErrors && applicationStatus?.hasDetails && (
+								<div className="od-error-details">
+									{ detailedErrors.map( ( error, index ) => (
+										<div key={ index } className="od-error-site">
+											<div className="od-error-site-name">{ error?.site }</div>
+											<div className="od-error-site-message">
+												{ error?.message }
+											</div>
+										</div>
+									) ) }
+								</div>
+							) }
+						</Notice>
+					) }
+
 					<div className="od-site-selection-wrapper">
 						<SiteSelection
 							setIsSiteSelected={ setIsSiteSelected }
@@ -189,48 +214,6 @@ const BasePatternsTab = memo(
 							sitePatterns={ sitePatterns }
 						/>
 					</div>
-
-					{ applicationStatus && (
-						<Notice
-							status={ applicationStatus.type }
-							isDismissible={ false }
-							className="od-application-notice od-error-notice"
-						>
-							<div className="od-error-notice-summary">
-								<div className="od-notice-message">
-									{ applicationStatus.message }
-								</div>
-
-								{ applicationStatus.hasDetails && (
-									<button
-										type="button"
-										className="od-error-notice-toggle"
-										onClick={ () => setShowDetailedErrors( ( prev ) => ! prev ) }
-									>
-										{ showDetailedErrors
-											? __( 'Hide Details', 'onedesign' )
-											: __( 'Show Details', 'onedesign' ) }
-										<span className="od-toggle-icon">
-											{ showDetailedErrors ? '▲' : '▼' }
-										</span>
-									</button>
-								) }
-							</div>
-
-							{ showDetailedErrors && applicationStatus.hasDetails && (
-								<div className="od-error-details">
-									{ detailedErrors.map( ( error, index ) => (
-										<div key={ index } className="od-error-site">
-											<div className="od-error-site-name">{ error.site }</div>
-											<div className="od-error-site-message">
-												{ error.message }
-											</div>
-										</div>
-									) ) }
-								</div>
-							) }
-						</Notice>
-					) }
 
 					<div className="od-modal-actions">
 						<Button

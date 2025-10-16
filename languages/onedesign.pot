@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-10-16T04:45:50+00:00\n"
+"POT-Creation-Date: 2025-10-16T15:47:48+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 
@@ -47,14 +47,14 @@ msgstr ""
 #: inc/classes/class-settings.php:67
 #: inc/classes/class-settings.php:68
 #: inc/classes/class-settings.php:219
-msgid "Design Library"
+msgid "Pattern Library"
 msgstr ""
 
 #: inc/classes/class-cpt-restriction.php:230
 #: inc/classes/class-cpt-restriction.php:231
 #: inc/classes/class-cpt-restriction.php:276
-#: inc/classes/post-type/class-design-library.php:43
-msgid "Edit Design Library"
+#: inc/classes/post-type/class-pattern.php:43
+msgid "Edit Pattern Library"
 msgstr ""
 
 #: inc/classes/class-hooks.php:73
@@ -112,7 +112,7 @@ msgstr ""
 
 #: inc/classes/class-settings.php:76
 #: assets/build/js/templates-library.js:7
-#: assets/src/admin/templates/components/TemplateModal.js:363
+#: assets/src/admin/templates/components/TemplateModal.js:299
 msgid "Template Library"
 msgstr ""
 
@@ -125,129 +125,129 @@ msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 
 #: inc/classes/class-settings.php:226
-msgid "Error creating Design Library post."
+msgid "Error creating Pattern Library post."
 msgstr ""
 
 #: inc/classes/plugin-configs/class-secret-key.php:96
 msgid "Secret key regenerated successfully."
 msgstr ""
 
-#: inc/classes/post-type/class-design-library.php:36
+#: inc/classes/post-type/class-pattern.php:36
 msgctxt "post type general name"
-msgid "Design Library"
+msgid "Pattern Library"
 msgstr ""
 
-#: inc/classes/post-type/class-design-library.php:37
+#: inc/classes/post-type/class-pattern.php:37
 msgctxt "post type singular name"
-msgid "Design Library"
+msgid "Pattern Library"
 msgstr ""
 
-#: inc/classes/post-type/class-design-library.php:38
+#: inc/classes/post-type/class-pattern.php:38
 msgctxt "admin menu"
-msgid "Design Library"
+msgid "Pattern Library"
 msgstr ""
 
-#: inc/classes/post-type/class-design-library.php:39
+#: inc/classes/post-type/class-pattern.php:39
 msgctxt "add new on admin bar"
-msgid "Design Library"
+msgid "Pattern Library"
 msgstr ""
 
-#: inc/classes/post-type/class-design-library.php:40
-msgctxt "Design Library"
+#: inc/classes/post-type/class-pattern.php:40
+msgctxt "Pattern Library"
 msgid "Add New"
 msgstr ""
 
-#: inc/classes/post-type/class-design-library.php:41
-msgid "Add New Design Library"
+#: inc/classes/post-type/class-pattern.php:41
+msgid "Add New Pattern Library"
 msgstr ""
 
-#: inc/classes/post-type/class-design-library.php:42
-msgid "New Design Library"
+#: inc/classes/post-type/class-pattern.php:42
+msgid "New Pattern Library"
 msgstr ""
 
-#: inc/classes/post-type/class-design-library.php:44
-msgid "View Design Library"
+#: inc/classes/post-type/class-pattern.php:44
+msgid "View Pattern Library"
 msgstr ""
 
-#: inc/classes/post-type/class-design-library.php:45
-msgid "All Design Library"
+#: inc/classes/post-type/class-pattern.php:45
+msgid "All Pattern Library"
 msgstr ""
 
-#: inc/classes/post-type/class-design-library.php:46
-msgid "Search Design Library"
+#: inc/classes/post-type/class-pattern.php:46
+msgid "Search Pattern Library"
 msgstr ""
 
-#: inc/classes/post-type/class-design-library.php:47
-msgid "Parent Design Library:"
+#: inc/classes/post-type/class-pattern.php:47
+msgid "Parent Pattern Library:"
 msgstr ""
 
-#: inc/classes/post-type/class-design-library.php:48
-msgid "No Design Library found."
+#: inc/classes/post-type/class-pattern.php:48
+msgid "No Pattern Library found."
 msgstr ""
 
-#: inc/classes/post-type/class-design-library.php:49
-msgid "No Design Library found in trash."
+#: inc/classes/post-type/class-pattern.php:49
+msgid "No Pattern Library found in trash."
 msgstr ""
 
 #: inc/classes/post-type/class-template.php:36
 msgctxt "post type general name"
-msgid "Template"
+msgid "Template Library"
 msgstr ""
 
 #: inc/classes/post-type/class-template.php:37
 msgctxt "post type singular name"
-msgid "Template"
+msgid "Template Library"
 msgstr ""
 
 #: inc/classes/post-type/class-template.php:38
 msgctxt "admin menu"
-msgid "Template"
+msgid "Template Library"
 msgstr ""
 
 #: inc/classes/post-type/class-template.php:39
 msgctxt "add new on admin bar"
-msgid "Template"
+msgid "Template Library"
 msgstr ""
 
 #: inc/classes/post-type/class-template.php:40
-msgctxt "Template"
+msgctxt "Template Library"
 msgid "Add New"
 msgstr ""
 
 #: inc/classes/post-type/class-template.php:41
-msgid "Add New Template"
+msgid "Add New Template Library"
 msgstr ""
 
 #: inc/classes/post-type/class-template.php:42
-msgid "New Template"
+msgid "New Template Library"
 msgstr ""
 
 #: inc/classes/post-type/class-template.php:43
-msgid "Edit Template"
+msgid "Edit Template Library"
 msgstr ""
 
 #: inc/classes/post-type/class-template.php:44
-msgid "View Template"
+msgid "View Template Library"
 msgstr ""
 
 #: inc/classes/post-type/class-template.php:45
-msgid "All Template"
+msgid "All Template Library"
 msgstr ""
 
 #: inc/classes/post-type/class-template.php:46
-msgid "Search Template"
+msgid "Search Template Library"
 msgstr ""
 
 #: inc/classes/post-type/class-template.php:47
-msgid "Parent Template:"
+msgid "Parent Template Library:"
 msgstr ""
 
 #: inc/classes/post-type/class-template.php:48
-msgid "No Template found."
+msgid "No Template Library found."
 msgstr ""
 
 #: inc/classes/post-type/class-template.php:49
-msgid "No Template found in trash."
+msgid "No Template Library found in trash."
 msgstr ""
 
 #: inc/classes/rest/class-basic-options.php:241
@@ -469,47 +469,59 @@ msgid "Provider Site:"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:1
-#: assets/src/admin/patterns/components/SiteSelection.js:102
+#: assets/build/js/templates-library.js:6
+#: assets/src/hooks/useSitesManagement.js:61
+msgid "Health check failed."
+msgstr ""
+
+#: assets/build/js/patterns-library.js:1
+#: assets/build/js/templates-library.js:6
+#: assets/src/hooks/useSitesManagement.js:69
+msgid "Failed to reach the site."
+msgstr ""
+
+#: assets/build/js/patterns-library.js:1
+#: assets/src/admin/patterns/components/SiteSelection.js:120
 msgid "Failed to load brand sites. Please check your connection and try again."
 msgstr ""
 
 #: assets/build/js/patterns-library.js:1
-#: assets/src/admin/patterns/components/SiteSelection.js:167
+#: assets/src/admin/patterns/components/SiteSelection.js:184
 msgid "Loading brand sites…"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:1
-#: assets/src/admin/patterns/components/SiteSelection.js:180
+#: assets/src/admin/patterns/components/SiteSelection.js:197
 msgid "Technical details"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:1
-#: assets/src/admin/patterns/components/SiteSelection.js:190
+#: assets/src/admin/patterns/components/SiteSelection.js:207
 msgid "Retry"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:1
-#: assets/src/admin/patterns/components/SiteSelection.js:200
+#: assets/src/admin/patterns/components/SiteSelection.js:217
 msgid "No brand sites configured."
 msgstr ""
 
 #: assets/build/js/patterns-library.js:1
-#: assets/src/admin/patterns/components/SiteSelection.js:202
+#: assets/src/admin/patterns/components/SiteSelection.js:219
 msgid "Please configure brand sites first to apply patterns."
 msgstr ""
 
 #: assets/build/js/patterns-library.js:1
 #: assets/build/js/templates-library.js:1
-#: assets/src/admin/patterns/components/SiteSelection.js:216
-#: assets/src/admin/templates/components/SiteSelection.js:142
+#: assets/src/admin/patterns/components/SiteSelection.js:233
+#: assets/src/admin/templates/components/SiteSelection.js:143
 msgid "Select Brand Sites"
 msgstr ""
 
 #. translators: %1$d: Number of selected sites, %2$d: Total number of sites.
 #: assets/build/js/patterns-library.js:2
 #: assets/build/js/templates-library.js:2
-#: assets/src/admin/patterns/components/SiteSelection.js:221
-#: assets/src/admin/templates/components/SiteSelection.js:147
+#: assets/src/admin/patterns/components/SiteSelection.js:238
+#: assets/src/admin/templates/components/SiteSelection.js:148
 #, js-format
 msgid "%1$d of %2$d selected"
 msgstr ""
@@ -517,70 +529,60 @@ msgstr ""
 #. translators: %1$d: Number of available sites, %2$d: Total number of sites.
 #: assets/build/js/patterns-library.js:3
 #: assets/build/js/templates-library.js:3
-#: assets/src/admin/patterns/components/SiteSelection.js:227
-#: assets/src/admin/templates/components/SiteSelection.js:153
+#: assets/src/admin/patterns/components/SiteSelection.js:244
+#: assets/src/admin/templates/components/SiteSelection.js:154
 #, js-format
 msgid "%1$d of %2$d sites available"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:3
 #: assets/build/js/templates-library.js:3
-#: assets/src/admin/patterns/components/SiteSelection.js:245
-#: assets/src/admin/templates/components/SiteSelection.js:171
+#: assets/src/admin/patterns/components/SiteSelection.js:262
+#: assets/src/admin/templates/components/SiteSelection.js:172
 msgid "Select All"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:3
 #: assets/build/js/templates-library.js:3
-#: assets/src/admin/patterns/components/SiteSelection.js:254
-#: assets/src/admin/templates/components/SiteSelection.js:180
+#: assets/src/admin/patterns/components/SiteSelection.js:271
+#: assets/src/admin/templates/components/SiteSelection.js:181
 msgid "Deselect All"
 msgstr ""
 
 #. translators: %1$d: number of non-selectable sites, %2$d: total sites
 #: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/SiteSelection.js:268
+#: assets/src/admin/patterns/components/SiteSelection.js:285
 #, js-format
 msgid "%1$d of %2$d sites already have all selected patterns and are disabled."
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/SiteSelection.js:275
+#: assets/src/admin/patterns/components/SiteSelection.js:292
 msgid "Sites that already have all selected patterns are disabled."
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/SiteSelection.js:330
+#: assets/src/admin/patterns/components/SiteSelection.js:347
 msgid "This site already has all selected patterns"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/SiteSelection.js:371
+#: assets/src/admin/patterns/components/SiteSelection.js:388
 msgid "All patterns will be synced"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/SiteSelection.js:379
+#: assets/src/admin/patterns/components/SiteSelection.js:396
 msgid "All selected patterns are already present"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/SiteSelection.js:414
-msgid "Patterns to sync:"
-msgstr ""
-
-#: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/SiteSelection.js:417
-msgid "All selected patterns are already on this site"
-msgstr ""
-
-#: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/SiteSelection.js:423
+#: assets/src/admin/patterns/components/SiteSelection.js:430
 msgid "of"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/SiteSelection.js:425
+#: assets/src/admin/patterns/components/SiteSelection.js:432
 msgid "selected patterns are already present"
 msgstr ""
 
@@ -596,33 +598,33 @@ msgstr ""
 
 #: assets/build/js/patterns-library.js:4
 #: assets/src/admin/patterns/components/AppliedPatternsTab.js:151
-#: assets/src/admin/patterns/components/BasePatternsTab.js:275
+#: assets/src/admin/patterns/components/BasePatternsTab.js:258
 msgid "No patterns found"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/BasePatternsTab.js:277
+#: assets/src/admin/patterns/components/BasePatternsTab.js:260
 msgid "Try adjusting your search criteria or check back later."
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
 #: assets/src/admin/patterns/components/AppliedPatternsTab.js:184
-#: assets/src/admin/patterns/components/BasePatternsTab.js:306
+#: assets/src/admin/patterns/components/BasePatternsTab.js:289
 msgid "pattern selected"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
 #: assets/src/admin/patterns/components/AppliedPatternsTab.js:185
-#: assets/src/admin/patterns/components/BasePatternsTab.js:307
+#: assets/src/admin/patterns/components/BasePatternsTab.js:290
 msgid "patterns selected"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
 #: assets/build/js/templates-library.js:6
 #: assets/build/js/templates-library.js:7
-#: assets/src/admin/patterns/components/BasePatternsTab.js:320
+#: assets/src/admin/patterns/components/BasePatternsTab.js:303
 #: assets/src/admin/templates/components/BrandSiteTemplates.js:112
-#: assets/src/admin/templates/components/TemplateModal.js:332
+#: assets/src/admin/templates/components/TemplateModal.js:268
 msgid "Show More"
 msgstr ""
 
@@ -632,27 +634,17 @@ msgid "Please select at least one pattern before proceeding."
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/BasePatternsTab.js:334
+#: assets/src/admin/patterns/components/BasePatternsTab.js:317
 msgid "Select Patterns First"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/BasePatternsTab.js:335
+#: assets/src/admin/patterns/components/BasePatternsTab.js:318
 msgid "Apply to Sites"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/BasePatternsTab.js:211
-msgid "Hide Details"
-msgstr ""
-
-#: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/BasePatternsTab.js:212
-msgid "Show Details"
-msgstr ""
-
-#: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/BasePatternsTab.js:242
+#: assets/src/admin/patterns/components/BasePatternsTab.js:225
 msgid "Yes, Cancel"
 msgstr ""
 
@@ -661,10 +653,10 @@ msgstr ""
 #: assets/build/js/templates-library.js:5
 #: assets/build/js/templates-library.js:6
 #: assets/src/admin/patterns/components/AppliedPatternsTab.js:235
-#: assets/src/admin/patterns/components/BasePatternsTab.js:243
+#: assets/src/admin/patterns/components/BasePatternsTab.js:226
 #: assets/src/admin/templates/components/BrandSiteTemplates.js:197
 #: assets/src/admin/templates/components/BrandSiteTemplates.js:199
-#: assets/src/admin/templates/components/SiteSelection.js:320
+#: assets/src/admin/templates/components/SiteSelection.js:321
 #: assets/src/components/SiteModal.js:41
 #: assets/src/components/SiteSettings.js:266
 #: assets/src/components/SiteTable.js:148
@@ -672,35 +664,30 @@ msgid "Cancel"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/BasePatternsTab.js:250
+#: assets/src/admin/patterns/components/BasePatternsTab.js:233
 msgid "Continue Applying"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/BasePatternsTab.js:109
-msgid "Applying patterns to selected sites…"
-msgstr ""
-
-#: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/BasePatternsTab.js:119
+#: assets/src/admin/patterns/components/BasePatternsTab.js:115
 msgid "Patterns applied successfully!"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/BasePatternsTab.js:131
-#: assets/src/admin/patterns/components/BasePatternsTab.js:141
+#: assets/src/admin/patterns/components/BasePatternsTab.js:128
+#: assets/src/admin/patterns/components/BasePatternsTab.js:138
 msgid "Failed to apply patterns. Please try again."
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
 #: assets/build/js/templates-library.js:5
-#: assets/src/admin/patterns/components/BasePatternsTab.js:261
-#: assets/src/admin/templates/components/SiteSelection.js:331
+#: assets/src/admin/patterns/components/BasePatternsTab.js:244
+#: assets/src/admin/templates/components/SiteSelection.js:332
 msgid "Applying…"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/BasePatternsTab.js:262
+#: assets/src/admin/patterns/components/BasePatternsTab.js:245
 msgid "Apply Patterns"
 msgstr ""
 
@@ -804,7 +791,7 @@ msgstr ""
 #: assets/build/js/patterns-library.js:4
 #: assets/build/js/templates-library.js:7
 #: assets/src/admin/patterns/components/PatternModal.js:431
-#: assets/src/admin/templates/components/TemplateModal.js:359
+#: assets/src/admin/templates/components/TemplateModal.js:295
 msgid "Loading…"
 msgstr ""
 
@@ -816,7 +803,7 @@ msgstr ""
 #: assets/build/js/patterns-library.js:4
 #: assets/build/js/templates-library.js:7
 #: assets/src/admin/patterns/components/PatternModal.js:461
-#: assets/src/admin/templates/components/TemplateModal.js:400
+#: assets/src/admin/templates/components/TemplateModal.js:336
 msgid "Go to OneDesign Settings"
 msgstr ""
 
@@ -834,7 +821,7 @@ msgstr ""
 #: assets/build/js/templates-library.js:1
 #: assets/src/admin/patterns/pattern-event.js:54
 #: assets/src/admin/templates/template-event.js:54
-msgid "Open the Design Library Modal!"
+msgid "Open the Pattern Library Modal!"
 msgstr ""
 
 #: assets/build/js/plugin.js:1
@@ -1205,51 +1192,51 @@ msgid "No templates found."
 msgstr ""
 
 #: assets/build/js/templates-library.js:1
-#: assets/src/admin/templates/components/SiteSelection.js:112
+#: assets/src/admin/templates/components/SiteSelection.js:113
 msgid "No connected sites found."
 msgstr ""
 
 #: assets/build/js/templates-library.js:1
-#: assets/src/admin/templates/components/SiteSelection.js:114
+#: assets/src/admin/templates/components/SiteSelection.js:115
 msgid "Please configure brand sites first to apply templates."
 msgstr ""
 
 #. translators: %1$d: Number of sites that already have all selected templates or are unreachable. %2$d: Total number of sites.
 #: assets/build/js/templates-library.js:4
-#: assets/src/admin/templates/components/SiteSelection.js:193
+#: assets/src/admin/templates/components/SiteSelection.js:194
 #, js-format
 msgid "%1$d of %2$d sites are disabled (already have all templates or unreachable)."
 msgstr ""
 
 #: assets/build/js/templates-library.js:4
-#: assets/src/admin/templates/components/SiteSelection.js:237
+#: assets/src/admin/templates/components/SiteSelection.js:238
 msgid "This site is unreachable"
 msgstr ""
 
 #: assets/build/js/templates-library.js:4
-#: assets/src/admin/templates/components/SiteSelection.js:238
+#: assets/src/admin/templates/components/SiteSelection.js:239
 msgid "This site already has all selected templates"
 msgstr ""
 
 #: assets/build/js/templates-library.js:4
-#: assets/src/admin/templates/components/SiteSelection.js:273
+#: assets/src/admin/templates/components/SiteSelection.js:274
 msgid "All templates will be synced"
 msgstr ""
 
 #: assets/build/js/templates-library.js:4
-#: assets/src/admin/templates/components/SiteSelection.js:281
+#: assets/src/admin/templates/components/SiteSelection.js:282
 msgid "All selected templates are already present"
 msgstr ""
 
 #. translators: %1$d: Number of selected templates already present. %2$d: Total number of selected templates.
 #: assets/build/js/templates-library.js:5
-#: assets/src/admin/templates/components/SiteSelection.js:294
+#: assets/src/admin/templates/components/SiteSelection.js:295
 #, js-format
 msgid "%1$d of %2$d selected templates are already present"
 msgstr ""
 
 #: assets/build/js/templates-library.js:5
-#: assets/src/admin/templates/components/SiteSelection.js:331
+#: assets/src/admin/templates/components/SiteSelection.js:332
 msgid "Apply Templates"
 msgstr ""
 
@@ -1275,14 +1262,14 @@ msgstr ""
 #: assets/build/js/templates-library.js:6
 #: assets/build/js/templates-library.js:7
 #: assets/src/admin/templates/components/BrandSiteTemplates.js:102
-#: assets/src/admin/templates/components/TemplateModal.js:322
+#: assets/src/admin/templates/components/TemplateModal.js:258
 msgid "Template selected"
 msgstr ""
 
 #: assets/build/js/templates-library.js:6
 #: assets/build/js/templates-library.js:7
 #: assets/src/admin/templates/components/BrandSiteTemplates.js:102
-#: assets/src/admin/templates/components/TemplateModal.js:322
+#: assets/src/admin/templates/components/TemplateModal.js:258
 msgid "Templates selected"
 msgstr ""
 
@@ -1310,65 +1297,60 @@ msgstr ""
 
 #: assets/build/js/templates-library.js:6
 #: assets/build/js/templates-library.js:7
-#: assets/src/admin/templates/components/TemplateModal.js:45
-#: assets/src/admin/templates/components/TemplateModal.js:277
+#: assets/src/admin/templates/components/TemplateModal.js:52
+#: assets/src/admin/templates/components/TemplateModal.js:213
 msgid "Current Site Templates"
 msgstr ""
 
 #: assets/build/js/templates-library.js:6
-#: assets/src/admin/templates/components/TemplateModal.js:75
-msgid "Health check failed."
-msgstr ""
-
-#: assets/build/js/templates-library.js:6
-#: assets/src/admin/templates/components/TemplateModal.js:187
+#: assets/src/admin/templates/components/TemplateModal.js:129
 msgid "Templates re-synced successfully."
 msgstr ""
 
 #: assets/build/js/templates-library.js:6
-#: assets/src/admin/templates/components/TemplateModal.js:192
+#: assets/src/admin/templates/components/TemplateModal.js:134
 msgid "Failed to re-sync templates."
 msgstr ""
 
 #. translators: %s site names.
 #: assets/build/js/templates-library.js:7
-#: assets/src/admin/templates/components/TemplateModal.js:228
+#: assets/src/admin/templates/components/TemplateModal.js:170
 #, js-format
 msgid "Templates applied successfully to %s site."
 msgstr ""
 
 #: assets/build/js/templates-library.js:7
-#: assets/src/admin/templates/components/TemplateModal.js:239
+#: assets/src/admin/templates/components/TemplateModal.js:181
 msgid "Failed to apply templates."
 msgstr ""
 
 #: assets/build/js/templates-library.js:7
-#: assets/src/admin/templates/components/TemplateModal.js:245
+#: assets/src/admin/templates/components/TemplateModal.js:187
 msgid "An error occurred while applying templates."
 msgstr ""
 
 #: assets/build/js/templates-library.js:7
-#: assets/src/admin/templates/components/TemplateModal.js:387
-#: assets/src/admin/templates/components/TemplateModal.js:389
+#: assets/src/admin/templates/components/TemplateModal.js:323
+#: assets/src/admin/templates/components/TemplateModal.js:325
 msgid "Sync Shared Templates"
 msgstr ""
 
 #: assets/build/js/templates-library.js:7
-#: assets/src/admin/templates/components/TemplateModal.js:409
+#: assets/src/admin/templates/components/TemplateModal.js:345
 msgid "Loading templates…"
 msgstr ""
 
 #: assets/build/js/templates-library.js:7
-#: assets/src/admin/templates/components/TemplateModal.js:417
+#: assets/src/admin/templates/components/TemplateModal.js:353
 msgid "Search Templates"
 msgstr ""
 
 #: assets/build/js/templates-library.js:7
-#: assets/src/admin/templates/components/TemplateModal.js:341
+#: assets/src/admin/templates/components/TemplateModal.js:277
 msgid "Select Template First"
 msgstr ""
 
 #: assets/build/js/templates-library.js:7
-#: assets/src/admin/templates/components/TemplateModal.js:341
+#: assets/src/admin/templates/components/TemplateModal.js:277
 msgid "Apply To Sites"
 msgstr ""

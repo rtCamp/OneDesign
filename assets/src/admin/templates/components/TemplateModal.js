@@ -18,6 +18,7 @@ import { cog } from '@wordpress/icons';
 import BaseSiteTemplates from './BaseSiteTemplates';
 import SiteSelection from './SiteSelection';
 import BrandSiteTemplates from './BrandSiteTemplates';
+import useSitesManagement from '../../../hooks/useSitesManagement';
 import { API_NAMESPACE as REST_NAMESPACE, NONCE, SETTINGS_LINK as SettingLink, PER_PAGE } from '../../../js/constants';
 
 /**
@@ -33,12 +34,18 @@ const TemplateModal = () => {
 	const [ selectedTemplates, setSelectedTemplates ] = useState( [] );
 	const [ currentPage, setCurrentPage ] = useState( 1 );
 	const [ activeTab, setActiveTab ] = useState( 'baseTemplate' );
-	const [ siteInfo, setSiteInfo ] = useState( {} );
 	const [ selectedSites, setSelectedSites ] = useState( [] );
 	const [ connectedSitesTemplates, setConnectedSitesTemplates ] = useState( {} );
 	const [ notice, setNotice ] = useState( null );
 	const [ isReSyncing, setIsReSyncing ] = useState( false );
-	const [ sitesHealthCheckResult, setSitesHealthCheckResult ] = useState( {} );
+
+	// common state for site info and health check results
+	const {
+		siteInfo,
+		sitesHealthCheckResult,
+		isLoading: isSiteInfoLoading,
+	} = useSitesManagement( { NONCE, API_NAMESPACE: REST_NAMESPACE } );
+
 	const [ tabs, setTabs ] = useState( [
 		{
 			name: 'baseTemplate',
@@ -49,50 +56,6 @@ const TemplateModal = () => {
 	] );
 	const [ isApplyModalOpen, setIsApplyModalOpen ] = useState( false );
 	const [ isApplying, setIsApplying ] = useState( false );
-
-	const PerformHealthCheckOnSites = useCallback( async () => {
-		setIsLoading( true );
-		try {
-			for ( const siteId of Object.keys( siteInfo ) ) {
-				const siteUrl = siteInfo[ siteId ]?.url;
-				const siteApiKey = siteInfo[ siteId ]?.api_key;
-				if ( siteUrl ) {
-					try {
-						const response = await fetch(
-							`${ siteUrl }/wp-json/onedesign/v1/health-check?timestamp=${ Date.now() }`,
-							{
-								method: 'GET',
-								headers: {
-									'Content-Type': 'application/json',
-									'X-OneDesign-Token': siteApiKey,
-								},
-							},
-						);
-						const data = await response.json();
-						if ( ! data.success ) {
-							setSitesHealthCheckResult( ( prevResults ) => ( {
-								...prevResults,
-								[ siteInfo[ siteId ]?.id ]: { success: false, message: data.message || __( 'Health check failed.', 'onedesign' ) },
-							} ) );
-							continue;
-						}
-						setSitesHealthCheckResult( ( prevResults ) => ( {
-							...prevResults,
-							[ siteInfo[ siteId ]?.id ]: data,
-						} ) );
-					} catch ( error ) {
-						setSitesHealthCheckResult( ( prevResults ) => ( {
-							...prevResults,
-							[ siteInfo[ siteId ]?.id ]: { success: false, message: __( 'Failed to reach the site.', 'onedesign' ) },
-						} ) );
-					}
-				}
-			}
-		} catch ( error ) {
-		} finally {
-			setIsLoading( false );
-		}
-	}, [ siteInfo ] );
 
 	const fetchConnectedSitesTemplates = useCallback( async () => {
 		try {
@@ -131,27 +94,6 @@ const TemplateModal = () => {
 			if ( data.success ) {
 				setTemplates( data.templates || [] );
 			}
-		} catch ( error ) {
-		} finally {
-			setIsLoading( false );
-		}
-	}, [] );
-
-	const fetchBrandSitesInfo = useCallback( async () => {
-		setIsLoading( true );
-		try {
-			const response = await fetch(
-				`${ REST_NAMESPACE }/configured-sites?timestamp=${ Date.now() }`,
-				{
-					method: 'GET',
-					headers: {
-						'Content-Type': 'application/json',
-						'X-WP-Nonce': NONCE,
-					},
-				},
-			);
-			const data = await response.json();
-			setSiteInfo( data || {} );
 		} catch ( error ) {
 		} finally {
 			setIsLoading( false );
@@ -255,15 +197,9 @@ const TemplateModal = () => {
 	// Fetch templates when the modal is opened
 	useEffect( () => {
 		fetchTemplates();
-		fetchBrandSitesInfo();
 		fetchConnectedSitesTemplates();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
-
-	// to check if the connected sites are reachable or not
-	useEffect( () => {
-		PerformHealthCheckOnSites();
-	}, [ PerformHealthCheckOnSites ] );
 
 	// clear notice on tab change
 	useEffect( () => {
@@ -403,13 +339,13 @@ const TemplateModal = () => {
 						</div>
 					}
 				>
-					{ isLoading && (
+					{ ( isLoading || isSiteInfoLoading ) && (
 						<div style={ { textAlign: 'center', padding: '20px' } }>
 							<Spinner />
 							<p>{ __( 'Loading templates…', 'onedesign' ) }</p>
 						</div>
 					) }
-					{ ! isLoading && (
+					{ ! ( isLoading || isSiteInfoLoading ) && (
 						<>
 							<SearchControl
 								value={ searchQuery }

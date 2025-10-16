@@ -6,7 +6,14 @@ import { Spinner, Notice, Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useEffect } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+
+/**
+ * Internal dependencies
+ */
+import useSitesManagement from '../../../hooks/useSitesManagement';
 import { getInitials } from '../../../js/utils';
+import { API_NAMESPACE, NONCE } from '../../../js/constants';
+import { renderIcon } from '../../../components/Dashicons';
 
 /**
  * Component to render the brand site selection with enhanced UX.
@@ -25,6 +32,12 @@ const SiteSelection = ( {
 	basePatterns = [],
 	sitePatterns = {},
 } ) => {
+	// common state for site info and health check results
+	const {
+		sitesHealthCheckResult,
+		isLoading: isSitesLoading,
+	} = useSitesManagement( { NONCE, API_NAMESPACE } );
+
 	/**
 	 * Get the current value of the brand_site meta field.
 	 */
@@ -56,6 +69,11 @@ const SiteSelection = ( {
 		// Get IDs of sites that don't already have all patterns (not disabled)
 		const selectableSiteIds = siteOptions
 			.filter( ( site ) => {
+				// skip if site is not reachable
+				if ( ! isSiteReachable( site.id ) ) {
+					return false;
+				}
+
 				// Skip if site has all patterns already
 				if ( selectedPatterns.length > 0 && sitePatterns[ site.id ] ) {
 					const sitePatternsArray = sitePatterns[ site.id ] || [];
@@ -118,23 +136,22 @@ const SiteSelection = ( {
 		setIsLoading( true );
 		// Clear brand site selection on mount
 		editPost( { meta: { brand_site: [] } } );
-
-		// Ensure dashicons are loaded
-		if ( document.querySelector( 'body' ).classList.contains( 'wp-admin' ) ) {
-			// Already in admin, dashicons should be loaded
-		} else {
-			// Load dashicons if not in admin context
-			const link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.href = '/wp-includes/css/dashicons.min.css';
-			document.head.appendChild( link );
-		}
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const totalCount = siteOptions.length;
 
+	// helper function to check if site is reachable.
+	const isSiteReachable = ( siteId ) => {
+		return sitesHealthCheckResult?.[ siteId ] && sitesHealthCheckResult[ siteId ]?.success;
+	};
+
 	// Calculate the number of sites that don't have all patterns already
 	const selectableSites = siteOptions.filter( ( site ) => {
+		// skip if site is not reachable
+		if ( ! isSiteReachable( site.id ) ) {
+			return false;
+		}
+
 		if ( selectedPatterns.length > 0 && sitePatterns[ site.id ] ) {
 			const sitePatternsArray = sitePatterns[ site.id ] || [];
 			const presentPatterns = selectedPatterns.filter( ( patternName ) =>
@@ -159,7 +176,7 @@ const SiteSelection = ( {
 
 	const selectedCount = BrandSite.length;
 
-	if ( isLoading ) {
+	if ( isLoading || isSitesLoading || sitesHealthCheckResult === undefined ) {
 		return (
 			<div className="od-site-loading">
 				<div className="od-loading-content">
@@ -300,7 +317,7 @@ const SiteSelection = ( {
 						hasAllPatterns =
 							presentPatterns.length === selectedPatterns.length &&
 							selectedPatterns.length > 0;
-						isDisabled = hasAllPatterns && ! isSelected;
+						isDisabled = ( hasAllPatterns && ! isSelected ) || ! isSiteReachable( id );
 					}
 
 					return (
@@ -309,7 +326,7 @@ const SiteSelection = ( {
 							className={ `od-site-item ${ isSelected ? 'od-site-selected' : '' } ${ isDisabled ? 'od-site-disabled' : '' }` }
 							onClick={ () => ! isDisabled && onBrandSiteChange( id ) }
 							onKeyDown={ ( e ) => {
-								if ( ! isDisabled && ( e.key === 'Enter' || e.key === ' ' ) ) {
+								if ( ! isDisabled && ( e.code === 'Enter' || e.key === 'Space' ) ) {
 									onBrandSiteChange( id );
 								}
 							} }
@@ -321,7 +338,7 @@ const SiteSelection = ( {
 							<div className="od-site-inner">
 								{ isSelected && (
 									<div className="od-site-selected-indicator">
-										<span className="dashicons dashicons-yes-alt"></span>
+										{ renderIcon( { sitesHealthCheckResult, id } ) }
 									</div>
 								) }
 								{ isDisabled && ! isSelected && (
@@ -332,7 +349,7 @@ const SiteSelection = ( {
 											'onedesign',
 										) }
 									>
-										<span className="dashicons dashicons-yes"></span>
+										{ renderIcon( { sitesHealthCheckResult, id } ) }
 									</div>
 								) }
 								<div className="od-site-logo">
@@ -409,16 +426,6 @@ const SiteSelection = ( {
 												<>
 													<span
 														className="od-onedesign-info"
-														data-tooltip={
-															toSyncPatterns.length > 0
-																? __( 'Patterns to sync:', 'onedesign' ) +
-																	' ' +
-																	toSyncPatternsTitles.join( ', ' )
-																: __(
-																	'All selected patterns are already on this site',
-																	'onedesign',
-																)
-														}
 													>
 														{ presentCount } { __( 'of', 'onedesign' ) }{ ' ' }
 														{ selectedPatterns.length }{ ' ' }
