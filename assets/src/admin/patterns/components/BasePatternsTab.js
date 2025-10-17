@@ -9,10 +9,10 @@ import { Button, Modal, Spinner, Notice } from '@wordpress/components';
  * Internal dependencies
  */
 import MemoizedPatternPreview from './MemoizedPatternPreview';
-import RenderConsumerSiteMeta from '../../plugins/consumer-site';
+import SiteSelection from './SiteSelection';
 
 /**
- * BasePatternsTab component displays a list of base patterns with options to apply them to consumer sites
+ * BasePatternsTab component displays a list of base patterns with options to apply them to brand sites
  *
  * @param {Object}   props                        - Component properties.
  * @param {boolean}  props.isLoading              - Indicates if base patterns are loading.
@@ -24,7 +24,7 @@ import RenderConsumerSiteMeta from '../../plugins/consumer-site';
  * @param {Function} props.loadMorePatterns       - Function to load more base patterns.
  * @param {Function} props.applySelectedPatterns  - Function to apply selected patterns.
  * @param {Function} props.setSelectedPatterns    - Function to set the selected patterns.
- * @param {Object}   props.sitePatterns           - Patterns from the consumer site.
+ * @param {Object}   props.sitePatterns           - Patterns from the brand site.
  * @return {JSX.Element} Rendered component.
  */
 const BasePatternsTab = memo(
@@ -66,7 +66,7 @@ const BasePatternsTab = memo(
 			);
 		}
 
-		const openConsumerSiteModal = () => {
+		const OpenBrandSiteModal = () => {
 			if ( selectedPatterns.length === 0 ) {
 				setApplicationStatus( {
 					type: 'warning',
@@ -82,7 +82,7 @@ const BasePatternsTab = memo(
 			setIsModalOpen( true );
 		};
 
-		const closeConsumerSiteModal = () => {
+		const CloseBrandSiteModal = () => {
 			// If we're in the middle of applying patterns, show confirmation first
 			if ( isApplying && ! showCloseConfirmation ) {
 				setShowCloseConfirmation( true );
@@ -104,10 +104,6 @@ const BasePatternsTab = memo(
 
 		const handleApplyPatterns = async () => {
 			setIsApplying( true );
-			setApplicationStatus( {
-				type: 'info',
-				message: __( 'Applying patterns to selected sites…', 'onedesign' ),
-			} );
 
 			try {
 				const result = await applySelectedPatterns();
@@ -121,8 +117,9 @@ const BasePatternsTab = memo(
 
 					// Close modal after success with slightly longer delay for better user feedback
 					setTimeout( () => {
-						closeConsumerSiteModal();
-					}, 2000 );
+						CloseBrandSiteModal();
+						setSelectedPatterns( [] );
+					}, 3000 );
 				} else {
 					setApplicationStatus( {
 						type: 'error',
@@ -178,52 +175,29 @@ const BasePatternsTab = memo(
 			}
 		};
 
-		const consumerSiteSelection = () => {
+		const BrandSiteSelection = () => {
 			return (
-				<div className="od-consumer-site-modal-content">
-					<div className="od-site-selection-wrapper">
-						<RenderConsumerSiteMeta
-							setIsSiteSelected={ setIsSiteSelected }
-							selectedPatterns={ selectedPatterns }
-							basePatterns={ basePatterns }
-							sitePatterns={ sitePatterns }
-						/>
-					</div>
+				<div className="od-brand-site-modal-content">
 
 					{ applicationStatus && (
 						<Notice
-							status={ applicationStatus.type }
-							isDismissible={ false }
+							status={ applicationStatus?.type ?? 'info' }
+							isDismissible={ true }
 							className="od-application-notice od-error-notice"
 						>
 							<div className="od-error-notice-summary">
 								<div className="od-notice-message">
-									{ applicationStatus.message }
+									{ applicationStatus?.message }
 								</div>
-
-								{ applicationStatus.hasDetails && (
-									<button
-										type="button"
-										className="od-error-notice-toggle"
-										onClick={ () => setShowDetailedErrors( ( prev ) => ! prev ) }
-									>
-										{ showDetailedErrors
-											? __( 'Hide Details', 'onedesign' )
-											: __( 'Show Details', 'onedesign' ) }
-										<span className="od-toggle-icon">
-											{ showDetailedErrors ? '▲' : '▼' }
-										</span>
-									</button>
-								) }
 							</div>
 
-							{ showDetailedErrors && applicationStatus.hasDetails && (
+							{ showDetailedErrors && applicationStatus?.hasDetails && (
 								<div className="od-error-details">
 									{ detailedErrors.map( ( error, index ) => (
 										<div key={ index } className="od-error-site">
-											<div className="od-error-site-name">{ error.site }</div>
+											<div className="od-error-site-name">{ error?.site }</div>
 											<div className="od-error-site-message">
-												{ error.message }
+												{ error?.message }
 											</div>
 										</div>
 									) ) }
@@ -232,10 +206,19 @@ const BasePatternsTab = memo(
 						</Notice>
 					) }
 
+					<div className="od-site-selection-wrapper">
+						<SiteSelection
+							setIsSiteSelected={ setIsSiteSelected }
+							selectedPatterns={ selectedPatterns }
+							basePatterns={ basePatterns }
+							sitePatterns={ sitePatterns }
+						/>
+					</div>
+
 					<div className="od-modal-actions">
 						<Button
 							variant="secondary"
-							onClick={ closeConsumerSiteModal }
+							onClick={ CloseBrandSiteModal }
 							disabled={ isApplying && ! showCloseConfirmation }
 						>
 							{ showCloseConfirmation
@@ -325,7 +308,7 @@ const BasePatternsTab = memo(
 						) }
 
 						<Button
-							onClick={ openConsumerSiteModal }
+							onClick={ OpenBrandSiteModal }
 							variant="primary"
 							className="od-apply-to-sites-button"
 							disabled={ selectedPatterns.length === 0 }
@@ -340,13 +323,13 @@ const BasePatternsTab = memo(
 				{ isModalOpen && (
 					<Modal
 						title=""
-						onRequestClose={ closeConsumerSiteModal }
-						className="od-consumer-site-modal"
+						onRequestClose={ CloseBrandSiteModal }
+						className="od-brand-site-modal"
 						shouldCloseOnClickOutside={ ! isApplying }
 						shouldCloseOnEsc={ ! isApplying }
 						isFullScreen={ true }
 					>
-						{ consumerSiteSelection() }
+						{ BrandSiteSelection() }
 					</Modal>
 				) }
 			</div>

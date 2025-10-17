@@ -11,7 +11,9 @@
 	},
 	"globals": {
 		"_": true,
-		"patternSyncData": true
+		"patternSyncData": true,
+		"TemplateLibraryData": true,
+		"OneDesignSettings": true
 	},
 	"rules": {
 		"jsdoc/check-indentation": "error",

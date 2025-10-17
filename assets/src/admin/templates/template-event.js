@@ -1,23 +1,28 @@
 /**
- * This File contains the code to add the Design Library Button.
+ * WordPress dependencies
+ */
+import { __ } from '@wordpress/i18n';
+
+/**
+ * This File contains the code to add the Pattern Library Button.
  */
 
 window.addEventListener( 'DOMContentLoaded', function() {
 	'use strict';
 
-	const DesignLibraryGutenbergApp = {
+	const TemplateLibrary = {
 		libraryCacheElements() {
 			this.libraryCache = {};
 			this.libraryCache.gutenberg = document.getElementById( 'editor' );
 			this.libraryCache.gutenbergEditorHeader = document.querySelector( '.edit-post-layout' );
 			this.libraryCache.switchModeTemplate = document.getElementById(
-				'design-library-gutenberg-button',
+				'onedesign-template-button',
 			).innerHTML;
 			this.libraryCache.switchMode = this.createElementFromHTML(
 				this.libraryCache.switchModeTemplate,
 			);
 			this.libraryCache.switchModeButton = this.libraryCache.switchMode.querySelector(
-				'#design-library-main-button',
+				'#template-main-button',
 			);
 			this.addCustomEventOnButtonClick();
 
@@ -33,7 +38,7 @@ window.addEventListener( 'DOMContentLoaded', function() {
 			return div.firstChild;
 		},
 		buildButton() {
-			if ( ! this.libraryCache.gutenberg.querySelector( '#design-library-button' ) ) {
+			if ( ! this.libraryCache.gutenberg.querySelector( '#onedesign-template-render' ) ) {
 				this.libraryCache?.gutenberg
 					?.querySelector( '.edit-post-header-toolbar' )
 					?.appendChild( this.libraryCache.switchMode );
@@ -44,15 +49,15 @@ window.addEventListener( 'DOMContentLoaded', function() {
 		},
 		addCustomEventOnButtonClick() {
 			this.libraryCache.switchModeButton.addEventListener( 'click', () => {
-				window.console.log( 'Firing Custom Event' );
-				const designLibraryModalOpenEvent = new CustomEvent( 'designLibraryModalOpen', {
-					detail: { message: 'Open the Design Library Modal!' },
+				window.console.log( 'Template event fired...' );
+				const TemplateLibraryOpenEvent = new CustomEvent( 'TemplateLibraryOpen', {
+					detail: { message: __( 'Open the Pattern Library Modal!', 'onedesign' ) },
 				} );
 
-				document.dispatchEvent( designLibraryModalOpenEvent );
+				document.dispatchEvent( TemplateLibraryOpenEvent );
 			} );
 		},
 	};
 
-	DesignLibraryGutenbergApp.init();
+	TemplateLibrary.init();
 } );

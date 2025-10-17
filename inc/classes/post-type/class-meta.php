@@ -2,7 +2,7 @@
 /**
  * Class Meta to register all the metas based on post type.
  *
- * @package onedesign
+ * @package OneDesign
  */
 
 namespace OneDesign\Post_Types;
@@ -76,8 +76,8 @@ class Meta {
 	private function get_post_meta_array(): array {
 		$post_meta_array = array(
 			array(
-				'post_type'    => array( Design_Library::SLUG ),
-				'meta'         => 'consumer_site',
+				'post_type'    => array( Pattern::SLUG ),
+				'meta'         => 'brand_site',
 				'type'         => 'array',
 				'show_in_rest' => array(
 					'schema' => array(

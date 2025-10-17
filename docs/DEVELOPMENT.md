@@ -26,42 +26,60 @@ Code contributions, bug reports, and feature requests are welcome! The following
 ```bash
 .
 ├── assets
+│   ├── images
+│   │   └── logo.svg
 │   └── src
+│       ├── admin
+│       │   ├── patterns
+│       │   │   ├── App.js
+│       │   │   ├── components
+│       │   │   │   ├── AppliedPatternsTab.js
+│       │   │   │   ├── BasePatternsTab.js
+│       │   │   │   ├── Category.js
+│       │   │   │   ├── MemoizedPatternPreview.js
+│       │   │   │   ├── PatternModal.js
+│       │   │   │   └── SiteSelection.js
+│       │   │   ├── index.js
+│       │   │   └── pattern-event.js
+│       │   ├── plugin
+│       │   │   └── index.js
+│       │   ├── settings
+│       │   │   └── index.js
+│       │   └── templates
+│       │       ├── App.js
+│       │       ├── components
+│       │       │   ├── BaseSiteTemplates.js
+│       │       │   ├── BrandSiteTemplates.js
+│       │       │   ├── MemoizedTemplatePreview.js
+│       │       │   ├── SiteSelection.js
+│       │       │   └── TemplateModal.js
+│       │       ├── index.js
+│       │       └── template-event.js
+│       ├── components
+│       │   ├── SiteModal.js
+│       │   ├── SiteSettings.js
+│       │   └── SiteTable.js
 │       ├── css
-│       │   └── editor.scss
+│       │   ├── admin.scss
+│       │   ├── editor.scss
+│       │   └── template.scss
 │       ├── js
 │       │   ├── admin.js
 │       │   ├── editor.js
-│       │   └── main.js
-│       ├── patterns-popover
-│       │   ├── components
-│       │   │   ├── app.js
-│       │   │   ├── AppliedPatternsTab.js
-│       │   │   ├── BasePatternsTab.js
-│       │   │   ├── Category.js
-│       │   │   ├── LibraryModal.js
-│       │   │   ├── MemoizedPatternPreview.js
-│       │   ├── custom-events.js
-│       │   ├── index.js
-│       ├── plugins
-│       │   └── consumer-site
-│       │       └── index.js
-│       ├── store
-│       │   └── index.js
-├── build
-│   ├── blocks
-│   ├── css
-│   │   └── editor.css
-│   ├── js
-│   │   ├── admin.asset.php
-│   │   ├── admin.js
-│   │   ├── editor-rtl.css
-│   │   ├── editor.asset.php
-│   │   ├── editor.js
-│   │   ├── main.asset.php
-│   │   └── main.js
+│       │   ├── main.js
+│       │   └── utils.js
+│       └── store
+│           └── index.js
+├── babel.config.js
 ├── bin
 │   └── phpcbf.sh
+├── composer.json
+├── composer.lock
+├── docs
+│   ├── CODE_OF_CONDUCT.md
+│   ├── CONTRIBUTING.md
+│   ├── DEVELOPMENT.md
+│   └── SECURITY.md
 ├── inc
 │   ├── classes
 │   │   ├── class-assets.php
@@ -70,24 +88,33 @@ Code contributions, bug reports, and feature requests are welcome! The following
 │   │   ├── class-plugin.php
 │   │   ├── class-rest.php
 │   │   ├── class-settings.php
-│   │   └── post-type
-│   │       ├── class-base.php
-│   │       ├── class-design-library.php
-│   │       ├── class-meta.php
+│   │   ├── class-utils.php
+│   │   ├── plugin-configs
+│   │   │   ├── class-constants.php
+│   │   │   └── class-secret-key.php
+│   │   ├── post-type
+│   │   │   ├── class-base.php
+│   │   │   ├── class-pattern-library.php
+│   │   │   ├── class-meta.php
+│   │   │   └── class-template.php
+│   │   └── rest
+│   │       ├── class-basic-options.php
+│   │       ├── class-patterns.php
+│   │       └── class-templates.php
 │   ├── helpers
+│   │   └── custom-functions.php
 │   └── traits
 │       └── trait-singleton.php
-├── vendor
-│   └── ...
-├── babel.config.js
-├── composer.json
-├── composer.lock
-├── CONTRIBUTING.md
-├── DEVELOPMENT.md
+├── languages
+│   └── onedesign.pot
+├── LICENSE
 ├── onedesign.php
+├── package-lock.json
 ├── package.json
 ├── phpcs.xml.dist
 ├── README.md
+├── readme.txt
+├── uninstall.php
 ├── webpack.config.js
 ```
 

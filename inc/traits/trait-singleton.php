@@ -2,7 +2,7 @@
 /**
  * Singleton trait for classes.
  *
- * @package onedesign
+ * @package OneDesign
  */
 
 namespace OneDesign\Traits;

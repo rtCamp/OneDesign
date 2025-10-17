@@ -7,7 +7,7 @@ import { registerPlugin } from '@wordpress/plugins';
 /**
  * Internal dependencies
  */
-import LibraryModal from './LibraryModal';
+import PatternModal from './components/PatternModal';
 
 /**
  * Registers the Pattern Sync Library plugin.
@@ -30,6 +30,6 @@ registerPlugin( 'onedesign-library', {
 		const modalWrap = document.createElement( 'div' );
 		const modal = Object.assign( modalWrap, { id: modalID, className } );
 		document.body?.appendChild( modal );
-		createRoot( modal ).render( <LibraryModal /> );
+		createRoot( modal ).render( <PatternModal /> );
 	},
 } );

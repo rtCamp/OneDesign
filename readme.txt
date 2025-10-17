@@ -1,11 +1,11 @@
 === OneDesign ===
-Contributors: rtcamp, parthnvaswani, up1512001, singhakanshu00, danish17, aviral-mittal, vaishaliagola27, rishavjeet, vishal4669, iamimmanuelraj
+Contributors: rtcamp, parthnvaswani, up1512001, singhakanshu00, danish17, aviral-mittal, vaishaliagola27, rishavjeet, vishal4669, iamimmanuelraj, vishalkakadiya
 Donate link: https://rtcamp.com/
 Tags: OnePress, Pattern distribution, Pattern sync, OneDesign, Design consistency
-Requires at least: 6.2.6
+Requires at least: 6.5
 Tested up to: 6.8
 Stable tag: 1.0.0
-Requires PHP: 7.4
+Requires PHP: 8.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Synchronize block patterns across multiple WordPress sites. Create once, deploy 
 
 == Description ==
 
-OneDesign is a powerful pattern synchronization solution designed for enterprises managing multiple WordPress sites or multisite networks. It enables you to define block patterns on a Dashboard site and distribute them to consumer sites, maintaining design consistency across your entire network.
+OneDesign is a powerful pattern synchronization solution designed for enterprises managing multiple WordPress sites or multisite networks. It enables you to define block patterns on a Governing site and distribute them to brand sites, maintaining design consistency across your entire network.
 
 **Why OneDesign?**
 
@@ -40,9 +40,9 @@ Built for enterprise teams, OneDesign unifies your design, editorial, and develo
 
 **Pattern Management Actions:**
 
-* Browse and preview all available patterns from Dashboard site
+* Browse and preview all available patterns from Governing site
 * Search and filter patterns by categories and names
-* Apply selected patterns to specific consumer sites
+* Apply selected patterns to specific brand sites
 * Remove patterns from specific sites
 * Bulk operations for multiple pattern deployment
 * Real-time pattern synchronization status tracking
@@ -60,10 +60,10 @@ Built for enterprise teams, OneDesign unifies your design, editorial, and develo
 1. Upload the OneDesign plugin files to the `/wp-content/plugins/onedesign` directory, or install the plugin through the WordPress plugins screen directly
 2. For multisite installations, network activate the plugin through the 'Plugins' menu in WordPress
 3. For single site installations, activate the plugin through the 'Plugins' menu in WordPress
-4. Set up one site as the "Dashboard Site" for centralized pattern management
-5. Configure other sites as "Consumer Sites"
-6. Copy API keys from each Consumer Site's settings page
-7. Register all Consumer Sites in the Dashboard Site with their respective:
+4. Set up one site as the "Governing Site" for centralized pattern management
+5. Configure other sites as "Brand Sites"
+6. Copy API keys from each Brand Site's settings page
+7. Register all Brand Sites in the Governing Site with their respective:
    * Site name
    * URL
    * Logo
@@ -77,7 +77,7 @@ Patterns are transferred securely via WordPress REST API with unique authenticat
 
 = Can I customize which patterns are available to specific sites? =
 
-Yes, you can control which patterns are applied to each consumer site by managing the selections in the Design Library interface.
+Yes, you can control which patterns are applied to each brand site by managing the selections in the Pattern Library interface.
 
 = Are there any limits to how many patterns I can sync? =
 
@@ -103,7 +103,7 @@ All blocks used in the patterns must be available on all target sites. Ensure co
 
 1. OneDesign Dashboard - Centralized pattern management interface
 2. Pattern Browser - Search and filter patterns with live previews
-3. Site Registration - Configure Dashboard and Consumer sites
+3. Site Registration - Configure Governing and Brand sites
 4. Bulk Operations - Select and apply patterns to multiple sites
 5. Disabled Sites - Which is already having currently selected patterns
 

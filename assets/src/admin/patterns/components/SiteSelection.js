@@ -8,46 +8,15 @@ import { useState, useEffect } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 
 /**
- * Helper function to extract initials from a name.
- *
- * @param {string} name - The name to extract initials from.
- * @return {string} The extracted initials (up to 2 characters).
+ * Internal dependencies
  */
-const getInitials = ( name ) => {
-	// Handle empty or invalid names
-	if ( ! name || typeof name !== 'string' ) {
-		return '?';
-	}
-
-	// Trim the name and convert to proper case
-	const trimmedName = name.trim();
-	if ( ! trimmedName ) {
-		return '?';
-	}
-
-	// Split the name by spaces and other separators
-	const parts = trimmedName
-		.split( /[\s-_,.]+/ )
-		.filter( ( part ) => part.length > 0 );
-
-	// For single word names
-	if ( parts.length === 1 ) {
-		// If name is a single character, return that character
-		if ( parts[ 0 ].length === 1 ) {
-			return parts[ 0 ].toUpperCase();
-		}
-		// Otherwise return first two characters
-		return parts[ 0 ].substring( 0, 2 ).toUpperCase();
-	}
-
-	// For multi-word names, take first letter of first two parts
-	return (
-		parts[ 0 ].charAt( 0 ) + ( parts[ 1 ] ? parts[ 1 ].charAt( 0 ) : '' )
-	).toUpperCase();
-};
+import useSitesManagement from '../../../hooks/useSitesManagement';
+import { getInitials } from '../../../js/utils';
+import { API_NAMESPACE, NONCE } from '../../../js/constants';
+import { renderIcon } from '../../../components/Dashicons';
 
 /**
- * Component to render the consumer site selection with enhanced UX.
+ * Component to render the brand site selection with enhanced UX.
  *
  * @param {Object}   props                   - Component properties.
  * @param {Function} props.setIsSiteSelected - Function to set the site selection state.
@@ -57,24 +26,30 @@ const getInitials = ( name ) => {
  *
  * @return {JSX.Element} JSX Element
  */
-const RenderConsumerSiteMeta = ( {
+const SiteSelection = ( {
 	setIsSiteSelected,
 	selectedPatterns = [],
 	basePatterns = [],
 	sitePatterns = {},
 } ) => {
+	// common state for site info and health check results
+	const {
+		sitesHealthCheckResult,
+		isLoading: isSitesLoading,
+	} = useSitesManagement( { NONCE, API_NAMESPACE } );
+
 	/**
-	 * Get the current value of the consumer_site meta field.
+	 * Get the current value of the brand_site meta field.
 	 */
-	const { consumerSite } = useSelect( ( select ) => {
+	const { BrandSite } = useSelect( ( select ) => {
 		const meta = select( 'core/editor' ).getEditedPostAttribute( 'meta' );
 		return {
-			consumerSite: meta?.consumer_site || [],
+			BrandSite: meta?.brand_site || [],
 		};
 	} );
 
 	/**
-	 * Dispatch the action to update the consumer_site meta field.
+	 * Dispatch the action to update the brand_site meta field.
 	 */
 	const { editPost } = useDispatch( 'core/editor' );
 
@@ -82,18 +57,23 @@ const RenderConsumerSiteMeta = ( {
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ error, setError ] = useState( null );
 
-	const onConsumerSiteChange = ( siteId ) => {
-		const newConsumerSite = consumerSite.includes( siteId )
-			? consumerSite.filter( ( site ) => site !== siteId )
-			: [ ...consumerSite, siteId ];
-		setIsSiteSelected( newConsumerSite.length > 0 );
-		editPost( { meta: { consumer_site: newConsumerSite } } );
+	const onBrandSiteChange = ( siteId ) => {
+		const newBrandSite = BrandSite.includes( siteId )
+			? BrandSite.filter( ( site ) => site !== siteId )
+			: [ ...BrandSite, siteId ];
+		setIsSiteSelected( newBrandSite.length > 0 );
+		editPost( { meta: { brand_site: newBrandSite } } );
 	};
 
 	const selectAllSites = () => {
 		// Get IDs of sites that don't already have all patterns (not disabled)
 		const selectableSiteIds = siteOptions
 			.filter( ( site ) => {
+				// skip if site is not reachable
+				if ( ! isSiteReachable( site.id ) ) {
+					return false;
+				}
+
 				// Skip if site has all patterns already
 				if ( selectedPatterns.length > 0 && sitePatterns[ site.id ] ) {
 					const sitePatternsArray = sitePatterns[ site.id ] || [];
@@ -113,11 +93,11 @@ const RenderConsumerSiteMeta = ( {
 			} )
 			.map( ( site ) => site.id );
 
-		editPost( { meta: { consumer_site: selectableSiteIds } } );
+		editPost( { meta: { brand_site: selectableSiteIds } } );
 	};
 
 	const deselectAllSites = () => {
-		editPost( { meta: { consumer_site: [] } } );
+		editPost( { meta: { brand_site: [] } } );
 	};
 
 	const retryFetch = () => {
@@ -138,7 +118,7 @@ const RenderConsumerSiteMeta = ( {
 		} catch ( fetchError ) {
 			setError( {
 				message: __(
-					'Failed to load consumer sites. Please check your connection and try again.',
+					'Failed to load brand sites. Please check your connection and try again.',
 					'onedesign',
 				),
 				details: fetchError.message,
@@ -154,25 +134,24 @@ const RenderConsumerSiteMeta = ( {
 		setError( null );
 		// Reset loading state
 		setIsLoading( true );
-		// Clear consumer site selection on mount
-		editPost( { meta: { consumer_site: [] } } );
-
-		// Ensure dashicons are loaded
-		if ( document.querySelector( 'body' ).classList.contains( 'wp-admin' ) ) {
-			// Already in admin, dashicons should be loaded
-		} else {
-			// Load dashicons if not in admin context
-			const link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.href = '/wp-includes/css/dashicons.min.css';
-			document.head.appendChild( link );
-		}
+		// Clear brand site selection on mount
+		editPost( { meta: { brand_site: [] } } );
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const totalCount = siteOptions.length;
 
+	// helper function to check if site is reachable.
+	const isSiteReachable = ( siteId ) => {
+		return sitesHealthCheckResult?.[ siteId ] && sitesHealthCheckResult[ siteId ]?.success;
+	};
+
 	// Calculate the number of sites that don't have all patterns already
 	const selectableSites = siteOptions.filter( ( site ) => {
+		// skip if site is not reachable
+		if ( ! isSiteReachable( site.id ) ) {
+			return false;
+		}
+
 		if ( selectedPatterns.length > 0 && sitePatterns[ site.id ] ) {
 			const sitePatternsArray = sitePatterns[ site.id ] || [];
 			const presentPatterns = selectedPatterns.filter( ( patternName ) =>
@@ -191,18 +170,18 @@ const RenderConsumerSiteMeta = ( {
 	} );
 
 	const selectableSiteCount = selectableSites.length;
-	const selectedSelectableSiteCount = consumerSite.filter( ( siteId ) =>
+	const selectedSelectableSiteCount = BrandSite.filter( ( siteId ) =>
 		selectableSites.some( ( site ) => site.id === siteId ),
 	).length;
 
-	const selectedCount = consumerSite.length;
+	const selectedCount = BrandSite.length;
 
-	if ( isLoading ) {
+	if ( isLoading || isSitesLoading || sitesHealthCheckResult === undefined ) {
 		return (
 			<div className="od-site-loading">
 				<div className="od-loading-content">
 					<Spinner />
-					<p>{ __( 'Loading consumer sites…', 'onedesign' ) }</p>
+					<p>{ __( 'Loading brand sites…', 'onedesign' ) }</p>
 				</div>
 			</div>
 		);
@@ -235,10 +214,10 @@ const RenderConsumerSiteMeta = ( {
 		return (
 			<div className="od-no-sites">
 				<Notice status="warning" isDismissible={ false }>
-					<p>{ __( 'No consumer sites configured.', 'onedesign' ) }</p>
+					<p>{ __( 'No brand sites configured.', 'onedesign' ) }</p>
 					<p>
 						{ __(
-							'Please configure consumer sites first to apply patterns.',
+							'Please configure brand sites first to apply patterns.',
 							'onedesign',
 						) }
 					</p>
@@ -248,18 +227,20 @@ const RenderConsumerSiteMeta = ( {
 	}
 
 	return (
-		<div className="od-consumer-site-selection">
+		<div className="od-brand-site-selection">
 			<div className="od-selection-header">
 				<div className="od-selection-summary">
-					<h4>{ __( 'Select Consumer Sites', 'onedesign' ) }</h4>
+					<h4>{ __( 'Select Brand Sites', 'onedesign' ) }</h4>
 					<span className="od-selection-count">
 						{ selectedCount > 0
-							? /* translators: %1$d: number of selected sites, %2$d: total number of selectable sites */ sprintf(
+							? sprintf(
+								/* translators: %1$d: Number of selected sites, %2$d: Total number of sites. */
 								__( '%1$d of %2$d selected', 'onedesign' ),
 								selectedCount,
 								selectableSiteCount,
 							)
-							: /* translators: %1$d: number of selectable sites, %2$d: total number of sites */ sprintf(
+							: sprintf(
+								/* translators: %1$d: Number of available sites, %2$d: Total number of sites. */
 								__( '%1$d of %2$d sites available', 'onedesign' ),
 								selectableSiteCount,
 								totalCount,
@@ -318,7 +299,7 @@ const RenderConsumerSiteMeta = ( {
 
 			<div className="od-sites-list od-sites-grid">
 				{ siteOptions.map( ( { id, name, url, logo } ) => {
-					const isSelected = consumerSite?.includes( id );
+					const isSelected = BrandSite?.includes( id );
 
 					// Check if all selected patterns are already present on this site
 					let hasAllPatterns = false;
@@ -336,17 +317,17 @@ const RenderConsumerSiteMeta = ( {
 						hasAllPatterns =
 							presentPatterns.length === selectedPatterns.length &&
 							selectedPatterns.length > 0;
-						isDisabled = hasAllPatterns && ! isSelected;
+						isDisabled = ( hasAllPatterns && ! isSelected ) || ! isSiteReachable( id );
 					}
 
 					return (
 						<div
 							key={ id }
 							className={ `od-site-item ${ isSelected ? 'od-site-selected' : '' } ${ isDisabled ? 'od-site-disabled' : '' }` }
-							onClick={ () => ! isDisabled && onConsumerSiteChange( id ) }
+							onClick={ () => ! isDisabled && onBrandSiteChange( id ) }
 							onKeyDown={ ( e ) => {
-								if ( ! isDisabled && ( e.key === 'Enter' || e.key === ' ' ) ) {
-									onConsumerSiteChange( id );
+								if ( ! isDisabled && ( e.code === 'Enter' || e.code === 'Space' ) ) {
+									onBrandSiteChange( id );
 								}
 							} }
 							tabIndex={ isDisabled ? -1 : 0 }
@@ -357,7 +338,7 @@ const RenderConsumerSiteMeta = ( {
 							<div className="od-site-inner">
 								{ isSelected && (
 									<div className="od-site-selected-indicator">
-										<span className="dashicons dashicons-yes-alt"></span>
+										{ renderIcon( { sitesHealthCheckResult, id } ) }
 									</div>
 								) }
 								{ isDisabled && ! isSelected && (
@@ -368,7 +349,7 @@ const RenderConsumerSiteMeta = ( {
 											'onedesign',
 										) }
 									>
-										<span className="dashicons dashicons-yes"></span>
+										{ renderIcon( { sitesHealthCheckResult, id } ) }
 									</div>
 								) }
 								<div className="od-site-logo">
@@ -445,16 +426,6 @@ const RenderConsumerSiteMeta = ( {
 												<>
 													<span
 														className="od-onedesign-info"
-														data-tooltip={
-															toSyncPatterns.length > 0
-																? __( 'Patterns to sync:', 'onedesign' ) +
-																	' ' +
-																	toSyncPatternsTitles.join( ', ' )
-																: __(
-																	'All selected patterns are already on this site',
-																	'onedesign',
-																)
-														}
 													>
 														{ presentCount } { __( 'of', 'onedesign' ) }{ ' ' }
 														{ selectedPatterns.length }{ ' ' }
@@ -477,4 +448,4 @@ const RenderConsumerSiteMeta = ( {
 	);
 };
 
-export default RenderConsumerSiteMeta;
+export default SiteSelection;
