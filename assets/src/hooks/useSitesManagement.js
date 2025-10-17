@@ -48,7 +48,7 @@ const useSitesManagement = ( { NONCE, API_NAMESPACE } ) => {
 								...prevResults,
 								[ siteInfo[ siteId ]?.id ]: {
 									success: false,
-									message: data.message || 'Health check failed.',
+									message: data.message || __( 'Health check failed.', 'onedesign' ),
 								},
 							} ) );
 							continue;

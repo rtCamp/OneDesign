@@ -326,7 +326,7 @@ const SiteSelection = ( {
 							className={ `od-site-item ${ isSelected ? 'od-site-selected' : '' } ${ isDisabled ? 'od-site-disabled' : '' }` }
 							onClick={ () => ! isDisabled && onBrandSiteChange( id ) }
 							onKeyDown={ ( e ) => {
-								if ( ! isDisabled && ( e.code === 'Enter' || e.key === 'Space' ) ) {
+								if ( ! isDisabled && ( e.code === 'Enter' || e.code === 'Space' ) ) {
 									onBrandSiteChange( id );
 								}
 							} }
