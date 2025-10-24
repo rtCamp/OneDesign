@@ -182,7 +182,7 @@ class Multisite {
 	 */
 	public function add_multisite_sites( \WP_REST_Request $request ): WP_REST_Response|WP_Error {
 
-		$site_ids = filter_var( $request->get_param( 'site_ids' ), FILTER_SANITIZE_NUMBER_INT );
+		$site_ids = array_map( 'absint', (array) $request->get_param( 'site_ids' ) );
 
 		if ( empty( $site_ids ) || ! is_array( $site_ids ) ) {
 			return new WP_Error(

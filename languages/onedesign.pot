@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-10-24T11:04:27+00:00\n"
+"POT-Creation-Date: 2025-10-24T11:07:30+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 
@@ -1393,11 +1393,11 @@ msgid "Governing site updated successfully."
 msgstr ""
 
 #: assets/src/admin/patterns/components/AppliedPatternsTab.js:224
-msgid "Are you sure your want to remove selected patterns?"
+msgid "Are you sure you want to remove selected patterns?"
 msgstr ""
 
 #: assets/src/admin/patterns/components/AppliedPatternsTab.js:226
-msgid "Once you remove pattern you want be able to use it on brand sites, so please check and confirm you don't require it."
+msgid "Once you remove a pattern you wan't be able to use it on brand sites, so please check and confirm you don't require it."
 msgstr ""
 
 #: assets/src/components/MultiSites.js:65
