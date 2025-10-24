@@ -123,6 +123,13 @@ class Constants {
 	public const ONEDESIGN_REST_VERSION = 'v1';
 
 	/**
+	 * Multisite governing site.
+	 *
+	 * @var string
+	 */
+	public const ONEDESIGN_MULTISITE_GOVERNING_SITE = 'onedesign_multisite_governing_site';
+
+	/**
 	 * Use Singleton trait.
 	 */
 	use Singleton;

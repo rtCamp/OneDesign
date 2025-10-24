@@ -8,6 +8,7 @@
 namespace OneDesign\Plugin_Configs;
 
 use OneDesign\Traits\Singleton;
+use OneDesign\Utils;
 
 /**
  * Class Secret_Key
@@ -46,6 +47,18 @@ class Secret_Key {
 			// Store the secret key in the database.
 			$is_key_updated = update_option( Constants::ONEDESIGN_API_KEY, $secret_key, false );
 
+			if ( Utils::is_multisite() ) {
+				/**
+				 * Trigger action when API key is generated in multisite setup.
+				 *
+				 * @param string $secret_key The generated secret key.
+				 * @param int $blog_id The blog ID where the key is generated.
+				 *
+				 * @hook onedesign_multisite_api_key_generated
+				 */
+				do_action( 'onedesign_multisite_api_key_generated', $secret_key, get_current_blog_id() );
+			}
+
 			if ( ! $is_key_updated ) {
 				return '';
 			}
@@ -59,7 +72,7 @@ class Secret_Key {
 	 *
 	 * @return string The generated key.
 	 */
-	private static function generate_key(): string {
+	public static function generate_key(): string {
 		return wp_generate_password( 128, false, false );
 	}
 

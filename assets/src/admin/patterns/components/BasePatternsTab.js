@@ -238,11 +238,9 @@ const BasePatternsTab = memo(
 								onClick={ handleApplyPatterns }
 								disabled={ isApplying || ! isSiteSelected }
 								className="od-apply-button"
+								isBusy={ isApplying }
 							>
-								{ isApplying && <Spinner /> }
-								{ isApplying
-									? __( 'Applying…', 'onedesign' )
-									: __( 'Apply Patterns', 'onedesign' ) }
+								{ __( 'Apply Patterns', 'onedesign' ) }
 							</Button>
 						) }
 					</div>
