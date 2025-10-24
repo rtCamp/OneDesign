@@ -58,7 +58,7 @@ if ( ! function_exists( 'onedesign_plugin_deletion' ) ) {
 			delete_option( $option );
 		}
 
-		// if its multisite, delete site options as well.
+		// if it's multisite, delete site options as well.
 		if ( is_multisite() ) {
 			$site_options_to_delete = array(
 				'onedesign_multisite_governing_site',

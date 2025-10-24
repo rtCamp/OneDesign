@@ -223,7 +223,7 @@ const AppliedPatternsTab = memo( ( {
 						<p>
 							{ __( 'Are you sure you want to remove selected patterns?', 'onedesign' ) }
 							<br />
-							{ __( 'Once you remove a pattern you wan\'t be able to use it on brand sites, so please check and confirm you don\'t require it.', 'onedesign' ) }
+							{ __( 'Once you remove a pattern you won\'t be able to use it on brand sites, so please check and confirm you don\'t require it.', 'onedesign' ) }
 						</p>
 						<div className="od-pattern-removal-modal-actions">
 							<Button

@@ -23,7 +23,7 @@ const SiteTypeSelector = ( { value, setGoverningSite } ) => (
 	<SelectControl
 		label={ __( 'Select Governing Site', 'onedesign' ) }
 		value={ value }
-		help={ __( 'Choose governing site from current multisite network other sites will be set as brand sites. This setting cannot be changed later and affects available features and configurations.', 'onedesign' ) }
+		help={ __( 'Choose governing site from current multisite network. Other sites will be set as brand sites. This setting cannot be changed later and affects available features and configurations.', 'onedesign' ) }
 		onChange={ ( v ) => {
 			setGoverningSite( v );
 		} }

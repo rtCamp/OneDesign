@@ -108,16 +108,13 @@ class Multisite {
 		// get the governing site id.
 		$governing_site_id = get_site_option( Constants::ONEDESIGN_MULTISITE_GOVERNING_SITE, 0 );
 
-		// assign secret_key is the new api key.
-		$api_key = $secret_key;
-
-		// go to governing site and update shared_sites option api_key of blog_id site.
-		if ( $governing_site_id && $api_key ) {
+		// go to governing site and update shared_sites option secret_key of blog_id site.
+		if ( $governing_site_id && $secret_key ) {
 			switch_to_blog( $governing_site_id );
 			$shared_sites = get_option( Constants::ONEDESIGN_SHARED_SITES, array() );
 			foreach ( $shared_sites as &$site ) {
 				if ( (int) $site['id'] === (int) $blog_id ) {
-					$site['api_key'] = $api_key;
+					$site['api_key'] = $secret_key;
 					break;
 				}
 			}
