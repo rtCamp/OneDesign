@@ -7,7 +7,7 @@
 
 namespace OneDesign\Rest;
 
-use OneDesign\Plugin_Configs\Constants;
+use OneDesign\Plugin_Configs\{Constants, Secret_Key };
 use OneDesign\Traits\Singleton;
 use OneDesign\Utils;
 use WP_Error;
@@ -175,6 +175,7 @@ class Multisite {
 				delete_option( Constants::ONEDESIGN_SHARED_SITES );
 			} else {
 				update_option( Constants::ONEDESIGN_SITE_TYPE, 'brand-site', false );
+				update_option( Constants::ONEDESIGN_API_KEY, Secret_Key::generate_key(), false );
 				delete_option( Constants::ONEDESIGN_GOVERNING_SITE_URL );
 				delete_option( Constants::ONEDESIGN_SHARED_SITES );
 			}
