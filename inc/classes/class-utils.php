@@ -44,6 +44,79 @@ class Utils {
 	const NAMESPACE = Constants::ONEDESIGN_REST_NAMESPACE . '/' . Constants::ONEDESIGN_REST_VERSION;
 
 	/**
+	 * Check if governing site is selected in multisite setup.
+	 *
+	 * @return bool True if governing site is selected, false otherwise.
+	 */
+	public static function is_governing_site_selected(): bool {
+		if ( ! self::is_multisite() ) {
+			return false;
+		}
+		$governing_site_id = self::get_multisite_governing_site();
+		return $governing_site_id > 0;
+	}
+
+	/**
+	 * Get shared sites information.
+	 *
+	 * @return array Array of shared sites information.
+	 */
+	public static function get_shared_sites_info(): array {
+		$shared_sites = get_option( Constants::ONEDESIGN_SHARED_SITES, array() );
+		return is_array( $shared_sites ) ? $shared_sites : array();
+	}
+
+	/**
+	 * Check if the current setup is multisite.
+	 *
+	 * @return bool True if multisite, false otherwise.
+	 */
+	public static function is_multisite(): bool {
+		return is_multisite();
+	}
+
+	/**
+	 * Get the governing site for multisite setup.
+	 *
+	 * @return int Governing site ID, or 0 if not set.
+	 */
+	public static function get_multisite_governing_site(): int {
+		if ( ! self::is_multisite() ) {
+			return 0;
+		}
+
+		$governing_site_id = get_site_option( 'onedesign_multisite_governing_site', 0 );
+		return is_numeric( $governing_site_id ) ? (int) $governing_site_id : 0;
+	}
+
+	/**
+	 * Get information of all multisites in the network.
+	 *
+	 * @return array Array of multisite information.
+	 */
+	public static function get_all_multisites_info(): array {
+		if ( ! self::is_multisite() ) {
+			return array();
+		}
+
+		$sites      = get_sites( array( 'number' => 0 ) );
+		$sites_info = array();
+
+		foreach ( $sites as $site ) {
+			$site_details = get_blog_details( $site->blog_id );
+			if ( $site_details ) {
+				$sites_info[] = array(
+					'id'   => (string) $site_details->blog_id,
+					'name' => $site_details->blogname,
+					'url'  => $site_details->siteurl,
+				);
+			}
+		}
+
+		return $sites_info;
+	}
+
+	/**
 	 * Get the current site type.
 	 *
 	 * @return string
