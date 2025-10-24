@@ -173,8 +173,8 @@ const MultiSites = ( { setBrandSites, brandSites, setNotice } ) => {
 					{ /* create multi select checkbox list of sites excluding current site */ }
 					{ sites?.length > 0 ? (
 						<div style={ { maxHeight: '400px', overflowY: 'auto', padding: '4px 4px' } }>
-							{ sites?.filter( ( site ) => site.id !== CURRENT_SITE_ID )
-								.filter( ( site ) => ! brandSites?.some( ( brandSite ) => brandSite.id === site.id ) )
+							{ sites?.filter( ( site ) => String( site.id ) !== CURRENT_SITE_ID &&
+                                    ! brandSites?.some( ( brandSite ) => String( brandSite.id ) === String( site.id ) ) )
 								.map( ( site ) => (
 									<CheckboxControl
 										key={ site.id }
@@ -188,8 +188,7 @@ const MultiSites = ( { setBrandSites, brandSites, setNotice } ) => {
 						<p>{ __( 'No other sites available in this multisite network.', 'onedesign' ) }</p>
 					) }
 
-					{ sites?.length > 0 && sites?.filter( ( site ) => site.id !== CURRENT_SITE_ID )
-						.filter( ( site ) => ! brandSites?.some( ( brandSite ) => brandSite.id === site.id ) ).length === 0 && (
+					{ sites?.length > 0 && sites?.filter( ( site ) => String( site.id ) !== CURRENT_SITE_ID && ! brandSites?.some( ( brandSite ) => String( brandSite.id ) === String( site.id ) ) ).length === 0 && (
 						<p>{ __( 'All sites in this multisite network have already been added as brand sites.', 'onedesign' ) }</p>
 					) }
 

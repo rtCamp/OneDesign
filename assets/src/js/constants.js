@@ -27,7 +27,7 @@ const PER_PAGE = 9;
 const MULTISITES = settings?.multisites || [];
 const IS_MULTISITE = settings?.isMultisite || false;
 const IS_GOVERNING_SITE_SELECTED = settings?.isGoverningSiteSelected || false;
-const CURRENT_SITE_ID = settings?.currentSiteId || '';
+const CURRENT_SITE_ID = String( settings?.currentSiteId ) || '';
 
 export {
 	API_NAMESPACE,

@@ -167,8 +167,13 @@ class Multisite {
 
 		// set all existing sites site-type as brand-site and current site as governing-site.
 		$multisite_info = Utils::get_all_multisites_info();
+
 		foreach ( $multisite_info as $site ) {
-			switch_to_blog( $site['id'] );
+
+			if ( ! switch_to_blog( (int) $site['id'] ) ) {
+				continue;
+			}
+
 			if ( intval( $site['id'] ) === intval( $governing_site_id ) ) {
 				update_option( Constants::ONEDESIGN_SITE_TYPE, 'governing-site', false );
 				delete_option( Constants::ONEDESIGN_GOVERNING_SITE_URL );
@@ -179,6 +184,7 @@ class Multisite {
 				delete_option( Constants::ONEDESIGN_GOVERNING_SITE_URL );
 				delete_option( Constants::ONEDESIGN_SHARED_SITES );
 			}
+
 			restore_current_blog();
 		}
 
@@ -227,7 +233,9 @@ class Multisite {
 		foreach ( $site_ids as $site_id ) {
 
 			// switch to each site and update option of onedesign_site_type as brand-site.
-			switch_to_blog( $site_id );
+			if ( ! switch_to_blog( (int) $site_id ) ) {
+				continue;
+			}
 
 			$shared_sites[] = array(
 				'id'          => $site_id,
@@ -247,8 +255,16 @@ class Multisite {
 		}
 
 		// update shared sites in governing site.
-		switch_to_blog( $governing_site_id );
+		if ( ! switch_to_blog( (int) $governing_site_id ) ) {
+			return new WP_Error(
+				sprintf( 'failed_to_switch_blog_%d', $governing_site_id ),
+				__( 'Failed to switch to governing site blog.', 'onedesign' ),
+				array( 'status' => 500 )
+			);
+		}
+
 		update_option( Constants::ONEDESIGN_SHARED_SITES, $shared_sites, false );
+
 		restore_current_blog();
 
 		return new WP_REST_Response(
@@ -265,7 +281,9 @@ class Multisite {
 	 * @return WP_REST_Response
 	 */
 	public function get_all_multisite_sites(): WP_REST_Response {
+
 		$all_multisites = Utils::get_all_multisites_info();
+
 		return new WP_REST_Response(
 			array(
 				'success' => true,

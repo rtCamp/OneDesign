@@ -110,7 +110,9 @@ class Multisite {
 
 		// go to governing site and update shared_sites option secret_key of blog_id site.
 		if ( $governing_site_id && $secret_key ) {
-			switch_to_blog( $governing_site_id );
+			if ( ! switch_to_blog( (int) $governing_site_id ) ) {
+				return;
+			}
 			$shared_sites = get_option( Constants::ONEDESIGN_SHARED_SITES, array() );
 			foreach ( $shared_sites as &$site ) {
 				if ( (int) $site['id'] === (int) $blog_id ) {
@@ -118,7 +120,9 @@ class Multisite {
 					break;
 				}
 			}
+
 			update_option( Constants::ONEDESIGN_SHARED_SITES, $shared_sites, false );
+
 			restore_current_blog();
 		}
 	}
