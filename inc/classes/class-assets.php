@@ -105,7 +105,7 @@ class Assets {
 			}
 		}
 
-		if ( strpos( $hook_suffix, 'plugins' ) !== false && empty( Utils::get_current_site_type() ) ) {
+		if ( strpos( $hook_suffix, 'plugins' ) !== false && empty( Utils::get_current_site_type() ) && 'plugins-network' !== $current_screen->id ) {
 
 			// remove all notices.
 			remove_all_actions( 'admin_notices' );
