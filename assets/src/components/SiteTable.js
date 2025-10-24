@@ -9,6 +9,12 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { getInitials } from '../js/utils';
+import MultiSites from './MultiSites';
+
+/**
+ * PHP consts for JS usage.
+ */
+import { IS_MULTISITE, IS_GOVERNING_SITE_SELECTED } from '../js/constants';
 
 /**
  * SiteTable component to display and manage brand sites.
@@ -19,9 +25,12 @@ import { getInitials } from '../js/utils';
  * @param {Function} props.onDelete     - Function to handle deleting a site.
  * @param {Function} props.setFormData  - Function to set form data for editing.
  * @param {Function} props.setShowModal - Function to show/hide the modal for adding/editing a site.
+ * @param {Function} props.setSites     - Function to update the list of sites.
+ * @param {Function} props.setNotice    - Function to set notice messages.
+ *
  * @return {JSX.Element} Rendered component.
  */
-const SiteTable = ( { sites, onEdit, onDelete, setFormData, setShowModal } ) => {
+const SiteTable = ( { sites, onEdit, onDelete, setFormData, setShowModal, setSites, setNotice } ) => {
 	const [ showDeleteModal, setShowDeleteModal ] = useState( false );
 	const [ deleteIndex, setDeleteIndex ] = useState( null );
 
@@ -45,13 +54,24 @@ const SiteTable = ( { sites, onEdit, onDelete, setFormData, setShowModal } ) => 
 		<Card style={ { marginTop: '30px' } }>
 			<CardHeader>
 				<h3>{ __( 'Brand Sites', 'onedesign' ) }</h3>
-				<Button
-					style={ { width: 'fit-content' } }
-					variant="primary"
-					onClick={ () => setShowModal( true ) }
-				>
-					{ __( 'Add Brand Site', 'onedesign' ) }
-				</Button>
+				<div style={ { display: 'flex', gap: '16px' } }>
+					{
+						IS_MULTISITE && IS_GOVERNING_SITE_SELECTED && (
+							<MultiSites
+								setBrandSites={ setSites }
+								brandSites={ sites }
+								setNotice={ setNotice }
+							/>
+						)
+					}
+					<Button
+						style={ { width: 'fit-content' } }
+						variant="primary"
+						onClick={ () => setShowModal( true ) }
+					>
+						{ __( 'Add Brand Site', 'onedesign' ) }
+					</Button>
+				</div>
 			</CardHeader>
 			<CardBody>
 				<table className="wp-list-table widefat fixed striped">
@@ -98,6 +118,7 @@ const SiteTable = ( { sites, onEdit, onDelete, setFormData, setShowModal } ) => 
 											onEdit( index );
 											setShowModal( true );
 										} }
+										disabled={ site?.is_editable === false }
 										style={ { marginRight: '8px' } }
 									>
 										{ __( 'Edit', 'onedesign' ) }

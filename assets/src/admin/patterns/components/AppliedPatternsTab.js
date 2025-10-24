@@ -206,10 +206,9 @@ const AppliedPatternsTab = memo( ( {
 						variant="secondary"
 						isDestructive
 						disabled={ selectedPatternsToRemove.length === 0 || isRemoving }
+						isBusy={ isRemoving }
 					>
-						{ isRemoving
-							? __( 'Removing…', 'onedesign' )
-							: __( 'Remove Selected Patterns', 'onedesign' ) }
+						{ __( 'Remove Selected Patterns', 'onedesign' ) }
 					</Button>
 				</div>
 			</div>
@@ -222,10 +221,9 @@ const AppliedPatternsTab = memo( ( {
 				>
 					<div className="od-pattern-removal-modal-content">
 						<p>
-							{ __(
-								'Are you sure you want to remove the selected patterns? This action cannot be undone.',
-								'onedesign',
-							) }
+							{ __( 'Are you sure your want to remove selected patterns?', 'onedesign' ) }
+							<br />
+							{ __( 'Once you remove pattern you want be able to use it on brand sites, so please check and confirm you don\'t require it.', 'onedesign' ) }
 						</p>
 						<div className="od-pattern-removal-modal-actions">
 							<Button
