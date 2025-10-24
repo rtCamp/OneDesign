@@ -165,6 +165,22 @@ class Multisite {
 			);
 		}
 
+		// set all existing sites site-type as brand-site and current site as governing-site.
+		$multisite_info = Utils::get_all_multisites_info();
+		foreach ( $multisite_info as $site ) {
+			switch_to_blog( $site['id'] );
+			if ( intval( $site['id'] ) === intval( $governing_site_id ) ) {
+				update_option( Constants::ONEDESIGN_SITE_TYPE, 'governing-site', false );
+				delete_option( Constants::ONEDESIGN_GOVERNING_SITE_URL );
+				delete_option( Constants::ONEDESIGN_SHARED_SITES );
+			} else {
+				update_option( Constants::ONEDESIGN_SITE_TYPE, 'brand-site', false );
+				delete_option( Constants::ONEDESIGN_GOVERNING_SITE_URL );
+				delete_option( Constants::ONEDESIGN_SHARED_SITES );
+			}
+			restore_current_blog();
+		}
+
 		return new WP_REST_Response(
 			array(
 				'success'        => true,

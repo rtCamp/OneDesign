@@ -66,7 +66,7 @@ class Multisite {
 			return;
 		}
 
-		if ( Utils::get_multisite_governing_site() !== 0 ) {
+		if ( Utils::is_governing_site_selected() ) {
 			return;
 		}
 
@@ -85,7 +85,7 @@ class Multisite {
 	 */
 	public function add_admin_body_class( string $classes ): string {
 
-		if ( Utils::get_multisite_governing_site() !== 0 ) {
+		if ( Utils::is_governing_site_selected() ) {
 			return $classes;
 		}
 

@@ -85,7 +85,7 @@ class Utils {
 			return 0;
 		}
 
-		$governing_site_id = get_site_option( 'onedesign_multisite_governing_site', 0 );
+		$governing_site_id = get_site_option( Constants::ONEDESIGN_MULTISITE_GOVERNING_SITE, 0 );
 		return is_numeric( $governing_site_id ) ? (int) $governing_site_id : 0;
 	}
 

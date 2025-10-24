@@ -78,6 +78,7 @@ const scripts = {
 		'patterns-library': path.resolve( process.cwd(), 'assets', 'src', 'admin', 'patterns', 'index.js' ),
 		settings: path.resolve( process.cwd(), 'assets', 'src', 'admin', 'settings', 'index.js' ),
 		plugin: path.resolve( process.cwd(), 'assets', 'src', 'admin', 'plugin', 'index.js' ),
+		'multisite-plugin': path.resolve( process.cwd(), 'assets', 'src', 'admin', 'multisite-plugin', 'index.js' ),
 	},
 };
 

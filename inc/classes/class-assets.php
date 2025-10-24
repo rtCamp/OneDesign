@@ -125,7 +125,7 @@ class Assets {
 
 		}
 
-		if ( Utils::is_multisite() && 'plugins-network' === $current_screen->id && Utils::get_multisite_governing_site() === 0 ) {
+		if ( Utils::is_multisite() && 'plugins-network' === $current_screen->id && ! Utils::is_governing_site_selected() ) {
 
 			// remove all notices.
 			remove_all_actions( 'admin_notices' );
