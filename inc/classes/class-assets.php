@@ -67,6 +67,8 @@ class Assets {
 	 */
 	public function add_admin_scripts( $hook_suffix ): void {
 
+		$current_screen = get_current_screen();
+
 		if ( strpos( $hook_suffix, 'onedesign-settings' ) !== false ) {
 
 			// remove all notices.
@@ -80,7 +82,15 @@ class Assets {
 			wp_localize_script(
 				'onedesign-settings-script',
 				'OneDesignSettings',
-				self::$localized_data
+				array_merge(
+					self::$localized_data,
+					array(
+						'multisites'              => Utils::get_all_multisites_info(),
+						'isMultisite'             => Utils::is_multisite(),
+						'isGoverningSiteSelected' => Utils::is_governing_site_selected(),
+						'currentSiteId'           => Utils::is_multisite() ? get_current_blog_id() : null,
+					)
+				)
 			);
 
 			wp_enqueue_script( 'onedesign-settings-script' );
@@ -112,6 +122,31 @@ class Assets {
 			);
 
 			wp_enqueue_script( 'onedesign-setup-script' );
+
+		}
+
+		if ( Utils::is_multisite() && 'plugins-network' === $current_screen->id && Utils::get_multisite_governing_site() === 0 ) {
+
+			// remove all notices.
+			remove_all_actions( 'admin_notices' );
+
+			$this->register_script(
+				'onedesign-multisite-setup-script',
+				'js/multisite-plugin.js',
+			);
+
+			wp_localize_script(
+				'onedesign-multisite-setup-script',
+				'OneDesignMultiSiteSettings',
+				array_merge(
+					self::$localized_data,
+					array(
+						'multisites' => Utils::get_all_multisites_info(),
+					)
+				)
+			);
+
+			wp_enqueue_script( 'onedesign-multisite-setup-script' );
 
 		}
 
