@@ -51,10 +51,22 @@ if ( ! function_exists( 'onedesign_plugin_deletion' ) ) {
 			'onedesign_shared_patterns',
 			'onedesign_shared_template_parts',
 			'onedesign_shared_synced_patterns',
+			'onedesign_multisite_governing_site',
 		);
 
 		foreach ( $options_to_delete as $option ) {
 			delete_option( $option );
+		}
+
+		// if its multisite, delete site options as well.
+		if ( is_multisite() ) {
+			$site_options_to_delete = array(
+				'onedesign_multisite_governing_site',
+			);
+
+			foreach ( $site_options_to_delete as $site_option ) {
+				delete_site_option( $site_option );
+			}
 		}
 	}
 }
