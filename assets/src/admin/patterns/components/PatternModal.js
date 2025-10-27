@@ -358,7 +358,7 @@ const PatternModal = () => {
 					},
 					body: JSON.stringify( {
 						pattern_names: patternNames,
-						site_id: siteId,
+						site_id: siteId.toString(),
 					} ),
 				} );
 
