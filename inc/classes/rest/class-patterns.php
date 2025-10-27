@@ -392,7 +392,8 @@ class Patterns {
 				)
 			);
 			if ( is_wp_error( $response ) ) {
-				continue; // Skip sites with errors.
+				$error_logs[] = $response;
+				continue;
 			}
 
 			$status_code = wp_remote_retrieve_response_code( $response );

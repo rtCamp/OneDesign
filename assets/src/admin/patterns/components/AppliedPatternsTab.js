@@ -1,9 +1,9 @@
 /**
  * WordPress dependencies
  */
-import { memo, useCallback, useState, useEffect } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
-import { Button, Notice, Modal } from '@wordpress/components';
+import { __, _n, sprintf } from '@wordpress/i18n';
+import { Button, Modal, Notice } from '@wordpress/components';
+import { useCallback, useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -11,240 +11,218 @@ import { Button, Notice, Modal } from '@wordpress/components';
 import MemoizedPatternPreview from './MemoizedPatternPreview';
 
 /**
- * AppliedPatternsTab component displays a list of applied patterns with options to remove them.
+ * AppliedPatternsTab component.
  *
- * @param {Object}   props                        - Component properties.
- * @param {boolean}  props.isLoadingApplied       - Indicates if applied patterns are loading.
- * @param {Array}    props.appliedPatterns        - List of applied patterns.
- * @param {number}   props.visibleAppliedCount    - Number of applied patterns currently visible.
- * @param {Function} props.applySelectedPatterns  - Function to apply selected patterns.
- * @param {Function} props.setVisibleAppliedCount - Function to set the number of visible applied patterns.
- * @param {Object}   props.siteInfo               - Information about the site (used for applying patterns).
- * @return {JSX.Element} Rendered component.
+ * @param {Object}   props                        - Component props.
+ * @param {Array}    props.appliedPatterns        - Array of applied patterns to display.
+ * @param {number}   props.currentPage            - Current page number for pagination.
+ * @param {number}   props.PER_PAGE               - Number of patterns to display per page.
+ * @param {Array}    props.selectedPatterns       - Array of selected pattern names.
+ * @param {Function} props.handlePatternSelection - Function to handle pattern selection.
+ * @param {Function} props.setCurrentPage         - Function to set the current page number.
+ * @param {Object}   props.siteInfo               - Current site information.
+ * @param {Function} props.applySelectedPatterns  - Function to apply/remove selected patterns.
+ * @param {Function} props.setSelectedPatterns    - Function to set selected patterns.
+ * @param {Object}   props.notice                 - Notice object containing type and message.
+ * @param {Function} props.setNotice              - Function to set the notice state.
+ *
+ * @return {JSX.Element} The rendered component.
  */
-const AppliedPatternsTab = memo( ( {
-	isLoadingApplied,
+const AppliedPatternsTab = ( {
 	appliedPatterns,
-	visibleAppliedCount,
-	applySelectedPatterns,
-	setVisibleAppliedCount,
+	currentPage,
+	PER_PAGE,
+	selectedPatterns,
+	handlePatternSelection,
+	setCurrentPage,
 	siteInfo,
+	applySelectedPatterns,
+	setSelectedPatterns,
+	notice,
+	setNotice,
 } ) => {
-	const uniquePatterns = new Map();
+	const [ isProcessing, setIsProcessing ] = useState( false );
+	const [ isRemoveModalOpen, setIsRemoveModalOpen ] = useState( false );
 
-	// Loop through appliedPatterns and only keep the last occurrence of each pattern name
+	// Get unique patterns
+	const uniquePatterns = new Map();
 	appliedPatterns?.forEach( ( pattern ) => {
 		uniquePatterns.set( pattern.name, pattern );
 	} );
+	const filteredPatterns = Array.from( uniquePatterns.values() );
 
-	// Convert the Map values back to an array if needed
-	const uniquePatternsArray = Array.from( uniquePatterns.values() );
+	const handleRemovePatterns = useCallback( async () => {
+		setIsProcessing( true );
+		try {
+			const result = await applySelectedPatterns(
+				selectedPatterns,
+				siteInfo?.value,
+			);
 
-	const [ selectedPatternsToRemove, setSelectedPatternsToRemove ] = useState( [] );
-	const [ isRemovalModalOpen, setIsRemovalModalOpen ] = useState( false );
-	const [ isRemoving, setIsRemoving ] = useState( false );
-	const [ feedbackMessage, setFeedbackMessage ] = useState( null );
+			if ( result ) {
+				const count = selectedPatterns.length;
 
-	useEffect( () => {
-		// Reset selected patterns to remove when applied patterns change
-		setSelectedPatternsToRemove( [] );
-	}, [ siteInfo ] );
-
-	const handlePatternRemoval = ( patternName ) => {
-		setSelectedPatternsToRemove( ( prevSelected ) => {
-			const newSelected = prevSelected.includes( patternName )
-				? prevSelected.filter( ( name ) => name !== patternName )
-				: [ ...prevSelected, patternName ];
-
-			return newSelected;
-		} );
-	};
-
-	const loadMoreUniquePatterns = useCallback( () => {
-		setVisibleAppliedCount( ( prevCount ) => prevCount + visibleAppliedCount );
-	}, [ visibleAppliedCount, setVisibleAppliedCount ] );
-
-	const removeSelectedPatterns = useCallback( () => {
-		// Open the confirmation modal when the button is clicked
-		setIsRemovalModalOpen( true );
-	}, [] );
-
-	const confirmAndRemovePatterns = useCallback( () => {
-		// Close the modal and set removing state
-		setIsRemovalModalOpen( false );
-		setIsRemoving( true );
-
-		// Show feedback that patterns are being removed
-		setFeedbackMessage( {
-			type: 'info',
-			message: __( 'Removing patterns…', 'onedesign' ),
-		} );
-
-		// Apply selected patterns and handle the result
-		const result = applySelectedPatterns(
-			selectedPatternsToRemove,
-			siteInfo?.value,
-		);
-
-		// If it's a Promise, handle success and error cases
-		if ( result && typeof result.then === 'function' ) {
-			result
-				.then( () => {
-					// On success, show success message
-					setFeedbackMessage( {
-						type: 'success',
-						message: __( 'Patterns removed successfully!', 'onedesign' ),
-					} );
-
-					// Clear the success message after 2 seconds
-					setTimeout( () => {
-						setFeedbackMessage( null );
-						setSelectedPatternsToRemove( [] );
-					}, 2000 );
-
-					setIsRemoving( false );
-				} )
-				.catch( ( error ) => {
-					// On error, show error message
-					setFeedbackMessage( {
-						type: 'error',
-						message:
-							error.message ||
-							__( 'Failed to remove patterns. Please try again.', 'onedesign' ),
-					} );
-
-					setIsRemoving( false );
+				setNotice( {
+					type: 'success',
+					message: sprintf(
+						/* translators: %d: Number of patterns removed. */
+						_n(
+							'%d pattern removed successfully.',
+							'%d patterns removed successfully.',
+							count,
+							'onedesign',
+						),
+						count,
+					),
 				} );
-		} else {
-			setIsRemoving( false );
+				setSelectedPatterns( [] );
+			} else {
+				setNotice( {
+					type: 'error',
+					message: __( 'Failed to remove patterns.', 'onedesign' ),
+				} );
+			}
+		} catch ( error ) {
+			setNotice( {
+				type: 'error',
+				message: error.message || __( 'An error occurred while removing patterns.', 'onedesign' ),
+			} );
+		} finally {
+			setIsProcessing( false );
 		}
-	}, [ selectedPatternsToRemove, applySelectedPatterns, siteInfo ] );
+	}, [ selectedPatterns, siteInfo, applySelectedPatterns, setSelectedPatterns, setNotice ] );
 
-	if ( isLoadingApplied ) {
+	const renderPagination = () => {
 		return (
-			<div className="od-pattern-loading od-applied-patterns">
-				<p>{ __( 'Loading applied patterns…', 'onedesign' ) }</p>
-			</div>
-		);
-	}
-
-	return (
-		<div>
-			{ feedbackMessage && (
-				<Notice
-					status={ feedbackMessage.type }
-					isDismissible={ feedbackMessage.type !== 'info' }
-					onRemove={ () => {
-						setFeedbackMessage( null );
-					} }
-					className="od-pattern-feedback-message"
-				>
-					{ feedbackMessage.message }
-				</Notice>
-			) }
-
-			<div className="od-pattern-modal od-applied-patterns">
-				{ appliedPatterns === null ||
-				appliedPatterns?.length === 0 ||
-				uniquePatternsArray?.length === 0
-					? ( <div className="od-no-patterns">
-						<p>{ __( 'No patterns found', 'onedesign' ) }</p>
-						<p className="od-no-patterns-subtitle">
-							{ __(
-								'Try adjusting your search criteria or add patterns to this site.',
-								'onedesign',
-							) }
-						</p>
-					</div>
-					) : (
-						uniquePatternsArray
-							?.slice( 0, visibleAppliedCount )
-							.map( ( pattern ) => (
-								<MemoizedPatternPreview
-									key={ pattern?.name }
-									pattern={ pattern }
-									isCheckBoxRequired={ true }
-									providerSite={ pattern?.providerSite }
-									isSelected={ selectedPatternsToRemove.includes( pattern?.name ) }
-									onSelect={ () => handlePatternRemoval( pattern?.name ) }
-								/>
-							) )
-					) }
-			</div>
-
-			<div className="od-pattern-footer">
-				<div className="od-selection-info">
-					{ selectedPatternsToRemove.length > 0 && (
-						<div className="od-selected-count">
-							<span className="od-count-badge">
-								{ selectedPatternsToRemove.length }
+			<div className="onedesign-pagination">
+				<div className="onedesign-selected-patterns-info">
+					{ selectedPatterns.length > 0 && (
+						<div className="onedesign-selected-patterns-count-info">
+							<span className="onedesign-selected-patterns-count">
+								{ selectedPatterns.length }
 							</span>
-							<span className="od-count-text">
-								{ selectedPatternsToRemove.length === 1
-									? __( 'pattern selected', 'onedesign' )
-									: __( 'patterns selected', 'onedesign' ) }
+							<span className="onedesign-selected-patterns-text">
+								{ selectedPatterns.length === 1
+									? __( 'Pattern selected', 'onedesign' )
+									: __( 'Patterns selected', 'onedesign' ) }
 							</span>
 						</div>
 					) }
 				</div>
-
-				<div>
-					{ uniquePatternsArray &&
-						uniquePatternsArray.length > visibleAppliedCount && (
-						<Button
-							variant="secondary"
-							onClick={ loadMoreUniquePatterns }
-							style={ { marginRight: '10px' } }
-						>
-							{ __( 'Show More Patterns', 'onedesign' ) } ({ visibleAppliedCount }/
-							{ uniquePatternsArray.length })
-						</Button>
-					) }
-
+				<div style={ { display: 'flex', gap: '12px', flexDirection: 'row' } }>
 					<Button
-						onClick={ removeSelectedPatterns }
 						variant="secondary"
-						isDestructive
-						disabled={ selectedPatternsToRemove.length === 0 || isRemoving }
-						isBusy={ isRemoving }
+						disabled={ ( currentPage * PER_PAGE ) >= filteredPatterns.length }
+						onClick={ () => setCurrentPage( ( prevPage ) => prevPage + 1 ) }
 					>
-						{ __( 'Remove Selected Patterns', 'onedesign' ) }
+						{ __( 'Show More', 'onedesign' ) } { ( Math.min( currentPage * PER_PAGE, filteredPatterns.length ) ) }/{ filteredPatterns.length }
+					</Button>
+					<Button
+						variant="primary"
+						isDestructive
+						disabled={ selectedPatterns.length === 0 }
+						onClick={ () => {
+							setIsRemoveModalOpen( true );
+						} }
+					>
+						{ __( 'Remove Pattern', 'onedesign' ) }
 					</Button>
 				</div>
 			</div>
+		);
+	};
 
-			{ isRemovalModalOpen && (
-				<Modal
-					title={ __( 'Confirm Pattern Removal', 'onedesign' ) }
-					onRequestClose={ () => setIsRemovalModalOpen( false ) }
-					className="od-pattern-removal-modal"
+	const renderPatterns = () => {
+		if ( filteredPatterns.length === 0 ) {
+			return (
+				<div className="onedesign-no-patterns">
+					<p>{ __( 'No patterns found.', 'onedesign' ) }</p>
+				</div>
+			);
+		}
+
+		return (
+			<div className="od-patterns-grid">
+				{ filteredPatterns.slice( 0, ( currentPage * PER_PAGE ) ).map( ( pattern ) => {
+					return (
+						<MemoizedPatternPreview
+							key={ pattern?.name }
+							pattern={ pattern }
+							isCheckBoxRequired={ true }
+							providerSite={ pattern?.providerSite }
+							onSelect={ () => handlePatternSelection( pattern?.name ) }
+							isSelected={ selectedPatterns.includes( pattern?.name ) }
+						/>
+					);
+				} ) }
+			</div>
+		);
+	};
+
+	return (
+		<>
+			{ notice && (
+				<Notice
+					status={ notice.type }
+					isDismissible
+					onRemove={ () => setNotice( null ) }
 				>
-					<div className="od-pattern-removal-modal-content">
-						<p>
-							{ __( 'Are you sure you want to remove selected patterns?', 'onedesign' ) }
-							<br />
-							{ __( 'Once you remove a pattern you won\'t be able to use it on brand sites, so please check and confirm you don\'t require it.', 'onedesign' ) }
-						</p>
-						<div className="od-pattern-removal-modal-actions">
-							<Button
-								variant="secondary"
-								onClick={ () => setIsRemovalModalOpen( false ) }
-							>
-								{ __( 'Cancel', 'onedesign' ) }
-							</Button>
-							<Button
-								variant="primary"
-								isDestructive
-								onClick={ confirmAndRemovePatterns }
-							>
-								{ __( 'Yes, Remove Patterns', 'onedesign' ) }
-							</Button>
-						</div>
+					{ notice.message }
+				</Notice>
+			) }
+			{ renderPatterns() }
+			{ renderPagination() }
+			{ isRemoveModalOpen && (
+				<Modal
+					title={ __( 'Remove Pattern', 'onedesign' ) }
+					onRequestClose={ () => {
+						setIsRemoveModalOpen( false );
+					} }
+					size="medium"
+				>
+					<p>
+						{ __( 'Are you sure you want to remove selected patterns?', 'onedesign' ) }
+						<br />
+						{ __( 'Once you remove a pattern you won\'t be able to use it on brand sites, so please check and confirm you don\'t require it.', 'onedesign' ) }
+					</p>
+
+					<div
+						style={ {
+							display: 'flex',
+							flexDirection: 'row',
+							gap: '12px',
+							justifyContent: 'flex-end',
+							alignItems: 'center',
+						} }
+					>
+						<Button
+							variant="secondary"
+							onClick={ () => {
+								setIsRemoveModalOpen( false );
+							} }
+							label={ __( 'Cancel', 'onedesign' ) }
+						>
+							{ __( 'Cancel', 'onedesign' ) }
+						</Button>
+						<Button
+							variant="primary"
+							onClick={ () => {
+								handleRemovePatterns();
+								setIsRemoveModalOpen( false );
+							} }
+							isDestructive
+							isBusy={ isProcessing }
+							disabled={ isProcessing }
+							label={ __( 'Remove Patterns', 'onedesign' ) }
+						>
+							{ __( 'Remove Patterns', 'onedesign' ) }
+						</Button>
 					</div>
+
 				</Modal>
 			) }
-		</div>
+		</>
 	);
-} );
+};
 
 export default AppliedPatternsTab;

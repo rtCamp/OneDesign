@@ -329,7 +329,7 @@ const SiteSelection = ( {
 							onApply( selectedSites );
 						} }
 					>
-						{ isApplying ? __( 'Applying…', 'onedesign' ) : __( 'Apply Templates', 'onedesign' ) }
+						{ __( 'Apply Templates', 'onedesign' ) }
 					</Button>
 				</div>
 			</div>
