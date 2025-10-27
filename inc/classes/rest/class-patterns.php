@@ -251,7 +251,7 @@ class Patterns {
 		// Use the option name from your settings class.
 		$child_sites = $this->get_compatible_sites_object();
 		foreach ( $child_sites as $site ) {
-			if ( isset( $site['id'] ) && $site['id'] === $site_id ) {
+			if ( isset( $site['id'] ) && (string) $site['id'] === (string) $site_id ) {
 				$remote_api_key = $site['api_key'] ?? '';
 				if ( empty( $remote_api_key ) ) {
 					return new WP_Error( 'no_api_key', __( 'API key for the target site is missing in configuration.', 'onedesign' ), array( 'status' => 400 ) );
