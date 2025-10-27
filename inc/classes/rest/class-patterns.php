@@ -187,7 +187,12 @@ class Patterns {
 					'target_site_ids' => array(
 						'required'          => true,
 						'type'              => 'array',
-						'items'             => array( 'type' => 'string' ),
+						'items'             => array(
+							'oneOf' => array(
+								array( 'type' => 'string' ),
+								array( 'type' => 'integer' ),
+							),
+						),
 						'validate_callback' => function ( $param ): bool {
 							return is_array( $param ) && ! empty( $param );
 						},

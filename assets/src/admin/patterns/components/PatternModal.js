@@ -509,6 +509,8 @@ const PatternModal = () => {
 													selectedPatterns={ selectedPatterns }
 													applySelectedPatterns={ applySelectedPatterns }
 													sitePatterns={ allBrandSitePatterns }
+													siteOptions={ siteOptions }
+													BrandSites={ BrandSites }
 												/>
 											);
 										}

@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { memo, useEffect, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Button, Modal, Spinner, Notice } from '@wordpress/components';
 
 /**
@@ -25,6 +25,9 @@ import SiteSelection from './SiteSelection';
  * @param {Function} props.applySelectedPatterns  - Function to apply selected patterns.
  * @param {Function} props.setSelectedPatterns    - Function to set the selected patterns.
  * @param {Object}   props.sitePatterns           - Patterns from the brand site.
+ * @param {Object}   props.siteOptions            - Information about the brand sites.
+ * @param {Array}    props.BrandSites             - List of brand site IDs.
+ *
  * @return {JSX.Element} Rendered component.
  */
 const BasePatternsTab = memo(
@@ -39,6 +42,8 @@ const BasePatternsTab = memo(
 		applySelectedPatterns,
 		setSelectedPatterns,
 		sitePatterns = {},
+		siteOptions: siteInfo = {},
+		BrandSites: selectedSites = [],
 	} ) => {
 		const [ isModalOpen, setIsModalOpen ] = useState( false );
 		const [ isApplying, setIsApplying ] = useState( false );
@@ -112,7 +117,11 @@ const BasePatternsTab = memo(
 					// Show success message but don't close immediately
 					setApplicationStatus( {
 						type: 'success',
-						message: __( 'Patterns applied successfully!', 'onedesign' ),
+						message: sprintf(
+							/* translators: %s site names. */
+							__( 'Patterns applied successfully to %s site.', 'onedesign' ),
+							Object.values( siteInfo ).filter( ( site ) => selectedSites.includes( site.id ) ).map( ( site ) => site.name ).join( ', ' ),
+						),
 					} );
 
 					// Close modal after success with slightly longer delay for better user feedback
