@@ -218,7 +218,7 @@ const PatternModal = () => {
 		{
 			name: 'basePatterns',
 			title: __( 'Current Site Patterns', 'onedesign' ),
-			className: 'od-base-patterns-tab',
+			className: 'onedesign-base-patterns-tab',
 		},
 	] );
 
@@ -228,7 +228,7 @@ const PatternModal = () => {
 				{
 					name: 'basePatterns',
 					title: __( 'Current Site Patterns', 'onedesign' ),
-					className: 'od-base-patterns-tab',
+					className: 'onedesign-base-patterns-tab',
 					value: 'basePatterns',
 				},
 			];
@@ -238,7 +238,7 @@ const PatternModal = () => {
 				newTabs.push( {
 					name: site.name,
 					title: site.name,
-					className: 'od-applied-patterns-tab',
+					className: 'onedesign-applied-patterns-tab',
 					value: site.id,
 				} );
 			} );

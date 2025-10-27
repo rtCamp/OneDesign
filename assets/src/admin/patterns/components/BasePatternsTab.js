@@ -60,10 +60,10 @@ const BasePatternsTab = memo(
 		// Loading state for patterns
 		if ( isLoading ) {
 			return (
-				<div className="od-pattern-loading">
-					<div className="od-loading-content">
+				<div className="onedesign-pattern-loading">
+					<div className="onedesign-loading-content">
 						<Spinner />
-						<p className="od-loading-text">
+						<p className="onedesign-loading-text">
 							{ __( 'Loading patterns…', 'onedesign' ) }
 						</p>
 					</div>
@@ -186,26 +186,26 @@ const BasePatternsTab = memo(
 
 		const BrandSiteSelection = () => {
 			return (
-				<div className="od-brand-site-modal-content">
+				<div className="onedesign-brand-site-modal-content">
 
 					{ applicationStatus && (
 						<Notice
 							status={ applicationStatus?.type ?? 'info' }
 							isDismissible={ true }
-							className="od-application-notice od-error-notice"
+							className="onedesign-application-notice onedesign-error-notice"
 						>
-							<div className="od-error-notice-summary">
-								<div className="od-notice-message">
+							<div className="onedesign-error-notice-summary">
+								<div className="onedesign-notice-message">
 									{ applicationStatus?.message }
 								</div>
 							</div>
 
 							{ showDetailedErrors && applicationStatus?.hasDetails && (
-								<div className="od-error-details">
+								<div className="onedesign-error-details">
 									{ detailedErrors.map( ( error, index ) => (
-										<div key={ index } className="od-error-site">
-											<div className="od-error-site-name">{ error?.site }</div>
-											<div className="od-error-site-message">
+										<div key={ index } className="onedesign-error-site">
+											<div className="onedesign-error-site-name">{ error?.site }</div>
+											<div className="onedesign-error-site-message">
 												{ error?.message }
 											</div>
 										</div>
@@ -215,7 +215,7 @@ const BasePatternsTab = memo(
 						</Notice>
 					) }
 
-					<div className="od-site-selection-wrapper">
+					<div className="onedesign-site-selection-wrapper">
 						<SiteSelection
 							setIsSiteSelected={ setIsSiteSelected }
 							selectedPatterns={ selectedPatterns }
@@ -224,7 +224,7 @@ const BasePatternsTab = memo(
 						/>
 					</div>
 
-					<div className="od-modal-actions">
+					<div className="onedesign-modal-actions">
 						<Button
 							variant="secondary"
 							onClick={ CloseBrandSiteModal }
@@ -246,7 +246,7 @@ const BasePatternsTab = memo(
 								variant="primary"
 								onClick={ handleApplyPatterns }
 								disabled={ isApplying || ! isSiteSelected }
-								className="od-apply-button"
+								className="onedesign-apply-button"
 								isBusy={ isApplying }
 							>
 								{ __( 'Apply Patterns', 'onedesign' ) }
@@ -258,12 +258,12 @@ const BasePatternsTab = memo(
 		};
 
 		return (
-			<div className="od-patterns-container">
-				<div className="od-pattern-modal">
+			<div className="onedesign-patterns-container">
+				<div className="onedesign-pattern-modal">
 					{ basePatterns && basePatterns.length === 0 ? (
-						<div className="od-no-patterns">
+						<div className="onedesign-no-patterns">
 							<p>{ __( 'No patterns found', 'onedesign' ) }</p>
-							<p className="od-no-patterns-subtitle">
+							<p className="onedesign-no-patterns-subtitle">
 								{ __(
 									'Try adjusting your search criteria or check back later.',
 									'onedesign',
@@ -284,14 +284,14 @@ const BasePatternsTab = memo(
 					) }
 				</div>
 
-				<div className="od-pattern-footer">
-					<div className="od-selection-info">
+				<div className="onedesign-pattern-footer">
+					<div className="onedesign-selection-info">
 						{ selectedPatterns.length > 0 && (
-							<div className="od-selected-count">
-								<span className="od-count-badge">
+							<div className="onedesign-selected-count">
+								<span className="onedesign-count-badge">
 									{ selectedPatterns.length }
 								</span>
-								<span className="od-count-text">
+								<span className="onedesign-count-text">
 									{ selectedPatterns.length === 1
 										? __( 'pattern selected', 'onedesign' )
 										: __( 'patterns selected', 'onedesign' ) }
@@ -300,15 +300,15 @@ const BasePatternsTab = memo(
 						) }
 					</div>
 
-					<div className="od-footer-actions">
+					<div className="onedesign-footer-actions">
 						{ hasMorePatterns && (
 							<Button
 								variant="secondary"
 								onClick={ loadMorePatterns }
-								className="od-load-more-button"
+								className="onedesign-load-more-button"
 							>
 								{ __( 'Show More', 'onedesign' ) }
-								<span className="od-pattern-count">
+								<span className="onedesign-pattern-count">
 									({ visibleCount }/{ basePatterns.length })
 								</span>
 							</Button>
@@ -317,7 +317,7 @@ const BasePatternsTab = memo(
 						<Button
 							onClick={ OpenBrandSiteModal }
 							variant="primary"
-							className="od-apply-to-sites-button"
+							className="onedesign-apply-to-sites-button"
 							disabled={ selectedPatterns.length === 0 }
 						>
 							{ selectedPatterns.length === 0
@@ -331,7 +331,7 @@ const BasePatternsTab = memo(
 					<Modal
 						title=""
 						onRequestClose={ CloseBrandSiteModal }
-						className="od-brand-site-modal"
+						className="onedesign-brand-site-modal"
 						shouldCloseOnClickOutside={ ! isApplying }
 						shouldCloseOnEsc={ ! isApplying }
 						isFullScreen={ true }

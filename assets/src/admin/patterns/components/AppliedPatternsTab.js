@@ -142,7 +142,7 @@ const AppliedPatternsTab = ( {
 		}
 
 		return (
-			<div className="od-patterns-grid">
+			<div className="onedesign-patterns-grid">
 				{ filteredPatterns.slice( 0, ( currentPage * PER_PAGE ) ).map( ( pattern ) => {
 					return (
 						<MemoizedPatternPreview

@@ -16,7 +16,7 @@ import { BlockPreview } from '@wordpress/block-editor';
  */
 const TemplatePreviewContent = memo( ( { parsedBlocks } ) => {
 	return (
-		<div className="od-template-preview">
+		<div className="onedesign-template-preview">
 			<BlockPreview blocks={ parsedBlocks } viewportWidth={ 1200 } />
 		</div>
 	);
@@ -41,10 +41,10 @@ const TemplateCategories = memo( ( { categories } ) => {
 	}
 
 	return (
-		<div className="od-template-categories">
+		<div className="onedesign-template-categories">
 			<p>{ __( 'Categories:', 'onedesign' ) }</p>
 			{ categoryValues.map( ( category, i ) => (
-				<span key={ `${ category }-${ i }` } className="od-template-category">
+				<span key={ `${ category }-${ i }` } className="onedesign-template-category">
 					{ category }
 				</span>
 			) ) }
@@ -65,10 +65,10 @@ const ProviderSiteInfo = memo( ( { providerSite } ) => {
 	}
 
 	return (
-		<div className="od-template-provider-site-name">
+		<div className="onedesign-template-provider-site-name">
 			<p>
 				{ __( 'Provider Site:', 'onedesign' ) }
-				<span className="od-provider-site-name">{ providerSite }</span>
+				<span className="onedesign-provider-site-name">{ providerSite }</span>
 			</p>
 		</div>
 	);
@@ -94,7 +94,7 @@ const MemoizedTemplatePreview = memo(
 
 		return (
 			<div
-				className="od-template-wrapper"
+				className="onedesign-template-wrapper"
 				onClick={ ( e ) => {
 					e.preventDefault();
 					onSelect( template );
@@ -108,7 +108,7 @@ const MemoizedTemplatePreview = memo(
 					}
 				} }
 			>
-				<div className="od-template-title-wrapper">
+				<div className="onedesign-template-title-wrapper">
 					{ isCheckBoxRequired &&
 					<CheckboxControl
 						checked={ isSelected }
@@ -117,7 +117,7 @@ const MemoizedTemplatePreview = memo(
 							e.stopPropagation();
 						} }
 					/> }
-					<span className="od-template-title">{ templateTitle }</span>
+					<span className="onedesign-template-title">{ templateTitle }</span>
 				</div>
 
 				{ /* The preview that shouldn't re-render */ }
