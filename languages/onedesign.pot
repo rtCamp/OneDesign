@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-10-24T12:43:01+00:00\n"
+"POT-Creation-Date: 2025-10-27T05:52:26+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 
@@ -49,6 +49,8 @@ msgstr ""
 #: inc/classes/class-settings.php:67
 #: inc/classes/class-settings.php:68
 #: inc/classes/class-settings.php:219
+#: assets/build/js/patterns-library.js:5
+#: assets/src/admin/patterns/App.js:37
 msgid "Pattern Library"
 msgstr ""
 
@@ -114,6 +116,7 @@ msgstr ""
 
 #: inc/classes/class-settings.php:76
 #: assets/build/js/templates-library.js:7
+#: assets/src/admin/templates/App.js:37
 #: assets/src/admin/templates/components/TemplateModal.js:299
 msgid "Template Library"
 msgstr ""
@@ -281,98 +284,98 @@ msgstr ""
 msgid "Failed to switch to governing site blog."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:236
-#: inc/classes/rest/class-patterns.php:359
-#: inc/classes/rest/class-patterns.php:569
+#: inc/classes/rest/class-patterns.php:241
+#: inc/classes/rest/class-patterns.php:364
+#: inc/classes/rest/class-patterns.php:574
 msgid "This site is not configured as a parent site."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:243
+#: inc/classes/rest/class-patterns.php:248
 msgid "Pattern name and site ID are required."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:252
-#: inc/classes/rest/class-patterns.php:636
+#: inc/classes/rest/class-patterns.php:257
+#: inc/classes/rest/class-patterns.php:641
 msgid "API key for the target site is missing in configuration."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:259
-#: inc/classes/rest/class-patterns.php:624
+#: inc/classes/rest/class-patterns.php:264
+#: inc/classes/rest/class-patterns.php:629
 msgid "Target site not found in configuration."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:282
+#: inc/classes/rest/class-patterns.php:287
 msgid "Failed to communicate with the target site."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:293
+#: inc/classes/rest/class-patterns.php:298
 msgid "Pattern removal request sent successfully."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:299
-#: inc/classes/rest/class-patterns.php:423
-#: inc/classes/rest/class-patterns.php:676
+#: inc/classes/rest/class-patterns.php:304
+#: inc/classes/rest/class-patterns.php:428
+#: inc/classes/rest/class-patterns.php:681
 msgid "Unknown error from remote site."
 msgstr ""
 
 #. translators: %1$s is the error message, %2$d is the HTTP status code.
-#: inc/classes/rest/class-patterns.php:303
+#: inc/classes/rest/class-patterns.php:308
 #, php-format
 msgid "Error removing pattern: %1$s (Status: %2$d)"
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:320
+#: inc/classes/rest/class-patterns.php:325
 msgid "Pattern names must be provided as an array."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:326
-#: inc/classes/rest/class-patterns.php:456
+#: inc/classes/rest/class-patterns.php:331
+#: inc/classes/rest/class-patterns.php:461
 msgid "No patterns found for this brand site."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:337
+#: inc/classes/rest/class-patterns.php:342
 msgid "No patterns were removed. Please check the pattern names provided."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:345
+#: inc/classes/rest/class-patterns.php:350
 msgid "Brand site patterns removed successfully."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:365
+#: inc/classes/rest/class-patterns.php:370
 msgid "No child sites configured to receive patterns."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:425
+#: inc/classes/rest/class-patterns.php:430
 msgid "Unknown Site"
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:496
+#: inc/classes/rest/class-patterns.php:501
 msgid "Pattern categories registry not found."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:605
+#: inc/classes/rest/class-patterns.php:610
 msgid "No valid patterns selected to push."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:672
+#: inc/classes/rest/class-patterns.php:677
 msgid "Patterns pushed successfully."
 msgstr ""
 
 #. translators: %1$s is the error message, %2$d is the HTTP status code.
-#: inc/classes/rest/class-patterns.php:680
+#: inc/classes/rest/class-patterns.php:685
 #, php-format
 msgid "Error pushing patterns: %1$s (Status: %2$d)"
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:832
+#: inc/classes/rest/class-patterns.php:837
 msgid "This site is not configured as a child site to receive patterns."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:838
+#: inc/classes/rest/class-patterns.php:843
 msgid "No patterns data received."
 msgstr ""
 
-#: inc/classes/rest/class-patterns.php:882
+#: inc/classes/rest/class-patterns.php:887
 msgid "Patterns processed."
 msgstr ""
 
@@ -642,77 +645,81 @@ msgid "selected patterns are already present"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/BasePatternsTab.js:62
+#: assets/src/admin/patterns/components/BasePatternsTab.js:67
 msgid "Loading patterns…"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/BasePatternsTab.js:91
+#: assets/src/admin/patterns/components/BasePatternsTab.js:96
 msgid "Pattern application is in progress. Are you sure you want to cancel?"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/src/admin/patterns/components/AppliedPatternsTab.js:151
-#: assets/src/admin/patterns/components/BasePatternsTab.js:256
+#: assets/src/admin/patterns/components/BasePatternsTab.js:265
 msgid "No patterns found"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/BasePatternsTab.js:258
+#: assets/src/admin/patterns/components/BasePatternsTab.js:267
 msgid "Try adjusting your search criteria or check back later."
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/src/admin/patterns/components/AppliedPatternsTab.js:184
-#: assets/src/admin/patterns/components/BasePatternsTab.js:287
+#: assets/src/admin/patterns/components/BasePatternsTab.js:296
 msgid "pattern selected"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/src/admin/patterns/components/AppliedPatternsTab.js:185
-#: assets/src/admin/patterns/components/BasePatternsTab.js:288
+#: assets/src/admin/patterns/components/BasePatternsTab.js:297
 msgid "patterns selected"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
 #: assets/build/js/templates-library.js:6
 #: assets/build/js/templates-library.js:7
-#: assets/src/admin/patterns/components/BasePatternsTab.js:301
+#: assets/src/admin/patterns/components/BasePatternsTab.js:310
 #: assets/src/admin/templates/components/BrandSiteTemplates.js:112
 #: assets/src/admin/templates/components/TemplateModal.js:268
 msgid "Show More"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/BasePatternsTab.js:73
+#: assets/src/admin/patterns/components/BasePatternsTab.js:78
 msgid "Please select at least one pattern before proceeding."
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/BasePatternsTab.js:315
+#: assets/src/admin/patterns/components/BasePatternsTab.js:324
 msgid "Select Patterns First"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/BasePatternsTab.js:316
+#: assets/src/admin/patterns/components/BasePatternsTab.js:325
 msgid "Apply to Sites"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/BasePatternsTab.js:225
+#: assets/src/admin/patterns/components/BasePatternsTab.js:234
 msgid "Yes, Cancel"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/build/js/settings.js:1
 #: assets/build/js/templates-library.js:5
 #: assets/build/js/templates-library.js:6
 #: assets/src/admin/patterns/components/AppliedPatternsTab.js:233
-#: assets/src/admin/patterns/components/BasePatternsTab.js:226
+#: assets/src/admin/patterns/components/BasePatternsTab.js:235
 #: assets/src/admin/templates/components/BrandSiteTemplates.js:197
 #: assets/src/admin/templates/components/BrandSiteTemplates.js:199
 #: assets/src/admin/templates/components/SiteSelection.js:321
-#: assets/src/components/MultiSites.js:201
+#: assets/src/components/MultiSites.js:200
 #: assets/src/components/SiteModal.js:41
 #: assets/src/components/SiteSettings.js:266
 #: assets/src/components/SiteTable.js:169
@@ -720,153 +727,155 @@ msgid "Cancel"
 msgstr ""
 
 #: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/BasePatternsTab.js:233
+#: assets/src/admin/patterns/components/BasePatternsTab.js:242
 msgid "Continue Applying"
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/BasePatternsTab.js:115
-msgid "Patterns applied successfully!"
+#. translators: %s site names.
+#: assets/build/js/patterns-library.js:5
+#: assets/src/admin/patterns/components/BasePatternsTab.js:122
+#, js-format
+msgid "Patterns applied successfully to %s site."
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/BasePatternsTab.js:128
-#: assets/src/admin/patterns/components/BasePatternsTab.js:138
+#: assets/build/js/patterns-library.js:5
+#: assets/src/admin/patterns/components/BasePatternsTab.js:137
+#: assets/src/admin/patterns/components/BasePatternsTab.js:147
 msgid "Failed to apply patterns. Please try again."
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
-#: assets/src/admin/patterns/components/BasePatternsTab.js:243
+#: assets/build/js/patterns-library.js:5
+#: assets/src/admin/patterns/components/BasePatternsTab.js:252
 msgid "Apply Patterns"
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/src/admin/patterns/components/AppliedPatternsTab.js:80
 msgid "Removing patterns…"
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/src/admin/patterns/components/AppliedPatternsTab.js:96
 msgid "Patterns removed successfully!"
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/src/admin/patterns/components/AppliedPatternsTab.js:113
 msgid "Failed to remove patterns. Please try again."
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/src/admin/patterns/components/AppliedPatternsTab.js:126
 msgid "Loading applied patterns…"
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/src/admin/patterns/components/AppliedPatternsTab.js:153
 msgid "Try adjusting your search criteria or add patterns to this site."
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/src/admin/patterns/components/AppliedPatternsTab.js:199
 msgid "Show More Patterns"
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/src/admin/patterns/components/AppliedPatternsTab.js:211
 msgid "Remove Selected Patterns"
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/src/admin/patterns/components/AppliedPatternsTab.js:218
 msgid "Confirm Pattern Removal"
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/src/admin/patterns/components/AppliedPatternsTab.js:224
 msgid "Are you sure you want to remove selected patterns?"
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/src/admin/patterns/components/AppliedPatternsTab.js:226
 msgid "Once you remove a pattern you won't be able to use it on brand sites, so please check and confirm you don't require it."
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/src/admin/patterns/components/AppliedPatternsTab.js:240
 msgid "Yes, Remove Patterns"
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/src/admin/patterns/components/Category.js:31
 #: assets/src/admin/patterns/components/Category.js:54
 msgid "No categories found"
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/src/admin/patterns/components/Category.js:59
 msgid "Error fetching pattern categories"
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/src/admin/patterns/components/Category.js:83
 msgid "Pattern Categories"
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/src/admin/patterns/components/Category.js:89
 msgid "All"
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/src/admin/patterns/components/PatternModal.js:216
 #: assets/src/admin/patterns/components/PatternModal.js:226
 msgid "Current Site Patterns"
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/src/admin/patterns/components/PatternModal.js:325
 msgid "Failed to apply patterns to some sites:"
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/src/admin/patterns/components/PatternModal.js:341
 msgid "No patterns or sites selected"
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/src/admin/patterns/components/PatternModal.js:410
 msgid "Failed to remove patterns"
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/build/js/templates-library.js:7
 #: assets/src/admin/patterns/components/PatternModal.js:431
 #: assets/src/admin/templates/components/TemplateModal.js:295
 msgid "Loading…"
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/src/admin/patterns/components/PatternModal.js:435
 msgid "Patterns Library"
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/build/js/templates-library.js:7
 #: assets/src/admin/patterns/components/PatternModal.js:461
 #: assets/src/admin/templates/components/TemplateModal.js:336
 msgid "Go to OneDesign Settings"
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/src/admin/patterns/components/PatternModal.js:485
 msgid "Search patterns…"
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/src/admin/patterns/components/PatternModal.js:274
 msgid "Here are patterns with"
 msgstr ""
 
-#: assets/build/js/patterns-library.js:4
+#: assets/build/js/patterns-library.js:5
 #: assets/build/js/templates-library.js:1
 #: assets/src/admin/patterns/pattern-event.js:54
 #: assets/src/admin/templates/template-event.js:54
@@ -963,12 +972,12 @@ msgid "No other sites available in this multisite network."
 msgstr ""
 
 #: assets/build/js/settings.js:1
-#: assets/src/components/MultiSites.js:193
+#: assets/src/components/MultiSites.js:192
 msgid "All sites in this multisite network have already been added as brand sites."
 msgstr ""
 
 #: assets/build/js/settings.js:1
-#: assets/src/components/MultiSites.js:212
+#: assets/src/components/MultiSites.js:211
 msgid "Add Selected Sites"
 msgstr ""
 
