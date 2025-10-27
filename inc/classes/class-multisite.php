@@ -47,6 +47,9 @@ class Multisite {
 
 		// add onedesign_multisite_api_key_generated action to change same key in governing site.
 		add_action( 'onedesign_multisite_api_key_generated', array( $this, 'sync_api_key_to_governing_site' ), 10, 2 );
+
+		// auto assign brand-site on new site creation if governing site is set.
+		add_action( 'wp_initialize_site', array( $this, 'assign_brand_site_on_new_site_creation' ), 10, 2 );
 	}
 
 	/**
@@ -122,6 +125,28 @@ class Multisite {
 			}
 
 			update_option( Constants::ONEDESIGN_SHARED_SITES, $shared_sites, false );
+
+			restore_current_blog();
+		}
+	}
+
+	/**
+	 * Assign brand-site on new site creation if governing site is set.
+	 *
+	 * @param \WP_Site $new_site The new site object.
+	 *
+	 * @return void
+	 */
+	public function assign_brand_site_on_new_site_creation( \WP_Site $new_site ): void {
+
+		$governing_site_id = get_site_option( Constants::ONEDESIGN_MULTISITE_GOVERNING_SITE, 0 );
+
+		if ( $governing_site_id && $new_site->blog_id !== $governing_site_id ) {
+			if ( ! switch_to_blog( (int) $new_site->blog_id ) ) {
+				return;
+			}
+
+			update_option( Constants::ONEDESIGN_SITE_TYPE, 'brand-site', false );
 
 			restore_current_blog();
 		}
