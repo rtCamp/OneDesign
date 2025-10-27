@@ -13,13 +13,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! function_exists( 'onedesign_plugin_deletion' ) ) {
+if ( ! function_exists( 'onedesign_delete_options_post_data' ) ) {
 
 	/**
-	 * Function to clean up options when the plugin is uninstalled.
+	 * Function to delete options and posts data.
+	 *
+	 * @return void
 	 */
-	function onedesign_plugin_deletion(): void {
-
+	function onedesign_delete_options_post_data(): void {
 		// get brand site post ids & delete posts.
 		$brand_site_post_ids = get_option( 'onedesign_brand_site_post_ids', array() );
 		if ( is_array( $brand_site_post_ids ) && ! empty( $brand_site_post_ids ) ) {
@@ -57,6 +58,19 @@ if ( ! function_exists( 'onedesign_plugin_deletion' ) ) {
 		foreach ( $options_to_delete as $option ) {
 			delete_option( $option );
 		}
+	}
+}
+
+if ( ! function_exists( 'onedesign_plugin_deletion' ) ) {
+
+	/**
+	 * Function to clean up options when the plugin is uninstalled.
+	 *
+	 * @return void
+	 */
+	function onedesign_plugin_deletion(): void {
+
+		onedesign_delete_options_post_data();
 
 		// if it's multisite, delete site options as well.
 		if ( is_multisite() ) {
@@ -67,9 +81,22 @@ if ( ! function_exists( 'onedesign_plugin_deletion' ) ) {
 			foreach ( $site_options_to_delete as $site_option ) {
 				delete_site_option( $site_option );
 			}
+
+			// for each site delete options.
+			$all_sites = get_sites( array( 'fields' => 'ids' ) );
+			foreach ( $all_sites as $site_id ) {
+				if ( ! switch_to_blog( (int) $site_id ) ) {
+					continue;
+				}
+
+				onedesign_delete_options_post_data();
+
+				restore_current_blog();
+			}
 		}
 	}
 }
+
 /**
  * Uninstall the plugin and clean up options.
  */
