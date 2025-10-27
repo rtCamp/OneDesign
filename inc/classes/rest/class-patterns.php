@@ -108,7 +108,7 @@ class Patterns {
 					),
 					'site_id'       => array(
 						'required'          => true,
-						'type'              => 'string',
+						'type'              => array( 'string', 'integer' ),
 						'validate_callback' => function ( $param ): bool {
 							return is_string( $param ) && ! empty( $param );
 						},
