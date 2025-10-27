@@ -181,7 +181,7 @@ const PatternModal = () => {
 	}, [] );
 
 	const handleTabSelect = ( tab ) => {
-		setActiveTab( tab );
+		setActiveTab( tabs.find( ( t ) => t.name === tab )?.value || 'basePatterns' );
 		setActiveCategory( 'All' );
 	};
 
@@ -225,13 +225,14 @@ const PatternModal = () => {
 					name: 'basePatterns',
 					title: __( 'Current Site Patterns', 'onedesign' ),
 					className: 'od-base-patterns-tab',
+					value: 'basePatterns',
 				},
 			];
 
 			// add all sites except base site
 			Object.values( siteOptions ).forEach( ( site ) => {
 				newTabs.push( {
-					name: site.id,
+					name: site.name,
 					title: site.name,
 					className: 'od-applied-patterns-tab',
 					value: site.id,
