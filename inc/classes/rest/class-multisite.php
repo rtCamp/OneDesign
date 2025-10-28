@@ -226,7 +226,16 @@ class Multisite {
 			);
 		}
 
-		$governing_site_url = get_blog_details( $governing_site_id )->siteurl;
+		// get governing site details.
+		$governing_site_details = get_blog_details( $governing_site_id );
+		if ( ! $governing_site_details || empty( $governing_site_details->siteurl ) ) {
+			return new WP_Error(
+				'invalid_governing_site',
+				__( 'The governing site could not be found.', 'onedesign' ),
+				array( 'status' => 400 )
+			);
+		}
+		$governing_site_url = $governing_site_details->siteurl;
 
 		$shared_sites = get_option( Constants::ONEDESIGN_SHARED_SITES, array() );
 
