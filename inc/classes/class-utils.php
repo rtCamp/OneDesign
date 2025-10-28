@@ -205,7 +205,7 @@ class Utils {
 		$filtered = array_filter(
 			$sites,
 			function ( $site ) use ( $site_id ): bool {
-				return $site['id'] === $site_id;
+				return (string) $site['id'] === (string) $site_id;
 			}
 		);
 
