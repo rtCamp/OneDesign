@@ -59,10 +59,10 @@ const PatternModal = () => {
 	const [ basePatterns, setBasePatterns ] = useState( [] );
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ searchTerm, setSearchTerm ] = useState( '' );
-	const [ isLoadingApplied, setIsLoadingApplied ] = useState( true );
 	const [ activeCategory, setActiveCategory ] = useState( 'All' );
 	const [ allBrandSitePatterns, setAllBrandSitePatterns ] = useState( [] );
 	const [ activeTab, setActiveTab ] = useState( 'basePatterns' );
+	const [ notice, setNotice ] = useState( null );
 
 	// Access the global pattern store
 	const { sitePatterns } = useSelect( ( select ) => {
@@ -76,11 +76,11 @@ const PatternModal = () => {
 	const [ isOpen, setIsOpen ] = useState( true );
 
 	// Pattern display settings
-	const patternsPerPage = 9;
-	const [ visibleCount, setVisibleCount ] = useState( patternsPerPage );
-	const [ visibleAppliedCount, setVisibleAppliedCount ] =
-		useState( patternsPerPage );
+	const PER_PAGE = 9;
+	const [ currentPage, setCurrentPage ] = useState( 1 );
+	const [ currentAppliedPage, setCurrentAppliedPage ] = useState( 1 );
 	const [ selectedPatterns, setSelectedPatterns ] = useState( [] );
+	const [ selectedAppliedPatterns, setSelectedAppliedPatterns ] = useState( [] );
 
 	const BrandSites = useSelect( ( select ) => {
 		const meta = select( 'core/editor' ).getEditedPostAttribute( 'meta' );
@@ -111,7 +111,6 @@ const PatternModal = () => {
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	useEffect( () => {
-		setIsLoadingApplied( true );
 		const fetchPatterns = async () => {
 			try {
 				// If we already have site patterns in the global store, use those
@@ -126,7 +125,6 @@ const PatternModal = () => {
 			} catch ( error ) {
 				console.error( 'Error fetching brand site patterns:', error ); // eslint-disable-line no-console
 			}
-			setIsLoadingApplied( false );
 		};
 		fetchPatterns();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -154,16 +152,7 @@ const PatternModal = () => {
 		} );
 	}, [ basePatterns, searchTerm, activeCategory ] );
 
-	// Memoize derived values
-	const hasMorePatterns = filteredBasePatterns.length > visibleCount;
-
 	// Use callbacks for event handlers to prevent recreating functions on each render
-	const loadMorePatterns = useCallback( () => {
-		setVisibleCount( ( prevCount ) =>
-			Math.min( prevCount + patternsPerPage, filteredBasePatterns.length ),
-		);
-	}, [ filteredBasePatterns.length ] );
-
 	const handlePatternSelection = ( patternId ) => {
 		setSelectedPatterns( ( prevSelectedPatterns ) => {
 			if ( prevSelectedPatterns.includes( patternId ) ) {
@@ -174,15 +163,30 @@ const PatternModal = () => {
 		editPost( { meta: { selected_patterns: selectedPatterns } } );
 	};
 
+	const handleAppliedPatternSelection = ( patternName ) => {
+		setSelectedAppliedPatterns( ( prevSelected ) => {
+			if ( prevSelected.includes( patternName ) ) {
+				return prevSelected.filter( ( name ) => name !== patternName );
+			}
+			return [ ...prevSelected, patternName ];
+		} );
+	};
+
 	const handleSearchChange = useCallback( ( value ) => {
 		setSearchTerm( value );
-		// Reset visible counts when search term changes
-		setVisibleCount( patternsPerPage );
+		// Reset pages when search term changes
+		setCurrentPage( 1 );
+		setCurrentAppliedPage( 1 );
 	}, [] );
 
 	const handleTabSelect = ( tab ) => {
-		setActiveTab( tab );
+		setActiveTab( tabs.find( ( t ) => t.name === tab )?.value || 'basePatterns' );
 		setActiveCategory( 'All' );
+		setCurrentPage( 1 );
+		setCurrentAppliedPage( 1 );
+		setSelectedPatterns( [] );
+		setSelectedAppliedPatterns( [] );
+		setNotice( null );
 	};
 
 	// Fetch base site patterns only when needed
@@ -204,9 +208,9 @@ const PatternModal = () => {
 		fetchPatterns();
 	}, [] );
 
-	// Reset visible counts and search when modal closes
+	// Reset when modal closes
 	useEffect( () => {
-		setVisibleCount( patternsPerPage );
+		setCurrentPage( 1 );
 		setSearchTerm( '' );
 	}, [] );
 
@@ -214,7 +218,7 @@ const PatternModal = () => {
 		{
 			name: 'basePatterns',
 			title: __( 'Current Site Patterns', 'onedesign' ),
-			className: 'od-base-patterns-tab',
+			className: 'onedesign-base-patterns-tab',
 		},
 	] );
 
@@ -224,16 +228,17 @@ const PatternModal = () => {
 				{
 					name: 'basePatterns',
 					title: __( 'Current Site Patterns', 'onedesign' ),
-					className: 'od-base-patterns-tab',
+					className: 'onedesign-base-patterns-tab',
+					value: 'basePatterns',
 				},
 			];
 
 			// add all sites except base site
 			Object.values( siteOptions ).forEach( ( site ) => {
 				newTabs.push( {
-					name: site.id,
+					name: site.name,
 					title: site.name,
-					className: 'od-applied-patterns-tab',
+					className: 'onedesign-applied-patterns-tab',
 					value: site.id,
 				} );
 			} );
@@ -342,86 +347,38 @@ const PatternModal = () => {
 		};
 	};
 
-	const getFilteredPatterns = ( tab ) => {
-		const patternsToBeApplied = allBrandSitePatterns[ tab.name ];
-
-		// First, filter by search term if one exists
-		if ( searchTerm.trim() ) {
-			return patternsToBeApplied?.filter( ( pattern ) => {
-				const title = ( pattern.title || pattern.name || '' ).toLowerCase();
-				return title.includes( searchTerm.toLowerCase() );
-			} );
-		}
-
-		// Otherwise, filter by category if not "All"
-		if ( activeCategory !== 'All' ) {
-			return patternsToBeApplied?.filter( ( pattern ) =>
-				pattern.categories?.includes( activeCategory ),
-			);
-		}
-
-		// Return all patterns if no filters apply
-		return patternsToBeApplied;
-	};
-
-	const hasMoreAppliedPatterns =
-		filteredAppliedPatterns.length > visibleAppliedCount;
-
-	const loadMoreAppliedPatterns = useCallback( () => {
-		setVisibleAppliedCount( ( prevCount ) =>
-			Math.min( prevCount + patternsPerPage, filteredAppliedPatterns.length ),
-		);
-	}, [ filteredAppliedPatterns.length ] );
-
 	const removeSelectedPatterns = useCallback(
-		( patternNames, siteId ) => {
-			// Return a promise that resolves or rejects based on the API result
-			return new Promise( ( resolve, reject ) => {
-				const removePatterns = async () => {
-					try {
-						const response = await apiFetch( {
-							path: `/onedesign/v1/request-remove-brand-site-patterns`,
-							method: 'DELETE',
-							headers: {
-								'Content-Type': 'application/json',
-							},
-							body: JSON.stringify( {
-								pattern_names: patternNames,
-								site_id: siteId,
-							} ),
-						} );
+		async ( patternNames, siteId ) => {
+			try {
+				const response = await apiFetch( {
+					path: `/onedesign/v1/request-remove-brand-site-patterns`,
+					method: 'DELETE',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify( {
+						pattern_names: patternNames,
+						site_id: siteId.toString(),
+					} ),
+				} );
 
-						if ( response.success ) {
-							// Delay closing to show success message
-							setTimeout( () => {
-								setSelectedPatterns( [] );
-								editPost( { meta: { selected_patterns: [] } } );
-							}, 2000 );
+				if ( response.success ) {
+					// Fetch patterns again to update the state
+					const patterns = await fetchAllBrandSitePatterns();
+					setAllBrandSitePatterns( patterns );
 
-							// Fetch patterns again to update the state
-							const patterns = await fetchAllBrandSitePatterns();
-							setAllBrandSitePatterns( patterns );
+					return response;
+				}
 
-							// Resolve the promise with success
-							resolve( response );
-						} else {
-							const error = new Error(
-								response.message ||
-									__( 'Failed to remove patterns', 'onedesign' ),
-							);
-							throw error;
-						}
-					} catch ( error ) {
-						// eslint-disable-next-line no-console
-						console.error( 'Error removing patterns:', error );
-						// Reject the promise with the error
-						reject( error );
-					}
-				};
-				removePatterns();
-			} );
+				throw new Error(
+					response.message || __( 'Failed to remove patterns', 'onedesign' ),
+				);
+			} catch ( error ) {
+				console.error( 'Error removing patterns:', error ); // eslint-disable-line no-console
+				throw error;
+			}
 		},
-		[ editPost ],
+		[],
 	);
 
 	return (
@@ -500,30 +457,34 @@ const PatternModal = () => {
 												<BasePatternsTab
 													isLoading={ isLoading }
 													basePatterns={ filteredBasePatterns }
-													visibleCount={ visibleCount }
+													visibleCount={ currentPage * PER_PAGE }
 													handlePatternSelection={ handlePatternSelection }
-													hasMorePatterns={ hasMorePatterns }
-													loadMorePatterns={ loadMorePatterns }
+													hasMorePatterns={ filteredBasePatterns.length > currentPage * PER_PAGE }
+													loadMorePatterns={ () => setCurrentPage( ( prev ) => prev + 1 ) }
 													searchTerm={ searchTerm }
 													setSelectedPatterns={ setSelectedPatterns }
 													selectedPatterns={ selectedPatterns }
 													applySelectedPatterns={ applySelectedPatterns }
 													sitePatterns={ allBrandSitePatterns }
+													siteOptions={ siteOptions }
+													BrandSites={ BrandSites }
 												/>
 											);
 										}
 										// based on tab name show applied patterns
 										return (
 											<AppliedPatternsTab
-												isLoadingApplied={ isLoadingApplied }
-												appliedPatterns={ getFilteredPatterns( tab ) }
-												visibleAppliedCount={ visibleAppliedCount }
-												selectedPatterns={ selectedPatterns }
-												hasMoreAppliedPatterns={ hasMoreAppliedPatterns }
-												loadMoreAppliedPatterns={ loadMoreAppliedPatterns }
-												applySelectedPatterns={ removeSelectedPatterns }
-												setVisibleAppliedCount={ setVisibleAppliedCount }
+												appliedPatterns={ filteredAppliedPatterns }
+												currentPage={ currentAppliedPage }
+												PER_PAGE={ PER_PAGE }
+												selectedPatterns={ selectedAppliedPatterns }
+												handlePatternSelection={ handleAppliedPatternSelection }
+												setCurrentPage={ setCurrentAppliedPage }
 												siteInfo={ tab }
+												applySelectedPatterns={ removeSelectedPatterns }
+												setSelectedPatterns={ setSelectedAppliedPatterns }
+												notice={ notice }
+												setNotice={ setNotice }
 											/>
 										);
 									} }

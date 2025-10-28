@@ -16,7 +16,7 @@ import { BlockPreview } from '@wordpress/block-editor';
  */
 const PatternPreviewContent = memo( ( { parsedBlocks } ) => {
 	return (
-		<div className="od-pattern-preview">
+		<div className="onedesign-pattern-preview">
 			<BlockPreview blocks={ parsedBlocks } viewportWidth={ 1200 } />
 		</div>
 	);
@@ -41,10 +41,10 @@ const PatternCategories = memo( ( { categories } ) => {
 	}
 
 	return (
-		<div className="od-pattern-categories">
+		<div className="onedesign-pattern-categories">
 			<p>{ __( 'Categories:', 'onedesign' ) }</p>
 			{ categoryValues.map( ( category, i ) => (
-				<span key={ `${ category }-${ i }` } className="od-pattern-category">
+				<span key={ `${ category }-${ i }` } className="onedesign-pattern-category">
 					{ category }
 				</span>
 			) ) }
@@ -65,10 +65,10 @@ const ProviderSiteInfo = memo( ( { providerSite } ) => {
 	}
 
 	return (
-		<div className="od-pattern-provider-site-name">
+		<div className="onedesign-pattern-provider-site-name">
 			<p>
 				{ __( 'Provider Site:', 'onedesign' ) }
-				<span className="od-provider-site-name">{ providerSite }</span>
+				<span className="onedesign-provider-site-name">{ providerSite }</span>
 			</p>
 		</div>
 	);
@@ -94,7 +94,7 @@ const MemoizedPatternPreview = memo(
 
 		return (
 			<div
-				className="od-pattern-wrapper"
+				className="onedesign-pattern-wrapper"
 				onClick={ () => onSelect( pattern ) }
 				role="button"
 				tabIndex={ 0 }
@@ -104,9 +104,9 @@ const MemoizedPatternPreview = memo(
 					}
 				} }
 			>
-				<div className="od-pattern-title-wrapper">
+				<div className="onedesign-pattern-title-wrapper">
 					{ isCheckBoxRequired && <CheckboxControl checked={ isSelected } /> }
-					<span className="od-pattern-title">{ patternTitle }</span>
+					<span className="onedesign-pattern-title">{ patternTitle }</span>
 				</div>
 
 				{ /* The preview that shouldn't re-render */ }

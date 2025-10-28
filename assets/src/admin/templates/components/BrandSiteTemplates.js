@@ -31,9 +31,22 @@ import { API_NAMESPACE as REST_NAMESPACE, NONCE } from '../../../js/constants';
  * @param {Array}    props.allTemplates                 - Array of all available templates.
  * @param {Object}   props.notice                       - Notice object containing type and message.
  * @param {Function} props.setNotice                    - Function to set the notice state.
+ *
  * @return {JSX.Element} The rendered component.
  */
-const BrandSiteTemplates = ( { filteredTemplates, currentPage, PER_PAGE, selectedTemplates, handleTemplateSelection, setCurrentPage, currentSiteId, fetchConnectedSitesTemplates, setSelectedTemplates, allTemplates, notice, setNotice } ) => {
+const BrandSiteTemplates = ( {
+	filteredTemplates,
+	currentPage,
+	PER_PAGE,
+	selectedTemplates,
+	handleTemplateSelection,
+	setCurrentPage,
+	currentSiteId,
+	fetchConnectedSitesTemplates,
+	setSelectedTemplates,
+	allTemplates,
+	notice,
+	setNotice } ) => {
 	const [ isProcessing, setIsProcessing ] = useState( false );
 	const [ isRemoveModalOpen, setIsRemoveModalOpen ] = useState( false );
 
@@ -50,7 +63,7 @@ const BrandSiteTemplates = ( { filteredTemplates, currentPage, PER_PAGE, selecte
 					},
 					body: JSON.stringify( {
 						template_ids: selectedTemplates,
-						site: currentSiteId,
+						site: currentSiteId.toString(),
 						is_remove_all: false,
 					} ),
 				},
