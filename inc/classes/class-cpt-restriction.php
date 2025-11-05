@@ -56,7 +56,8 @@ class CPT_Restriction {
 	 * @return string Modified title.
 	 */
 	public function add_default_title_to_editor( string $title ): string {
-		if ( Pattern::SLUG === get_current_screen()->post_type ) {
+		$current_screen = Utils::get_current_screen();
+		if ( $current_screen && Pattern::SLUG === $current_screen->post_type ) {
 			return esc_html__( 'Pattern Library', 'onedesign' );
 		}
 		return $title;
@@ -131,7 +132,7 @@ class CPT_Restriction {
 	 */
 	public function limit_pattern_library_posts(): void {
 		// Check if we're trying to create a new pattern library post.
-		$screen = get_current_screen();
+		$screen = Utils::get_current_screen();
 		if ( ! $screen || Pattern::SLUG !== $screen->post_type || 'add' !== $screen->action ) {
 			return;
 		}
@@ -166,7 +167,7 @@ class CPT_Restriction {
 	 * @return void
 	 */
 	public function limit_template_posts(): void {
-		$screen = get_current_screen();
+		$screen = Utils::get_current_screen();
 		if ( ! $screen || Template::SLUG !== $screen->post_type || 'add' !== $screen->action ) {
 			return;
 		}

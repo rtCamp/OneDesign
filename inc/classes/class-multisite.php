@@ -66,9 +66,9 @@ class Multisite {
 			return;
 		}
 
-		$current_screen = get_current_screen();
+		$current_screen = Utils::get_current_screen();
 
-		if ( 'plugins-network' !== $current_screen->id ) {
+		if ( $current_screen && 'plugins-network' !== $current_screen->id ) {
 			return;
 		}
 
@@ -95,9 +95,9 @@ class Multisite {
 			return $classes;
 		}
 
-		$current_screen = get_current_screen();
+		$current_screen = Utils::get_current_screen();
 
-		if ( is_network_admin() && 'plugins-network' === $current_screen->id ) {
+		if ( is_network_admin() && $current_screen && 'plugins-network' === $current_screen->id ) {
 			$classes .= ' onedesign-multisite-selection-modal ';
 		}
 		return $classes;

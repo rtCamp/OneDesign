@@ -82,7 +82,7 @@ class Hooks {
 	 * @return void
 	 */
 	public function add_site_selection_modal(): void {
-		$current_screen = get_current_screen();
+		$current_screen = Utils::get_current_screen();
 		if ( ! $current_screen || 'plugins' !== $current_screen->base ) {
 			return;
 		}
@@ -108,7 +108,7 @@ class Hooks {
 	 * @return string
 	 */
 	public function add_body_class_for_modal( $classes ): string {
-		$current_screen = get_current_screen();
+		$current_screen = Utils::get_current_screen();
 		if ( ! $current_screen || 'plugins' !== $current_screen->base ) {
 			return $classes;
 		}
@@ -133,7 +133,7 @@ class Hooks {
 	 * @return string
 	 */
 	public function add_body_class_for_missing_sites( $classes ): string {
-		$current_screen = get_current_screen();
+		$current_screen = Utils::get_current_screen();
 
 		if ( ! $current_screen ) {
 			return $classes;
@@ -328,7 +328,7 @@ class Hooks {
 	 * @return void
 	 */
 	public function print_pattern_library_button_in_editor_js_template(): void {
-		$current_screen = get_current_screen();
+		$current_screen = Utils::get_current_screen();
 		if ( ! $current_screen || Pattern::SLUG !== $current_screen->post_type ) {
 			return;
 		}
@@ -350,7 +350,7 @@ class Hooks {
 	 * @return void
 	 */
 	public function add_templates_button_to_editor(): void {
-		$current_screen = get_current_screen();
+		$current_screen = Utils::get_current_screen();
 		if ( ! $current_screen || Template::SLUG !== $current_screen->post_type ) {
 			return;
 		}

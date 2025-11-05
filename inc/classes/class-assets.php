@@ -67,7 +67,7 @@ class Assets {
 	 */
 	public function add_admin_scripts( $hook_suffix ): void {
 
-		$current_screen = get_current_screen();
+		$current_screen = Utils::get_current_screen();
 
 		if ( strpos( $hook_suffix, 'onedesign-settings' ) !== false ) {
 
@@ -105,7 +105,7 @@ class Assets {
 			}
 		}
 
-		if ( strpos( $hook_suffix, 'plugins' ) !== false && empty( Utils::get_current_site_type() ) && 'plugins-network' !== $current_screen->id ) {
+		if ( strpos( $hook_suffix, 'plugins' ) !== false && empty( Utils::get_current_site_type() ) && ( $current_screen && 'plugins-network' !== $current_screen->id ) ) {
 
 			// remove all notices.
 			remove_all_actions( 'admin_notices' );
@@ -161,9 +161,9 @@ class Assets {
 	 */
 	public function enqueue_scripts(): void {
 
-		$current_screen = get_current_screen();
+		$current_screen = Utils::get_current_screen();
 
-		if ( Pattern::SLUG === $current_screen->id ) {
+		if ( $current_screen && Pattern::SLUG === $current_screen->id ) {
 
 			$this->register_script(
 				'onedesign-patterns-library-script',
