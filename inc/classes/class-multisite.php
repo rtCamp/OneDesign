@@ -164,6 +164,16 @@ class Multisite {
 	 *
 	 * @return void
 	 */
+
+	/**
+	 * Update site details in governing site table on option changes.
+	 *
+	 * @param string $option_name The name of the updated option.
+	 * @param mixed  $old_value The old value of the option.
+	 * @param mixed  $new_value The new value of the option.
+	 *
+	 * @return void
+	 */
 	public function update_site_details_in_governing_site_table( string $option_name, $old_value, $new_value ): void {
 
 		$governing_site_id = get_site_option( Constants::ONEDESIGN_MULTISITE_GOVERNING_SITE, 0 );
@@ -173,15 +183,30 @@ class Multisite {
 			return;
 		}
 
-		$relevant_options = array( 'blogname', 'siteurl', 'home' );
-		$current_site_id  = get_current_blog_id();
+		$relevant_options = array( 'blogname', 'siteurl', 'home', 'site_icon' );
 
+		$current_site_id = get_current_blog_id();
+
+		// For site_icon: Fetch details in CHILD site context BEFORE switching.
+		$logo_url = '';
+		$logo_id  = 0;
 		if ( in_array( $option_name, $relevant_options, true ) ) {
+			if ( 'site_icon' === $option_name ) {
+				if ( ! empty( $new_value ) && is_numeric( $new_value ) && (int) $new_value > 0 ) {
+					$attachment = get_post( (int) $new_value );
+					if ( $attachment && 'attachment' === $attachment->post_type ) {
+						$logo_url = wp_get_attachment_url( (int) $new_value );
+						$logo_id  = (int) $new_value;
+					}
+				}
+			}
+
+			// Now switch to governing site.
 			if ( ! switch_to_blog( (int) $governing_site_id ) ) {
 				return;
 			}
 
-			// get shared sites from governing site.
+			// Get shared sites from governing site.
 			$shared_sites = get_option( Constants::ONEDESIGN_SHARED_SITES, array() );
 
 			foreach ( $shared_sites as &$site ) {
@@ -190,15 +215,18 @@ class Multisite {
 						$site['name'] = sanitize_text_field( $new_value );
 					} elseif ( in_array( $option_name, array( 'siteurl', 'home' ), true ) ) {
 						$site['url'] = esc_url_raw( $new_value );
+					} elseif ( 'site_icon' === $option_name ) {
+						$site['logo']    = $logo_url;
+						$site['logo_id'] = $logo_id;
 					}
 					break;
 				}
 			}
 
-			// save the updated shared_sites option.
+			// Save the updated shared_sites option.
 			update_option( Constants::ONEDESIGN_SHARED_SITES, $shared_sites, false );
 
-			// restore blog.
+			// Restore blog.
 			restore_current_blog();
 		}
 	}
