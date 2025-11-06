@@ -164,16 +164,6 @@ class Multisite {
 	 *
 	 * @return void
 	 */
-
-	/**
-	 * Update site details in governing site table on option changes.
-	 *
-	 * @param string $option_name The name of the updated option.
-	 * @param mixed  $old_value The old value of the option.
-	 * @param mixed  $new_value The new value of the option.
-	 *
-	 * @return void
-	 */
 	public function update_site_details_in_governing_site_table( string $option_name, $old_value, $new_value ): void {
 
 		$governing_site_id = get_site_option( Constants::ONEDESIGN_MULTISITE_GOVERNING_SITE, 0 );
