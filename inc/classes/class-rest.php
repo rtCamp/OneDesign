@@ -8,7 +8,7 @@
 namespace OneDesign;
 
 use OneDesign\Traits\Singleton;
-use OneDesign\Rest\{ Patterns, Templates, Basic_Options };
+use OneDesign\Rest\{ Patterns, Templates, Basic_Options, Multisite };
 
 /**
  * Class Rest
@@ -37,6 +37,11 @@ class Rest {
 		Basic_Options::get_instance();
 		Patterns::get_instance();
 		Templates::get_instance();
+
+		// only load multisite REST routes if multisite is enabled.
+		if ( Utils::is_multisite() ) {
+			Multisite::get_instance();
+		}
 
 		// allow cors header for all REST API requests.
 		add_filter( 'rest_pre_serve_request', array( $this, 'add_cors_headers' ), PHP_INT_MAX - 30, 4 );

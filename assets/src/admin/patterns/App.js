@@ -3,6 +3,7 @@
  */
 import { createRoot } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -31,5 +32,8 @@ registerPlugin( 'onedesign-library', {
 		const modal = Object.assign( modalWrap, { id: modalID, className } );
 		document.body?.appendChild( modal );
 		createRoot( modal ).render( <PatternModal /> );
+
+		// make document.title to Pattern Library.
+		document.title = __( 'Pattern Library', 'onedesign' );
 	},
 } );

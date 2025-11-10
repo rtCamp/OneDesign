@@ -38,6 +38,11 @@ class Plugin {
 
 		// Load configs.
 		$this->load_configs();
+
+		// Load multisite functionality.
+		if ( Utils::is_multisite() ) {
+			$this->load_multisite_classes();
+		}
 	}
 
 	/**
@@ -72,5 +77,14 @@ class Plugin {
 	private function load_configs(): void {
 		Secret_Key::get_instance();
 		Constants::get_instance();
+	}
+
+	/**
+	 * Load multisite related classes.
+	 *
+	 * @return void
+	 */
+	private function load_multisite_classes(): void {
+		Multisite::get_instance();
 	}
 }

@@ -175,6 +175,14 @@ function onedesign_key_validation( bool $is_health_check ): bool {
 		if ( Utils::is_brand_site() && ! $is_same_domain && $is_token_valid && ! empty( $governing_site_url ) && ( Utils::is_same_domain( $governing_site_url, $request_origin ) || false !== strpos( $user_agent, $governing_site_url ) ) ) {
 			return true;
 		}
+
+		// if its multisite and token is valid then check governing site url and request origin is in multisite url list.
+		if ( Utils::is_multisite() && $is_token_valid && ! empty( $governing_site_url ) ) {
+			$all_multisite_urls = Utils::get_all_multisite_urls();
+			if ( ( in_array( $request_origin, $all_multisite_urls, true ) && in_array( $governing_site_url, $all_multisite_urls, true ) ) || false !== strpos( $user_agent, $request_origin ) ) {
+				return true;
+			}
+		}
 	}
 	return false;
 }

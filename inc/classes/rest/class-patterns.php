@@ -187,7 +187,12 @@ class Patterns {
 					'target_site_ids' => array(
 						'required'          => true,
 						'type'              => 'array',
-						'items'             => array( 'type' => 'string' ),
+						'items'             => array(
+							'oneOf' => array(
+								array( 'type' => 'string' ),
+								array( 'type' => 'integer' ),
+							),
+						),
 						'validate_callback' => function ( $param ): bool {
 							return is_array( $param ) && ! empty( $param );
 						},
@@ -246,7 +251,7 @@ class Patterns {
 		// Use the option name from your settings class.
 		$child_sites = $this->get_compatible_sites_object();
 		foreach ( $child_sites as $site ) {
-			if ( isset( $site['id'] ) && $site['id'] === $site_id ) {
+			if ( isset( $site['id'] ) && (string) $site['id'] === (string) $site_id ) {
 				$remote_api_key = $site['api_key'] ?? '';
 				if ( empty( $remote_api_key ) ) {
 					return new WP_Error( 'no_api_key', __( 'API key for the target site is missing in configuration.', 'onedesign' ), array( 'status' => 400 ) );
@@ -387,7 +392,8 @@ class Patterns {
 				)
 			);
 			if ( is_wp_error( $response ) ) {
-				continue; // Skip sites with errors.
+				$error_logs[] = $response;
+				continue;
 			}
 
 			$status_code = wp_remote_retrieve_response_code( $response );

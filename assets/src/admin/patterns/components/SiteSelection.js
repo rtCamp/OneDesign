@@ -178,8 +178,8 @@ const SiteSelection = ( {
 
 	if ( isLoading || isSitesLoading || sitesHealthCheckResult === undefined ) {
 		return (
-			<div className="od-site-loading">
-				<div className="od-loading-content">
+			<div className="onedesign-site-loading">
+				<div className="onedesign-loading-content">
 					<Spinner />
 					<p>{ __( 'Loading brand sites…', 'onedesign' ) }</p>
 				</div>
@@ -189,11 +189,11 @@ const SiteSelection = ( {
 
 	if ( error ) {
 		return (
-			<div className="od-site-error">
+			<div className="onedesign-site-error">
 				<Notice status="error" isDismissible={ false }>
 					<p>{ error.message }</p>
 					{ error.details && (
-						<details className="od-error-details">
+						<details className="onedesign-error-details">
 							<summary>{ __( 'Technical details', 'onedesign' ) }</summary>
 							<p>{ error.details }</p>
 						</details>
@@ -202,7 +202,7 @@ const SiteSelection = ( {
 				<Button
 					variant="secondary"
 					onClick={ retryFetch }
-					className="od-retry-button"
+					className="onedesign-retry-button"
 				>
 					{ __( 'Retry', 'onedesign' ) }
 				</Button>
@@ -212,7 +212,7 @@ const SiteSelection = ( {
 
 	if ( siteOptions.length === 0 ) {
 		return (
-			<div className="od-no-sites">
+			<div className="onedesign-no-sites">
 				<Notice status="warning" isDismissible={ false }>
 					<p>{ __( 'No brand sites configured.', 'onedesign' ) }</p>
 					<p>
@@ -227,11 +227,11 @@ const SiteSelection = ( {
 	}
 
 	return (
-		<div className="od-brand-site-selection">
-			<div className="od-selection-header">
-				<div className="od-selection-summary">
+		<div className="onedesign-brand-site-selection">
+			<div className="onedesign-selection-header">
+				<div className="onedesign-selection-summary">
 					<h4>{ __( 'Select Brand Sites', 'onedesign' ) }</h4>
-					<span className="od-selection-count">
+					<span className="onedesign-selection-count">
 						{ selectedCount > 0
 							? sprintf(
 								/* translators: %1$d: Number of selected sites, %2$d: Total number of sites. */
@@ -249,7 +249,7 @@ const SiteSelection = ( {
 				</div>
 
 				{ totalCount > 1 && (
-					<div className="od-bulk-actions">
+					<div className="onedesign-bulk-actions">
 						<Button
 							variant="link"
 							onClick={ selectAllSites }
@@ -257,16 +257,16 @@ const SiteSelection = ( {
 								selectedSelectableSiteCount === selectableSiteCount ||
 								selectableSiteCount === 0
 							}
-							className="od-bulk-action"
+							className="onedesign-bulk-action"
 						>
 							{ __( 'Select All', 'onedesign' ) }
 						</Button>
-						<span className="od-bulk-separator">|</span>
+						<span className="onedesign-bulk-separator">|</span>
 						<Button
 							variant="link"
 							onClick={ deselectAllSites }
 							disabled={ selectedCount === 0 }
-							className="od-bulk-action"
+							className="onedesign-bulk-action"
 						>
 							{ __( 'Deselect All', 'onedesign' ) }
 						</Button>
@@ -276,7 +276,7 @@ const SiteSelection = ( {
 
 			{ /* Message explaining disabled sites if there are any */ }
 			{ selectedPatterns.length > 0 && (
-				<div className="od-selection-hint">
+				<div className="onedesign-selection-hint">
 					<p>
 						<span className="dashicons dashicons-info"></span>
 						{ totalCount !== selectableSiteCount
@@ -297,7 +297,7 @@ const SiteSelection = ( {
 				</div>
 			) }
 
-			<div className="od-sites-list od-sites-grid">
+			<div className="onedesign-sites-list onedesign-sites-grid">
 				{ siteOptions.map( ( { id, name, url, logo } ) => {
 					const isSelected = BrandSite?.includes( id );
 
@@ -323,7 +323,7 @@ const SiteSelection = ( {
 					return (
 						<div
 							key={ id }
-							className={ `od-site-item ${ isSelected ? 'od-site-selected' : '' } ${ isDisabled ? 'od-site-disabled' : '' }` }
+							className={ `onedesign-site-item ${ isSelected ? 'onedesign-site-selected' : '' } ${ isDisabled ? 'onedesign-site-disabled' : '' }` }
 							onClick={ () => ! isDisabled && onBrandSiteChange( id ) }
 							onKeyDown={ ( e ) => {
 								if ( ! isDisabled && ( e.code === 'Enter' || e.code === 'Space' ) ) {
@@ -335,15 +335,15 @@ const SiteSelection = ( {
 							aria-checked={ isSelected }
 							aria-disabled={ isDisabled }
 						>
-							<div className="od-site-inner">
+							<div className="onedesign-site-inner">
 								{ isSelected && (
-									<div className="od-site-selected-indicator">
+									<div className="onedesign-site-selected-indicator">
 										{ renderIcon( { sitesHealthCheckResult, id } ) }
 									</div>
 								) }
 								{ isDisabled && ! isSelected && (
 									<div
-										className="od-site-disabled-indicator"
+										className="onedesign-site-disabled-indicator"
 										title={ __(
 											'This site already has all selected patterns',
 											'onedesign',
@@ -352,21 +352,21 @@ const SiteSelection = ( {
 										{ renderIcon( { sitesHealthCheckResult, id } ) }
 									</div>
 								) }
-								<div className="od-site-logo">
+								<div className="onedesign-site-logo">
 									{ logo ? (
 										<img src={ logo } alt={ name } />
 									) : (
-										<div className="od-site-initials">
+										<div className="onedesign-site-initials">
 											{ name ? getInitials( name ) : '?' }
 										</div>
 									) }
 								</div>
-								<span className="od-site-name">{ name }</span>
-								{ url && <span className="od-site-url">{ url }</span> }
+								<span className="onedesign-site-name">{ name }</span>
+								{ url && <span className="onedesign-site-url">{ url }</span> }
 
 								{ /* Pattern sync status */ }
 								{ selectedPatterns.length > 0 && sitePatterns[ id ] && (
-									<div className="od-pattern-status">
+									<div className="onedesign-pattern-status">
 										{ ( () => {
 											const sitePatternsArray = sitePatterns[ id ] || [];
 											// Remove forward slash from selected patterns names before comparison
@@ -384,7 +384,7 @@ const SiteSelection = ( {
 
 											if ( presentCount === 0 ) {
 												return (
-													<span className="od-onedesign-info">
+													<span className="onedesign-onedesign-info">
 														{ __( 'All patterns will be synced', 'onedesign' ) }
 													</span>
 												);
@@ -392,7 +392,7 @@ const SiteSelection = ( {
 
 											if ( allPatternsPresent ) {
 												return (
-													<span className="od-onedesign-info od-all-patterns-present">
+													<span className="onedesign-onedesign-info onedesign-all-patterns-present">
 														{ __(
 															'All selected patterns are already present',
 															'onedesign',
@@ -425,7 +425,7 @@ const SiteSelection = ( {
 											return (
 												<>
 													<span
-														className="od-onedesign-info"
+														className="onedesign-onedesign-info"
 													>
 														{ presentCount } { __( 'of', 'onedesign' ) }{ ' ' }
 														{ selectedPatterns.length }{ ' ' }

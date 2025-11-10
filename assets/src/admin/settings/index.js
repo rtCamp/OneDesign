@@ -164,7 +164,15 @@ const OneDesignSettingsPage = () => {
 			}
 
 			{ siteType === 'governing-site' && (
-				<SiteTable sites={ sites } onEdit={ setEditingIndex } onDelete={ handleDelete } setFormData={ setFormData } setShowModal={ setShowModal } />
+				<SiteTable
+					sites={ sites }
+					onEdit={ setEditingIndex }
+					onDelete={ handleDelete }
+					setFormData={ setFormData }
+					setShowModal={ setShowModal }
+					setSites={ setSites }
+					setNotice={ setNotice }
+				/>
 			) }
 
 			{ showModal && (
