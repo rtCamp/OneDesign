@@ -1,4 +1,6 @@
 name: Upload Package on Release
+permissions:
+  contents: write
 
 # Cancels all previous workflow runs for pull requests that have not completed.
 concurrency:
