@@ -15,20 +15,12 @@ const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 const sharedConfig = {
 	...defaultConfig,
 	output: {
-		path: path.resolve( process.cwd(), 'assets', 'build', 'js' ),
+		path: path.resolve( process.cwd(), 'build' ),
 		filename: '[name].js',
 		chunkFilename: '[name].js',
 	},
 	plugins: [
-		...defaultConfig.plugins
-			.map(
-				( plugin ) => {
-					if ( plugin.constructor.name === 'MiniCssExtractPlugin' ) {
-						plugin.options.filename = '../css/[name].css';
-					}
-					return plugin;
-				},
-			),
+		...defaultConfig.plugins,
 		new RemoveEmptyScriptsPlugin(),
 	],
 	optimization: {
@@ -44,28 +36,32 @@ const sharedConfig = {
 // Look for css/scss files and extract them into a build/css directory.
 const styles = {
 	...sharedConfig,
+	output: {
+		path: path.resolve( process.cwd(), 'build' ),
+		filename: '[name].js',
+		chunkFilename: '[name].js',
+	},
 	entry: () => {
 		const entries = {};
 
 		const dir = './assets/src/css';
 		fs.readdirSync( dir ).forEach( ( fileName ) => {
 			const fullPath = `${ dir }/${ fileName }`;
-			if ( ! fs.lstatSync( fullPath ).isDirectory() ) {
+			if (
+				! fs.lstatSync( fullPath ).isDirectory() &&
+				fileName.match( /\.(scss|css)$/ )
+			) {
 				entries[ fileName.replace( /\.[^/.]+$/, '' ) ] = fullPath;
 			}
 		} );
 
 		return entries;
 	},
-	module: {
-		...sharedConfig.module,
-	},
 	plugins: [
 		...sharedConfig.plugins.filter(
 			( plugin ) => plugin.constructor.name !== 'DependencyExtractionWebpackPlugin',
 		),
 	],
-
 };
 
 const scripts = {

@@ -49,4 +49,3 @@ If you can't do everything, that's okay too.
 -   [ ] My code passes all lints (ESLint etc.).
 -   [ ] My code has detailed inline documentation.
 -   [ ] I have updated the project documentation as needed.
--   [ ] I have added a changeset for this PR using `npm run changeset`.

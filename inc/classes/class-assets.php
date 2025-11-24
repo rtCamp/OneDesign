@@ -76,7 +76,7 @@ class Assets {
 
 			$this->register_script(
 				'onedesign-settings-script',
-				'js/settings.js'
+				'settings.js'
 			);
 
 			wp_localize_script(
@@ -96,7 +96,7 @@ class Assets {
 			wp_enqueue_script( 'onedesign-settings-script' );
 
 			// Enqueue the settings page styles.
-			$this->register_style( 'onedesign-settings-style', 'css/settings.css' );
+			$this->register_style( 'onedesign-settings-style', 'settings.css' );
 			wp_enqueue_style( 'onedesign-settings-style' );
 
 			// only load media uploader in governing site settings page.
@@ -112,7 +112,7 @@ class Assets {
 
 			$this->register_script(
 				'onedesign-setup-script',
-				'js/plugin.js',
+				'plugin.js',
 			);
 
 			wp_localize_script(
@@ -132,7 +132,7 @@ class Assets {
 
 			$this->register_script(
 				'onedesign-multisite-setup-script',
-				'js/multisite-plugin.js',
+				'multisite-plugin.js',
 			);
 
 			wp_localize_script(
@@ -150,7 +150,7 @@ class Assets {
 
 		}
 
-		$this->register_style( 'onedesign-admin-style', 'css/admin.css' );
+		$this->register_style( 'onedesign-admin-style', 'admin.css' );
 		wp_enqueue_style( 'onedesign-admin-style' );
 	}
 
@@ -167,7 +167,7 @@ class Assets {
 
 			$this->register_script(
 				'onedesign-patterns-library-script',
-				'js/patterns-library.js'
+				'patterns-library.js'
 			);
 
 			wp_localize_script(
@@ -178,7 +178,7 @@ class Assets {
 
 			wp_enqueue_script( 'onedesign-patterns-library-script' );
 
-			$this->register_style( 'onedesign-editor-style', 'css/editor.css' );
+			$this->register_style( 'onedesign-editor-style', 'editor.css' );
 			wp_enqueue_style( 'onedesign-editor-style' );
 		}
 
@@ -186,7 +186,7 @@ class Assets {
 
 			$this->register_script(
 				'onedesign-templates-library-script',
-				'js/templates-library.js'
+				'templates-library.js'
 			);
 
 			wp_localize_script(
@@ -197,7 +197,7 @@ class Assets {
 
 			wp_enqueue_script( 'onedesign-templates-library-script' );
 
-			$this->register_style( 'onedesign-template-style', 'css/template.css' );
+			$this->register_style( 'onedesign-template-style', 'template.css' );
 			wp_enqueue_style( 'onedesign-template-style' );
 		}
 	}
@@ -212,7 +212,7 @@ class Assets {
 	 * @return array
 	 */
 	public function get_asset_meta( $file, $deps = array(), $ver = false ): array {
-		$asset_meta_file = sprintf( '%s/js/%s.asset.php', untrailingslashit( ONEDESIGN_BUILD_PATH ), basename( $file, '.' . pathinfo( $file )['extension'] ) );
+		$asset_meta_file = sprintf( '%s/%s.asset.php', untrailingslashit( ONEDESIGN_BUILD_PATH ), basename( $file, '.' . pathinfo( $file )['extension'] ) );
 		$asset_meta      = is_readable( $asset_meta_file )
 			? require_once $asset_meta_file
 			: array(

@@ -1,6 +1,6 @@
 # Security Policy for `OneDesign`
 
-At **rtCamp**, we take the security of our software products and services seriously. This document outlines how you can report vulnerabilities and how we handle them to ensure our users’ safety.
+At **rtCamp**, we take the security of our software products and services seriously. This document outlines how you can report vulnerabilities and how we handle them to ensure our users' safety.
 
 ## Reporting a Vulnerability
 

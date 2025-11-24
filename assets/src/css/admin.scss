@@ -55,7 +55,7 @@
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 	}
-	
+
 }
 
 .toplevel_page_onedesign {
@@ -113,6 +113,6 @@ body.onedesign-site-selection-modal {
 [id="toplevel_page_onedesign"] {
 
 	.dashicons-admin-generic::before {
-		content: url("../../images/logo.svg") !important;
+		content: url("../images/logo.svg") !important;
 	}
 }

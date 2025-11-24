@@ -1,4 +1,4 @@
-![Banner V3](./assets/images/banner.webp)
+![Banner V3](./wp-assets/banner.webp)
 
 # OneDesign
 Contributors: [rtcamp](https://profiles.wordpress.org/rtcamp), [parthnvaswani](https://github.com/parthnvaswani), [up1512001](https://github.com/up1512001), [singhakanshu00](https://github.com/singhakanshu00), [danish17](https://github.com/danish17), [aviral-mittal](https://github.com/aviral-mittal), [vaishaliagola27](https://github.com/vaishaliagola27), [rishavjeet](https://github.com/rishavjeet), [vishal4669](https://github.com/vishal4669), [iamimmanuelraj](https://github.com/iamimmanuelraj) [vishalkakadiya](https://github.com/vishalkakadiya)
