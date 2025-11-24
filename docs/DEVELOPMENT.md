@@ -160,7 +160,7 @@ You can use Docker and the `wp-env` tool to set up a local development environme
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/rtCamp/onecontent.git
+   git clone https://github.com/rtCamp/OneDesign.git
    ```
 
 2. Change into the project folder and install the development dependencies:
