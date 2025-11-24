@@ -29,7 +29,7 @@ function constants(): void {
 	/**
 	 * Version of the plugin.
 	 */
-	define( 'ONESEARCH_VERSION', '1.0.0' );
+	define( 'ONEDESIGN_VERSION', '1.0.0' );
 	define( 'ONEDESIGN_DIR_PATH', plugin_dir_path( __FILE__ ) );
 	define( 'ONEDESIGN_RELATIVE_PATH', dirname( plugin_basename( __FILE__ ) ) );
 	define( 'ONEDESIGN_DIR_URL', plugin_dir_url( __FILE__ ) );
