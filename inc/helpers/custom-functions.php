@@ -8,10 +8,6 @@
 use OneDesign\Utils;
 use OneDesign\Plugin_Configs\Constants;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
-}
-
 /**
  * Parse the block template content to extract blocks, template parts, and patterns.
  *

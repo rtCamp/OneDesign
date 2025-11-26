@@ -1,0 +1,67 @@
+name: Upload Package on Release
+permissions:
+  contents: write
+
+# Cancels all previous workflow runs for pull requests that have not completed.
+concurrency:
+  # The concurrency group contains the workflow name and the branch name for pull requests
+  # or the commit hash for any other events.
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.sha }}
+  cancel-in-progress: true
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  tag:
+    name: Upload New Release
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        with:
+          show-progress: ${{ runner.debug == '1' && 'true' || 'false' }}
+          persist-credentials: false
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f # v2.35.5
+        with:
+          php-version: "8.3"
+          coverage: none
+          tools: composer:v2
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520 # v3.1.1
+
+      - name: Setup Node
+        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v5.0.0
+        with:
+          cache: "npm"
+          node-version-file: ".nvmrc"
+
+      - name: Install NPM dependencies
+        run: npm ci
+        env:
+          CI: true
+
+      - name: Build JavaScript assets
+        run: npm run build:prod
+
+      - name: Create Artifact
+        run: |
+          npm run plugin-zip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        with:
+          name: onedesign
+          path: onedesign.zip
+
+      - name: Upload release asset
+        uses: softprops/action-gh-release@5be0e66d93ac7ed76da52eca8bb058f665c3a5fe # v2.4.2
+        with:
+          files: onedesign.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
