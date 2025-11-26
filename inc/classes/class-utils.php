@@ -7,8 +7,8 @@
 
 namespace OneDesign;
 
-use OneDesign\Traits\Singleton;
 use OneDesign\Plugin_Configs\Constants;
+use OneDesign\Traits\Singleton;
 
 /**
  * Class Utils
@@ -62,8 +62,8 @@ class Utils {
 	 * @return array Array of shared sites information.
 	 */
 	public static function get_shared_sites_info(): array {
-		$shared_sites = get_option( Constants::ONEDESIGN_SHARED_SITES, array() );
-		return is_array( $shared_sites ) ? $shared_sites : array();
+		$shared_sites = get_option( Constants::ONEDESIGN_SHARED_SITES, [] );
+		return is_array( $shared_sites ) ? $shared_sites : [];
 	}
 
 	/**
@@ -96,21 +96,23 @@ class Utils {
 	 */
 	public static function get_all_multisites_info(): array {
 		if ( ! self::is_multisite() ) {
-			return array();
+			return [];
 		}
 
-		$sites      = get_sites( array( 'number' => 0 ) );
-		$sites_info = array();
+		$sites      = get_sites( [ 'number' => 0 ] );
+		$sites_info = [];
 
 		foreach ( $sites as $site ) {
 			$site_details = get_blog_details( $site->blog_id );
-			if ( $site_details ) {
-				$sites_info[] = array(
-					'id'   => (string) $site_details->blog_id,
-					'name' => $site_details->blogname,
-					'url'  => $site_details->siteurl,
-				);
+			if ( ! $site_details ) {
+				continue;
 			}
+
+			$sites_info[] = [
+				'id'   => (string) $site_details->blog_id,
+				'name' => $site_details->blogname,
+				'url'  => $site_details->siteurl,
+			];
 		}
 
 		return $sites_info;
@@ -123,12 +125,14 @@ class Utils {
 	 */
 	public static function get_all_multisite_urls(): array {
 		$sites_info = self::get_all_multisites_info();
-		$urls       = array();
+		$urls       = [];
 
 		foreach ( $sites_info as $site ) {
-			if ( isset( $site['url'] ) ) {
-				$urls[] = $site['url'];
+			if ( ! isset( $site['url'] ) ) {
+				continue;
 			}
+
+			$urls[] = $site['url'];
 		}
 
 		return $urls;
@@ -140,8 +144,7 @@ class Utils {
 	 * @return string
 	 */
 	public static function get_current_site_type(): string {
-		$onedesign_site_type = get_option( Constants::ONEDESIGN_SITE_TYPE, '' );
-		return $onedesign_site_type;
+		return get_option( Constants::ONEDESIGN_SITE_TYPE, '' );
 	}
 
 	/**
@@ -204,7 +207,7 @@ class Utils {
 		$sites    = self::get_sites_info();
 		$filtered = array_filter(
 			$sites,
-			function ( $site ) use ( $site_id ): bool {
+			static function ( $site ) use ( $site_id ): bool {
 				return (string) $site['id'] === (string) $site_id;
 			}
 		);
@@ -218,8 +221,8 @@ class Utils {
 	 * @return array Array of sites info.
 	 */
 	public static function get_sites_info(): array {
-		$sites_info = get_option( Constants::ONEDESIGN_SHARED_SITES, array() );
-		return is_array( $sites_info ) ? $sites_info : array();
+		$sites_info = get_option( Constants::ONEDESIGN_SHARED_SITES, [] );
+		return is_array( $sites_info ) ? $sites_info : [];
 	}
 
 	/**
@@ -287,11 +290,11 @@ class Utils {
 			}
 		} elseif ( is_array( $content ) ) {
 			// Handle array format.
-			if ( isset( $content['content'] ) ) {
-				$content_string = $content['content'];
-			} else {
+			if ( ! isset( $content['content'] ) ) {
 				return '';
 			}
+
+			$content_string = $content['content'];
 		} else {
 			// Unsupported content type.
 			return '';
@@ -302,7 +305,7 @@ class Utils {
 
 		return preg_replace_callback(
 			$pattern,
-			function ( $matches ) use ( $shared_site_name ): string|null {
+			static function ( $matches ) use ( $shared_site_name ): string|null {
 				$block_type      = $matches[1];
 				$attributes_json = $matches[2];
 
@@ -390,7 +393,7 @@ class Utils {
 
 				$content = preg_replace_callback(
 					$pattern,
-					function ( $matches ): string|null {
+					static function ( $matches ): string|null {
 						$block_type      = $matches[1];
 						$attributes_json = $matches[2];
 
@@ -427,17 +430,19 @@ class Utils {
 				$current_content = $templates[ $index ]['content'];
 			}
 
-			if ( ! empty( $current_content ) ) {
-				$modified_content = self::modify_content_references(
-					$current_content,
-					$shared_site_name
-				);
+			if ( empty( $current_content ) ) {
+				continue;
+			}
 
-				if ( $template instanceof \WP_Block_Template ) {
-					$templates[ $index ]->content = $modified_content;
-				} else {
-					$templates[ $index ]['content'] = $modified_content;
-				}
+			$modified_content = self::modify_content_references(
+				$current_content,
+				$shared_site_name
+			);
+
+			if ( $template instanceof \WP_Block_Template ) {
+				$templates[ $index ]->content = $modified_content;
+			} else {
+				$templates[ $index ]['content'] = $modified_content;
 			}
 		}
 
@@ -452,22 +457,24 @@ class Utils {
 	 * @param string $content_key  Key for the content field (default: 'content').
 	 * @return array Modified items with updated block refs.
 	 */
-	public static function replace_block_refs( array $items, array $id_map = array(), string $content_key = 'content' ): array {
+	public static function replace_block_refs( array $items, array $id_map = [], string $content_key = 'content' ): array {
 		if ( empty( $id_map ) || ! is_array( $items ) ) {
 			return $items;
 		}
 
 		foreach ( $items as $key => $item ) {
-			if ( isset( $item[ $content_key ] ) && ! empty( $item[ $content_key ] ) ) {
-				$content = $item[ $content_key ];
-
-				foreach ( $id_map as $old_id => $new_id ) {
-					$pattern1 = '/(<!--\s*wp:block\s*\{\s*"ref"\s*:\s*)' . preg_quote( $old_id, '/' ) . '(\s*\}\s*\/-->)/';
-					$content  = preg_replace( $pattern1, '${1}' . $new_id . '${2}', $content );
-				}
-
-				$items[ $key ][ $content_key ] = $content;
+			if ( ! isset( $item[ $content_key ] ) || empty( $item[ $content_key ] ) ) {
+				continue;
 			}
+
+			$content = $item[ $content_key ];
+
+			foreach ( $id_map as $old_id => $new_id ) {
+				$pattern1 = '/(<!--\s*wp:block\s*\{\s*"ref"\s*:\s*)' . preg_quote( $old_id, '/' ) . '(\s*\}\s*\/-->)/';
+				$content  = preg_replace( $pattern1, '${1}' . $new_id . '${2}', $content );
+			}
+
+			$items[ $key ][ $content_key ] = $content;
 		}
 
 		return $items;
@@ -476,7 +483,7 @@ class Utils {
 	/**
 	 * Get current screen object.
 	 *
-	 * @return WP_Screen|null Current screen object or null if not available.
+	 * @return \OneDesign\WP_Screen|null Current screen object or null if not available.
 	 */
 	public static function get_current_screen(): ?\WP_Screen {
 		if ( ! function_exists( 'get_current_screen' ) ) {

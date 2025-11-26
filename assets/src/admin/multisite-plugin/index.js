@@ -70,7 +70,6 @@ const OneDesignMultisiteGoverningSiteSelection = () => {
 				setGoverningSite( data.governing_site );
 				currentGoverningSiteID.current = data.governing_site;
 			}
-			return;
 		} catch {
 			setNotice( {
 				type: 'error',
@@ -116,7 +115,6 @@ const OneDesignMultisiteGoverningSiteSelection = () => {
 				setIsSaving( false );
 				window.location.reload();
 			}, 1000 );
-			return;
 		} catch {
 			setNotice( {
 				type: 'error',

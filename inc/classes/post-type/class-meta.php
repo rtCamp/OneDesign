@@ -30,7 +30,7 @@ class Meta {
 	 */
 	public function setup_hooks(): void {
 		// Register all the meta based on post type here.
-		add_action( 'init', array( $this, 'register_custom_meta' ), 10 );
+		add_action( 'init', [ $this, 'register_custom_meta' ], 10 );
 	}
 
 	/**
@@ -44,14 +44,14 @@ class Meta {
 		$post_meta_array = $this->get_post_meta_array();
 
 		foreach ( $post_meta_array as $meta_info ) {
-			$args = array(
+			$args = [
 				'show_in_rest'  => $meta_info['show_in_rest'] ?? true,
 				'type'          => $meta_info['type'] ?? '',
 				'single'        => $meta_info['single'] ?? true,
-				'auth_callback' => function () {
+				'auth_callback' => static function () {
 					return current_user_can( 'edit_posts' );
 				},
-			);
+			];
 
 			if ( array_key_exists( 'default', $meta_info ) ) {
 				$args['default'] = $meta_info['default'];
@@ -59,10 +59,12 @@ class Meta {
 
 			$post_types = $meta_info['post_type'];
 
-			if ( is_array( $post_types ) && ! empty( $post_types ) ) {
-				foreach ( $post_types as $post_type ) {
-					register_post_meta( $post_type, $meta_info['meta'], $args );
-				}
+			if ( ! is_array( $post_types ) || empty( $post_types ) ) {
+				continue;
+			}
+
+			foreach ( $post_types as $post_type ) {
+				register_post_meta( $post_type, $meta_info['meta'], $args );
 			}
 		}
 	}
@@ -74,23 +76,21 @@ class Meta {
 	 * @return array
 	 */
 	private function get_post_meta_array(): array {
-		$post_meta_array = array(
-			array(
-				'post_type'    => array( Pattern::SLUG ),
+		return [
+			[
+				'post_type'    => [ Pattern::SLUG ],
 				'meta'         => 'brand_site',
 				'type'         => 'array',
-				'show_in_rest' => array(
-					'schema' => array(
+				'show_in_rest' => [
+					'schema' => [
 						'type'  => 'array',
-						'items' => array(
+						'items' => [
 							'type' => 'integer',
-						),
-					),
-				),
+						],
+					],
+				],
 				'single'       => true,
-			),
-		);
-
-		return $post_meta_array;
+			],
+		];
 	}
 }

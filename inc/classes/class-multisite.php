@@ -40,19 +40,19 @@ class Multisite {
 		}
 
 		// add governing site selection modal on network admin plugins page.
-		add_action( 'admin_footer', array( $this, 'render_governing_site_modal' ) );
+		add_action( 'admin_footer', [ $this, 'render_governing_site_modal' ] );
 
 		// add admin_body_class class of onedesign-multisite-selection-modal on network admin plugins page.
-		add_filter( 'admin_body_class', array( $this, 'add_admin_body_class' ) );
+		add_filter( 'admin_body_class', [ $this, 'add_admin_body_class' ] );
 
 		// add onedesign_multisite_api_key_generated action to change same key in governing site.
-		add_action( 'onedesign_multisite_api_key_generated', array( $this, 'sync_api_key_to_governing_site' ), 10, 2 );
+		add_action( 'onedesign_multisite_api_key_generated', [ $this, 'sync_api_key_to_governing_site' ], 10, 2 );
 
 		// auto assign brand-site on new site creation if governing site is set.
-		add_action( 'wp_initialize_site', array( $this, 'assign_brand_site_on_new_site_creation' ), 10, 2 );
+		add_action( 'wp_initialize_site', [ $this, 'assign_brand_site_on_new_site_creation' ], 10, 2 );
 
 		// listen to option changes for blogname, siteurl and home to update into governing site table.
-		add_action( 'updated_option', array( $this, 'update_site_details_in_governing_site_table' ), 10, 3 );
+		add_action( 'updated_option', [ $this, 'update_site_details_in_governing_site_table' ], 10, 3 );
 	}
 
 	/**
@@ -115,22 +115,24 @@ class Multisite {
 		$governing_site_id = get_site_option( Constants::ONEDESIGN_MULTISITE_GOVERNING_SITE, 0 );
 
 		// go to governing site and update shared_sites option secret_key of blog_id site.
-		if ( $governing_site_id && $secret_key ) {
-			if ( ! switch_to_blog( (int) $governing_site_id ) ) {
-				return;
-			}
-			$shared_sites = get_option( Constants::ONEDESIGN_SHARED_SITES, array() );
-			foreach ( $shared_sites as &$site ) {
-				if ( (int) $site['id'] === (int) $blog_id ) {
-					$site['api_key'] = $secret_key;
-					break;
-				}
-			}
-
-			update_option( Constants::ONEDESIGN_SHARED_SITES, $shared_sites, false );
-
-			restore_current_blog();
+		if ( ! $governing_site_id || ! $secret_key ) {
+			return;
 		}
+
+		if ( ! switch_to_blog( (int) $governing_site_id ) ) {
+			return;
+		}
+		$shared_sites = get_option( Constants::ONEDESIGN_SHARED_SITES, [] );
+		foreach ( $shared_sites as &$site ) {
+			if ( (int) $site['id'] === (int) $blog_id ) {
+				$site['api_key'] = $secret_key;
+				break;
+			}
+		}
+
+		update_option( Constants::ONEDESIGN_SHARED_SITES, $shared_sites, false );
+
+		restore_current_blog();
 	}
 
 	/**
@@ -144,15 +146,17 @@ class Multisite {
 
 		$governing_site_id = get_site_option( Constants::ONEDESIGN_MULTISITE_GOVERNING_SITE, 0 );
 
-		if ( $governing_site_id && $new_site->blog_id !== $governing_site_id ) {
-			if ( ! switch_to_blog( (int) $new_site->blog_id ) ) {
-				return;
-			}
-
-			update_option( Constants::ONEDESIGN_SITE_TYPE, 'brand-site', false );
-
-			restore_current_blog();
+		if ( ! $governing_site_id || $new_site->blog_id === $governing_site_id ) {
+			return;
 		}
+
+		if ( ! switch_to_blog( (int) $new_site->blog_id ) ) {
+			return;
+		}
+
+		update_option( Constants::ONEDESIGN_SITE_TYPE, 'brand-site', false );
+
+		restore_current_blog();
 	}
 
 	/**
@@ -173,51 +177,55 @@ class Multisite {
 			return;
 		}
 
-		$relevant_options = array( 'blogname', 'siteurl', 'home', 'site_icon' );
+		$relevant_options = [ 'blogname', 'siteurl', 'home', 'site_icon' ];
 
 		$current_site_id = get_current_blog_id();
 
 		// For site_icon: Fetch details in CHILD site context BEFORE switching.
 		$logo_url = '';
 		$logo_id  = 0;
-		if ( in_array( $option_name, $relevant_options, true ) ) {
-			if ( 'site_icon' === $option_name ) {
-				if ( ! empty( $new_value ) && is_numeric( $new_value ) && (int) $new_value > 0 ) {
-					$attachment = get_post( (int) $new_value );
-					if ( $attachment && 'attachment' === $attachment->post_type ) {
-						$logo_url = wp_get_attachment_url( (int) $new_value );
-						$logo_id  = (int) $new_value;
-					}
-				}
-			}
-
-			// Now switch to governing site.
-			if ( ! switch_to_blog( (int) $governing_site_id ) ) {
-				return;
-			}
-
-			// Get shared sites from governing site.
-			$shared_sites = get_option( Constants::ONEDESIGN_SHARED_SITES, array() );
-
-			foreach ( $shared_sites as &$site ) {
-				if ( (int) $site['id'] === $current_site_id ) {
-					if ( 'blogname' === $option_name ) {
-						$site['name'] = sanitize_text_field( $new_value );
-					} elseif ( in_array( $option_name, array( 'siteurl', 'home' ), true ) ) {
-						$site['url'] = esc_url_raw( $new_value );
-					} elseif ( 'site_icon' === $option_name ) {
-						$site['logo']    = $logo_url;
-						$site['logo_id'] = $logo_id;
-					}
-					break;
-				}
-			}
-
-			// Save the updated shared_sites option.
-			update_option( Constants::ONEDESIGN_SHARED_SITES, $shared_sites, false );
-
-			// Restore blog.
-			restore_current_blog();
+		if ( ! in_array( $option_name, $relevant_options, true ) ) {
+			return;
 		}
+
+		if ( 'site_icon' === $option_name ) {
+			if ( ! empty( $new_value ) && is_numeric( $new_value ) && (int) $new_value > 0 ) {
+				$attachment = get_post( (int) $new_value );
+				if ( $attachment && 'attachment' === $attachment->post_type ) {
+					$logo_url = wp_get_attachment_url( (int) $new_value );
+					$logo_id  = (int) $new_value;
+				}
+			}
+		}
+
+		// Now switch to governing site.
+		if ( ! switch_to_blog( (int) $governing_site_id ) ) {
+			return;
+		}
+
+		// Get shared sites from governing site.
+		$shared_sites = get_option( Constants::ONEDESIGN_SHARED_SITES, [] );
+
+		foreach ( $shared_sites as &$site ) {
+			if ( (int) $site['id'] !== $current_site_id ) {
+				continue;
+			}
+
+			if ( 'blogname' === $option_name ) {
+				$site['name'] = sanitize_text_field( $new_value );
+			} elseif ( in_array( $option_name, [ 'siteurl', 'home' ], true ) ) {
+				$site['url'] = esc_url_raw( $new_value );
+			} elseif ( 'site_icon' === $option_name ) {
+				$site['logo']    = $logo_url;
+				$site['logo_id'] = $logo_id;
+			}
+			break;
+		}
+
+		// Save the updated shared_sites option.
+		update_option( Constants::ONEDESIGN_SHARED_SITES, $shared_sites, false );
+
+		// Restore blog.
+		restore_current_blog();
 	}
 }

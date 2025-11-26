@@ -22,7 +22,7 @@ if ( ! function_exists( 'onedesign_delete_options_post_data' ) ) {
 	 */
 	function onedesign_delete_options_post_data(): void {
 		// get brand site post ids & delete posts.
-		$brand_site_post_ids = get_option( 'onedesign_brand_site_post_ids', array() );
+		$brand_site_post_ids = get_option( 'onedesign_brand_site_post_ids', [] );
 		if ( is_array( $brand_site_post_ids ) && ! empty( $brand_site_post_ids ) ) {
 			foreach ( $brand_site_post_ids as $post_id ) {
 
@@ -38,7 +38,7 @@ if ( ! function_exists( 'onedesign_delete_options_post_data' ) ) {
 			}
 		}
 
-		$options_to_delete = array(
+		$options_to_delete = [
 			'onedesign_site_type',
 			'onedesign_brand_site_patterns',
 			'onedesign_child_site_public_key',
@@ -53,7 +53,7 @@ if ( ! function_exists( 'onedesign_delete_options_post_data' ) ) {
 			'onedesign_shared_template_parts',
 			'onedesign_shared_synced_patterns',
 			'onedesign_multisite_governing_site',
-		);
+		];
 
 		foreach ( $options_to_delete as $option ) {
 			delete_option( $option );
@@ -73,26 +73,28 @@ if ( ! function_exists( 'onedesign_plugin_deletion' ) ) {
 		onedesign_delete_options_post_data();
 
 		// if it's multisite, delete site options as well.
-		if ( is_multisite() ) {
-			$site_options_to_delete = array(
-				'onedesign_multisite_governing_site',
-			);
+		if ( ! is_multisite() ) {
+			return;
+		}
 
-			foreach ( $site_options_to_delete as $site_option ) {
-				delete_site_option( $site_option );
+		$site_options_to_delete = [
+			'onedesign_multisite_governing_site',
+		];
+
+		foreach ( $site_options_to_delete as $site_option ) {
+			delete_site_option( $site_option );
+		}
+
+		// for each site delete options.
+		$all_sites = get_sites( [ 'fields' => 'ids' ] );
+		foreach ( $all_sites as $site_id ) {
+			if ( ! switch_to_blog( (int) $site_id ) ) {
+				continue;
 			}
 
-			// for each site delete options.
-			$all_sites = get_sites( array( 'fields' => 'ids' ) );
-			foreach ( $all_sites as $site_id ) {
-				if ( ! switch_to_blog( (int) $site_id ) ) {
-					continue;
-				}
+			onedesign_delete_options_post_data();
 
-				onedesign_delete_options_post_data();
-
-				restore_current_blog();
-			}
+			restore_current_blog();
 		}
 	}
 }

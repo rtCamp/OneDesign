@@ -38,14 +38,14 @@ class CPT_Restriction {
 	 * Function to setup hooks.
 	 */
 	public function setup_hooks(): void {
-		add_filter( 'register_post_type_args', array( $this, 'restrict_cpt' ), 5, 2 );
-		add_action( 'init', array( $this, 'unregister_cpt' ), 20 );
-		add_action( 'current_screen', array( $this, 'limit_pattern_library_posts' ) );
-		add_action( 'current_screen', array( $this, 'limit_template_posts' ) );
-		add_filter( 'register_post_type_args', array( $this, 'modify_pattern_library_labels' ), 10, 2 );
-		add_action( 'admin_menu', array( $this, 'modify_pattern_library_admin_menu' ), 999 );
-		add_filter( 'default_content', array( $this, 'add_default_content_to_editor' ), 10, 2 );
-		add_filter( 'default_title', array( $this, 'add_default_title_to_editor' ), 10, 2 );
+		add_filter( 'register_post_type_args', [ $this, 'restrict_cpt' ], 5, 2 );
+		add_action( 'init', [ $this, 'unregister_cpt' ], 20 );
+		add_action( 'current_screen', [ $this, 'limit_pattern_library_posts' ] );
+		add_action( 'current_screen', [ $this, 'limit_template_posts' ] );
+		add_filter( 'register_post_type_args', [ $this, 'modify_pattern_library_labels' ], 10, 2 );
+		add_action( 'admin_menu', [ $this, 'modify_pattern_library_admin_menu' ], 999 );
+		add_filter( 'default_content', [ $this, 'add_default_content_to_editor' ], 10, 2 );
+		add_filter( 'default_title', [ $this, 'add_default_title_to_editor' ], 10, 2 );
 	}
 
 	/**
@@ -72,7 +72,7 @@ class CPT_Restriction {
 	 * @return array Modified arguments.
 	 */
 	public function restrict_cpt( array $args, string $post_type ): array {
-		if ( ! in_array( $post_type, array( Pattern::SLUG, Template::SLUG ), true ) ) {
+		if ( ! in_array( $post_type, [ Pattern::SLUG, Template::SLUG ], true ) ) {
 			return $args;
 		}
 
@@ -88,7 +88,7 @@ class CPT_Restriction {
 			return $args;
 		}
 
-		if ( in_array( $post_type, array( Pattern::SLUG, Template::SLUG ), true ) ) {
+		if ( in_array( $post_type, [ Pattern::SLUG, Template::SLUG ], true ) ) {
 			$args['public']              = false;
 			$args['show_ui']             = false;
 			$args['show_in_menu']        = false;
@@ -99,7 +99,7 @@ class CPT_Restriction {
 			$args['exclude_from_search'] = true;
 			$args['publicly_queryable']  = false;
 			$args['show_in_rest']        = false;
-			$args['capabilities']        = array(
+			$args['capabilities']        = [
 				'edit_post'          => 'do_not_allow',
 				'read_post'          => 'do_not_allow',
 				'delete_post'        => 'do_not_allow',
@@ -107,7 +107,7 @@ class CPT_Restriction {
 				'edit_others_posts'  => 'do_not_allow',
 				'publish_posts'      => 'do_not_allow',
 				'read_private_posts' => 'do_not_allow',
-			);
+			];
 		}
 
 		return $args;
@@ -142,22 +142,24 @@ class CPT_Restriction {
 		$post_count     = $existing_posts->publish + $existing_posts->draft + $existing_posts->pending + $existing_posts->private;
 
 		// If a post already exists, redirect to edit screen.
-		if ( $post_count > 0 ) {
-			// Get the existing post.
-			$existing_post = get_posts(
-				array(
-					'post_type'        => Pattern::SLUG,
-					'post_status'      => array( 'publish', 'draft', 'pending', 'private' ),
-					'numberposts'      => 1,
-					'suppress_filters' => false,
-				)
-			);
+		if ( $post_count <= 0 ) {
+			return;
+		}
 
-			if ( ! empty( $existing_post ) ) {
-				// Redirect to edit screen of the existing post.
-				wp_safe_redirect( admin_url( 'post.php?post=' . $existing_post[0]->ID . '&action=edit' ) );
-				exit;
-			}
+		// Get the existing post.
+		$existing_post = get_posts(
+			[
+				'post_type'        => Pattern::SLUG,
+				'post_status'      => [ 'publish', 'draft', 'pending', 'private' ],
+				'numberposts'      => 1,
+				'suppress_filters' => false,
+			]
+		);
+
+		if ( ! empty( $existing_post ) ) {
+			// Redirect to edit screen of the existing post.
+			wp_safe_redirect( admin_url( 'post.php?post=' . $existing_post[0]->ID . '&action=edit' ) );
+			exit;
 		}
 	}
 
@@ -183,22 +185,24 @@ class CPT_Restriction {
 		$post_count = $existing_posts->publish + $existing_posts->draft + $existing_posts->pending + $existing_posts->private;
 
 		// If a post already exists, redirect to edit screen.
-		if ( $post_count > 0 ) {
-			// Get the existing post.
-			$existing_post = get_posts(
-				array(
-					'post_type'        => Template::SLUG,
-					'post_status'      => array( 'publish', 'draft', 'pending', 'private' ),
-					'numberposts'      => 1,
-					'suppress_filters' => false,
-				)
-			);
+		if ( $post_count <= 0 ) {
+			return;
+		}
 
-			if ( ! empty( $existing_post ) ) {
-				// Redirect to edit screen of the existing post.
-				wp_safe_redirect( admin_url( 'post.php?post=' . $existing_post[0]->ID . '&action=edit' ) );
-				exit;
-			}
+		// Get the existing post.
+		$existing_post = get_posts(
+			[
+				'post_type'        => Template::SLUG,
+				'post_status'      => [ 'publish', 'draft', 'pending', 'private' ],
+				'numberposts'      => 1,
+				'suppress_filters' => false,
+			]
+		);
+
+		if ( ! empty( $existing_post ) ) {
+			// Redirect to edit screen of the existing post.
+			wp_safe_redirect( admin_url( 'post.php?post=' . $existing_post[0]->ID . '&action=edit' ) );
+			exit;
 		}
 	}
 
@@ -257,28 +261,32 @@ class CPT_Restriction {
 
 		$post_count = $existing_posts->publish + $existing_posts->draft + $existing_posts->pending + $existing_posts->private;
 
-		if ( $post_count > 0 ) {
-			// Find the "Add New" menu item.
-			foreach ( $submenu[ 'edit.php?post_type=' . Pattern::SLUG ] as $key => $item ) {
-				if ( 'post-new.php?post_type=' . Pattern::SLUG === $item[2] ) {
-					// Get the existing post.
-					$existing_post = get_posts(
-						array(
-							'post_type'        => Pattern::SLUG,
-							'post_status'      => array( 'publish', 'draft', 'pending', 'private' ),
-							'numberposts'      => 1,
-							'suppress_filters' => false,
-						)
-					);
+		if ( $post_count <= 0 ) {
+			return;
+		}
 
-					if ( ! empty( $existing_post ) ) {
-						// Change the "Add New" link to edit the existing post.
-						$submenu['edit.php?post_type=onedesign-pattern'][ $key ][2] = 'post.php?post=' . $existing_post[0]->ID . '&action=edit'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- We need to modify for pattern library post type.
-						$submenu['edit.php?post_type=onedesign-pattern'][ $key ][0] = esc_html__( 'Edit Pattern Library', 'onedesign' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- We need to modify for pattern library post type.
-					}
-					break;
-				}
+		// Find the "Add New" menu item.
+		foreach ( $submenu[ 'edit.php?post_type=' . Pattern::SLUG ] as $key => $item ) {
+			if ( 'post-new.php?post_type=' . Pattern::SLUG !== $item[2] ) {
+				continue;
 			}
+
+			// Get the existing post.
+			$existing_post = get_posts(
+				[
+					'post_type'        => Pattern::SLUG,
+					'post_status'      => [ 'publish', 'draft', 'pending', 'private' ],
+					'numberposts'      => 1,
+					'suppress_filters' => false,
+				]
+			);
+
+			if ( ! empty( $existing_post ) ) {
+				// Change the "Add New" link to edit the existing post.
+				$submenu['edit.php?post_type=onedesign-pattern'][ $key ][2] = 'post.php?post=' . $existing_post[0]->ID . '&action=edit'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- We need to modify for pattern library post type.
+				$submenu['edit.php?post_type=onedesign-pattern'][ $key ][0] = esc_html__( 'Edit Pattern Library', 'onedesign' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- We need to modify for pattern library post type.
+			}
+			break;
 		}
 	}
 

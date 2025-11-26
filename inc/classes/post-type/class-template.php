@@ -32,7 +32,7 @@ class Template extends Base {
 	 * @return array
 	 */
 	public function get_labels(): array {
-		return array(
+		return [
 			'name'               => _x( 'Template Library', 'post type general name', 'onedesign' ),
 			'singular_name'      => _x( 'Template Library', 'post type singular name', 'onedesign' ),
 			'menu_name'          => _x( 'Template Library', 'admin menu', 'onedesign' ),
@@ -47,7 +47,7 @@ class Template extends Base {
 			'parent_item_colon'  => __( 'Parent Template Library:', 'onedesign' ),
 			'not_found'          => __( 'No Template Library found.', 'onedesign' ),
 			'not_found_in_trash' => __( 'No Template Library found in trash.', 'onedesign' ),
-		);
+		];
 	}
 
 	/**
@@ -56,14 +56,14 @@ class Template extends Base {
 	 * @return array
 	 */
 	public function get_args(): array {
-		return array(
+		return [
 			'public'        => false,
 			'show_ui'       => true,
 			'has_archive'   => false,
 			'show_in_rest'  => true,
 			'menu_position' => 6,
-			'supports'      => array( 'title', 'editor', 'custom-fields' ),
+			'supports'      => [ 'title', 'editor', 'custom-fields' ],
 			'menu_icon'     => 'dashicons-media-text',
-		);
+		];
 	}
 }

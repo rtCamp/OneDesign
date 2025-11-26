@@ -10,7 +10,6 @@ namespace OneDesign\Rest;
 use OneDesign\Plugin_Configs\{Constants, Secret_Key };
 use OneDesign\Traits\Singleton;
 use OneDesign\Utils;
-use WP_Error;
 use WP_REST_Response;
 use WP_REST_Server;
 
@@ -44,7 +43,7 @@ class Multisite {
 	 * @return void
 	 */
 	protected function setup_hooks(): void {
-		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
+		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
 	}
 
 	/**
@@ -59,25 +58,25 @@ class Multisite {
 		register_rest_route(
 			self::NAMESPACE,
 			'/governing-site',
-			array(
-				array(
+			[
+				[
 					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_multisite_governing_site' ),
-					'permission_callback' => array( Basic_Options::class, 'permission_callback' ),
-				),
-				array(
+					'callback'            => [ $this, 'get_multisite_governing_site' ],
+					'permission_callback' => [ Basic_Options::class, 'permission_callback' ],
+				],
+				[
 					'methods'             => WP_REST_Server::CREATABLE,
-					'callback'            => array( $this, 'set_multisite_governing_site' ),
-					'permission_callback' => array( Basic_Options::class, 'permission_callback' ),
-					'args'                => array(
-						'governing_site_id' => array(
+					'callback'            => [ $this, 'set_multisite_governing_site' ],
+					'permission_callback' => [ Basic_Options::class, 'permission_callback' ],
+					'args'                => [
+						'governing_site_id' => [
 							'required'          => true,
 							'type'              => 'integer',
 							'sanitize_callback' => 'absint',
-						),
-					),
-				),
-			)
+						],
+					],
+				],
+			]
 		);
 
 		/**
@@ -86,19 +85,19 @@ class Multisite {
 		register_rest_route(
 			self::NAMESPACE,
 			'/add-sites',
-			array(
-				array(
+			[
+				[
 					'methods'             => WP_REST_Server::CREATABLE,
-					'callback'            => array( $this, 'add_multisite_sites' ),
-					'permission_callback' => array( Basic_Options::class, 'permission_callback' ),
-					'args'                => array(
-						'site_ids' => array(
+					'callback'            => [ $this, 'add_multisite_sites' ],
+					'permission_callback' => [ Basic_Options::class, 'permission_callback' ],
+					'args'                => [
+						'site_ids' => [
 							'required' => true,
 							'type'     => 'array',
-						),
-					),
-				),
-			)
+						],
+					],
+				],
+			]
 		);
 
 		/**
@@ -107,20 +106,20 @@ class Multisite {
 		register_rest_route(
 			self::NAMESPACE,
 			'/sites',
-			array(
-				array(
+			[
+				[
 					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_all_multisite_sites' ),
-					'permission_callback' => array( Basic_Options::class, 'permission_callback' ),
-				),
-			)
+					'callback'            => [ $this, 'get_all_multisite_sites' ],
+					'permission_callback' => [ Basic_Options::class, 'permission_callback' ],
+				],
+			]
 		);
 	}
 
 	/**
 	 * Get the governing site for multisite setup.
 	 *
-	 * @return WP_REST_Response
+	 * @return \WP_REST_Response
 	 */
 	public function get_multisite_governing_site(): WP_REST_Response {
 
@@ -128,10 +127,10 @@ class Multisite {
 		$governing_site = get_site_option( Constants::ONEDESIGN_MULTISITE_GOVERNING_SITE, '' );
 
 		return new WP_REST_Response(
-			array(
+			[
 				'success'        => true,
 				'governing_site' => $governing_site,
-			)
+			]
 		);
 	}
 
@@ -140,17 +139,17 @@ class Multisite {
 	 *
 	 * @param \WP_REST_Request $request The REST request.
 	 *
-	 * @return WP_REST_Response|WP_Error
+	 * @return \WP_REST_Response|\WP_Error
 	 */
-	public function set_multisite_governing_site( \WP_REST_Request $request ): WP_REST_Response|WP_Error {
+	public function set_multisite_governing_site( \WP_REST_Request $request ): WP_REST_Response|\WP_Error {
 
 		$governing_site_id = filter_var( $request->get_param( 'governing_site_id' ), FILTER_SANITIZE_NUMBER_INT );
 
 		if ( empty( $governing_site_id ) || ! is_numeric( $governing_site_id ) ) {
-			return new WP_Error(
+			return new \WP_Error(
 				'invalid_governing_site_id',
 				__( 'Invalid site info provided.', 'onedesign' ),
-				array( 'status' => 400 )
+				[ 'status' => 400 ]
 			);
 		}
 
@@ -158,10 +157,10 @@ class Multisite {
 		$is_updated = update_site_option( Constants::ONEDESIGN_MULTISITE_GOVERNING_SITE, $governing_site_id );
 
 		if ( ! $is_updated ) {
-			return new WP_Error(
+			return new \WP_Error(
 				'update_failed',
 				__( 'Failed to update governing site.', 'onedesign' ),
-				array( 'status' => 500 )
+				[ 'status' => 500 ]
 			);
 		}
 
@@ -169,7 +168,6 @@ class Multisite {
 		$multisite_info = Utils::get_all_multisites_info();
 
 		foreach ( $multisite_info as $site ) {
-
 			if ( ! switch_to_blog( (int) $site['id'] ) ) {
 				continue;
 			}
@@ -189,10 +187,10 @@ class Multisite {
 		}
 
 		return new WP_REST_Response(
-			array(
+			[
 				'success'        => true,
 				'governing_site' => $governing_site_id,
-			)
+			]
 		);
 	}
 
@@ -201,17 +199,17 @@ class Multisite {
 	 *
 	 * @param \WP_REST_Request $request The REST request.
 	 *
-	 * @return WP_REST_Response|WP_Error
+	 * @return \WP_REST_Response|\WP_Error
 	 */
-	public function add_multisite_sites( \WP_REST_Request $request ): WP_REST_Response|WP_Error {
+	public function add_multisite_sites( \WP_REST_Request $request ): WP_REST_Response|\WP_Error {
 
 		$site_ids = array_map( 'absint', (array) $request->get_param( 'site_ids' ) );
 
 		if ( empty( $site_ids ) || ! is_array( $site_ids ) ) {
-			return new WP_Error(
+			return new \WP_Error(
 				'invalid_site_ids',
 				__( 'Invalid site info provided.', 'onedesign' ),
-				array( 'status' => 400 )
+				[ 'status' => 400 ]
 			);
 		}
 
@@ -219,25 +217,25 @@ class Multisite {
 		$governing_site_id = get_site_option( Constants::ONEDESIGN_MULTISITE_GOVERNING_SITE, 0 );
 
 		if ( ! $governing_site_id ) {
-			return new WP_Error(
+			return new \WP_Error(
 				'no_governing_site',
 				__( 'No governing site set. Please set a governing site first.', 'onedesign' ),
-				array( 'status' => 400 )
+				[ 'status' => 400 ]
 			);
 		}
 
 		// get governing site details.
 		$governing_site_details = get_blog_details( $governing_site_id );
 		if ( ! $governing_site_details || empty( $governing_site_details->siteurl ) ) {
-			return new WP_Error(
+			return new \WP_Error(
 				'invalid_governing_site',
 				__( 'The governing site could not be found.', 'onedesign' ),
-				array( 'status' => 400 )
+				[ 'status' => 400 ]
 			);
 		}
 		$governing_site_url = $governing_site_details->siteurl;
 
-		$shared_sites = get_option( Constants::ONEDESIGN_SHARED_SITES, array() );
+		$shared_sites = get_option( Constants::ONEDESIGN_SHARED_SITES, [] );
 
 		foreach ( $site_ids as $site_id ) {
 
@@ -246,13 +244,13 @@ class Multisite {
 				continue;
 			}
 
-			$shared_sites[] = array(
+			$shared_sites[] = [
 				'id'          => $site_id,
 				'name'        => get_bloginfo( 'name' ),
 				'url'         => get_bloginfo( 'url' ),
 				'api_key'     => get_option( Constants::ONEDESIGN_API_KEY, '' ),
 				'is_editable' => false,
-			);
+			];
 
 			update_option( Constants::ONEDESIGN_SITE_TYPE, 'brand-site', false );
 			update_option( Constants::ONEDESIGN_GOVERNING_SITE_URL, $governing_site_url, false );
@@ -265,10 +263,10 @@ class Multisite {
 
 		// update shared sites in governing site.
 		if ( ! switch_to_blog( (int) $governing_site_id ) ) {
-			return new WP_Error(
+			return new \WP_Error(
 				sprintf( 'failed_to_switch_blog_%d', $governing_site_id ),
 				__( 'Failed to switch to governing site blog.', 'onedesign' ),
-				array( 'status' => 500 )
+				[ 'status' => 500 ]
 			);
 		}
 
@@ -277,27 +275,27 @@ class Multisite {
 		restore_current_blog();
 
 		return new WP_REST_Response(
-			array(
+			[
 				'success'     => true,
 				'added_sites' => $site_ids,
-			)
+			]
 		);
 	}
 
 	/**
 	 * Get all sites from current multisite setup.
 	 *
-	 * @return WP_REST_Response
+	 * @return \WP_REST_Response
 	 */
 	public function get_all_multisite_sites(): WP_REST_Response {
 
 		$all_multisites = Utils::get_all_multisites_info();
 
 		return new WP_REST_Response(
-			array(
+			[
 				'success' => true,
 				'sites'   => $all_multisites,
-			)
+			]
 		);
 	}
 }
