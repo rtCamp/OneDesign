@@ -39,9 +39,9 @@ class Settings {
 	 * Function to setup hooks.
 	 */
 	public function setup_hooks(): void {
-		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
-		add_action( 'admin_init', array( $this, 'handle_pattern_library_redirect' ) );
-		add_action( 'admin_init', array( $this, 'templates_page_redirection' ) );
+		add_action( 'admin_menu', [ $this, 'add_settings_page' ] );
+		add_action( 'admin_init', [ $this, 'handle_pattern_library_redirect' ] );
+		add_action( 'admin_init', [ $this, 'templates_page_redirection' ] );
 	}
 
 	/**
@@ -86,7 +86,7 @@ class Settings {
 			__( 'Settings', 'onedesign' ),
 			'manage_options',
 			'onedesign-settings',
-			array( $this, 'settings_page_content' )
+			[ $this, 'settings_page_content' ]
 		);
 
 		remove_submenu_page( 'onedesign', 'onedesign' );
@@ -101,7 +101,7 @@ class Settings {
 	 * @return void
 	 */
 	public function templates_page_redirection(): void {
-		$pages = array( 'onedesign-template-library' );
+		$pages = [ 'onedesign-template-library' ];
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! isset( $_GET['page'] ) || ! in_array( $_GET['page'], $pages, true ) ) {
@@ -115,12 +115,12 @@ class Settings {
 
 		// Check if a Pattern Library post already exists.
 		$existing_posts = get_posts(
-			array(
+			[
 				'post_type'        => Template::SLUG,
-				'post_status'      => array( 'publish', 'draft', 'pending', 'private' ),
+				'post_status'      => [ 'publish', 'draft', 'pending', 'private' ],
 				'numberposts'      => 1,
 				'suppress_filters' => false,
-			)
+			]
 		);
 
 		if ( ! empty( $existing_posts ) ) {
@@ -131,12 +131,12 @@ class Settings {
 
 		// If no post exists, create a new one.
 		$new_post_id = wp_insert_post(
-			array(
+			[
 				'post_type'    => Template::SLUG,
 				'post_title'   => esc_html__( 'Templates', 'onedesign' ),
 				'post_content' => '',
 				'post_status'  => 'draft',
-			)
+			]
 		);
 
 		if ( is_wp_error( $new_post_id ) ) {
@@ -157,7 +157,7 @@ class Settings {
 	 * @return void
 	 */
 	public function handle_pattern_library_redirect(): void {
-		$pages = array( 'onedesign-pattern-library', 'onedesign' );
+		$pages = [ 'onedesign-pattern-library', 'onedesign' ];
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! isset( $_GET['page'] ) || ! in_array( $_GET['page'], $pages, true ) ) {
@@ -198,12 +198,12 @@ class Settings {
 	public function create_and_open_pattern_library_post(): void {
 		// Check if a Pattern Library post already exists.
 		$existing_posts = get_posts(
-			array(
+			[
 				'post_type'        => Pattern::SLUG,
-				'post_status'      => array( 'publish', 'draft', 'pending', 'private' ),
+				'post_status'      => [ 'publish', 'draft', 'pending', 'private' ],
 				'numberposts'      => 1,
 				'suppress_filters' => false,
-			)
+			]
 		);
 
 		if ( ! empty( $existing_posts ) ) {
@@ -214,12 +214,12 @@ class Settings {
 
 		// If no post exists, create a new one.
 		$new_post_id = wp_insert_post(
-			array(
+			[
 				'post_type'    => Pattern::SLUG,
 				'post_title'   => esc_html__( 'Pattern Library', 'onedesign' ),
 				'post_content' => '<!-- wp:heading {"level":2} --><h2>Click on the "Patterns Selection" to push patterns to brand site.</h2><!-- /wp:heading -->',
 				'post_status'  => 'draft',
-			)
+			]
 		);
 
 		if ( is_wp_error( $new_post_id ) ) {

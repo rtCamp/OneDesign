@@ -40,9 +40,11 @@ class Plugin {
 		$this->load_configs();
 
 		// Load multisite functionality.
-		if ( Utils::is_multisite() ) {
-			$this->load_multisite_classes();
+		if ( ! Utils::is_multisite() ) {
+			return;
 		}
+
+		$this->load_multisite_classes();
 	}
 
 	/**

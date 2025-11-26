@@ -44,7 +44,7 @@ class Rest {
 		}
 
 		// allow cors header for all REST API requests.
-		add_filter( 'rest_pre_serve_request', array( $this, 'add_cors_headers' ), PHP_INT_MAX - 30, 4 );
+		add_filter( 'rest_pre_serve_request', [ $this, 'add_cors_headers' ], PHP_INT_MAX - 30, 4 );
 	}
 
 	/**

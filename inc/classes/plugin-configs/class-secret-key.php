@@ -30,7 +30,7 @@ class Secret_Key {
 	 * Setup WordPress hooks
 	 */
 	public function setup_hooks(): void {
-		add_action( 'admin_init', array( self::class, 'generate_secret_key' ) );
+		add_action( 'admin_init', [ self::class, 'generate_secret_key' ] );
 	}
 
 	/**
@@ -87,10 +87,10 @@ class Secret_Key {
 			$secret_key = self::generate_secret_key();
 		}
 		return new \WP_REST_Response(
-			array(
+			[
 				'success'    => true,
 				'secret_key' => $secret_key,
-			)
+			]
 		);
 	}
 
@@ -104,11 +104,11 @@ class Secret_Key {
 		$regenerated_key = self::generate_secret_key( true );
 
 		return new \WP_REST_Response(
-			array(
+			[
 				'success'    => true,
 				'message'    => __( 'Secret key regenerated successfully.', 'onedesign' ),
 				'secret_key' => $regenerated_key,
-			)
+			]
 		);
 	}
 }

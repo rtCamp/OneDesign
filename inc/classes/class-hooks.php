@@ -36,27 +36,27 @@ class Hooks {
 	 * @return void
 	 */
 	public function setup_hooks(): void {
-		add_action( 'admin_footer', array( $this, 'print_pattern_library_button_in_editor_js_template' ) );
-		add_action( 'admin_footer', array( $this, 'add_templates_button_to_editor' ) );
-		add_action( 'wp_ajax_register_block_patterns', array( $this, 'ajax_register_block_patterns' ) );
-		add_action( 'wp_ajax_nopriv_register_block_patterns', array( $this, 'ajax_register_block_patterns' ) );
-		add_action( 'init', array( $this, 'register_block_patterns_if_not_exist' ) );
+		add_action( 'admin_footer', [ $this, 'print_pattern_library_button_in_editor_js_template' ] );
+		add_action( 'admin_footer', [ $this, 'add_templates_button_to_editor' ] );
+		add_action( 'wp_ajax_register_block_patterns', [ $this, 'ajax_register_block_patterns' ] );
+		add_action( 'wp_ajax_nopriv_register_block_patterns', [ $this, 'ajax_register_block_patterns' ] );
+		add_action( 'init', [ $this, 'register_block_patterns_if_not_exist' ] );
 		add_filter( 'should_load_remote_block_patterns', '__return_false' );
-		add_action( 'after_setup_theme', array( $this, 'remove_core_block_patterns' ) );
-		add_filter( 'allowed_block_types_all', array( $this, 'allowed_block_types' ), 10, 2 );
+		add_action( 'after_setup_theme', [ $this, 'remove_core_block_patterns' ] );
+		add_filter( 'allowed_block_types_all', [ $this, 'allowed_block_types' ], 10, 2 );
 
 		// Create templates, patterns and template parts from saved options.
-		add_action( 'after_setup_theme', array( $this, 'create_template' ), 99 );
+		add_action( 'after_setup_theme', [ $this, 'create_template' ], 99 );
 
 		// add container for modal for site selection on activation.
-		add_action( 'admin_footer', array( $this, 'add_site_selection_modal' ) );
+		add_action( 'admin_footer', [ $this, 'add_site_selection_modal' ] );
 
 		// add body class for site selection modal.
-		add_filter( 'admin_body_class', array( $this, 'add_body_class_for_modal' ) );
-		add_filter( 'admin_body_class', array( $this, 'add_body_class_for_missing_sites' ) );
+		add_filter( 'admin_body_class', [ $this, 'add_body_class_for_modal' ] );
+		add_filter( 'admin_body_class', [ $this, 'add_body_class_for_missing_sites' ] );
 
 		// add setup page link to plugins page.
-		add_filter( 'plugin_action_links_' . ONEDESIGN_PLUGIN_LOADER_PLUGIN_BASENAME, array( $this, 'add_setup_page_link' ) );
+		add_filter( 'plugin_action_links_' . ONEDESIGN_PLUGIN_LOADER_PLUGIN_BASENAME, [ $this, 'add_setup_page_link' ] );
 	}
 
 	/**
@@ -140,7 +140,7 @@ class Hooks {
 		}
 
 		// get onedesign_shared_sites option.
-		$shared_sites = get_option( Constants::ONEDESIGN_SHARED_SITES, array() );
+		$shared_sites = get_option( Constants::ONEDESIGN_SHARED_SITES, [] );
 
 		// if shared_sites is empty or not an array, return the classes.
 		if ( empty( $shared_sites ) || ! is_array( $shared_sites ) ) {
@@ -167,28 +167,28 @@ class Hooks {
 			return;
 		}
 
-		$brand_site_post_ids = get_option( Constants::ONEDESIGN_BRAND_SITE_POST_IDS, array() );
+		$brand_site_post_ids = get_option( Constants::ONEDESIGN_BRAND_SITE_POST_IDS, [] );
 
-		$shared_templates = get_option( Constants::ONEDESIGN_SHARED_TEMPLATES, array() );
+		$shared_templates = get_option( Constants::ONEDESIGN_SHARED_TEMPLATES, [] );
 
-		$logs = array();
+		$logs = [];
 
-		$all_post_types = get_post_types( array( 'public' => true ), 'names' );
+		$all_post_types = get_post_types( [ 'public' => true ], 'names' );
 
 		// Remove post types that shouldn't have templates.
-		$excluded_types = array( 'attachment', 'wp_block', 'wp_template', 'wp_template_part', 'wp_navigation' );
+		$excluded_types = [ 'attachment', 'wp_block', 'wp_template', 'wp_template_part', 'wp_navigation' ];
 		$all_post_types = array_values( array_diff( $all_post_types, $excluded_types ) );
 
 		foreach ( $shared_templates as $template ) {
 			$res = register_block_template(
 				sanitize_text_field( $template['id'] ),
-				array(
+				[
 					'slug'        => isset( $template['slug'] ) ? sanitize_text_field( $template['slug'] ) : '',
 					'title'       => isset( $template['title'] ) ? sanitize_text_field( $template['title'] ) : '',
 					'description' => isset( $template['description'] ) ? sanitize_textarea_field( $template['description'] ) : '',
 					'content'     => $template['content'] ?? '',
 					'post_types'  => isset( $template['post_types'] ) ? array_map( 'sanitize_textarea_field', $template['post_types'] ) : $all_post_types,
-				)
+				]
 			);
 
 			$logs[] = sprintf(
@@ -199,19 +199,19 @@ class Hooks {
 			);
 		}
 
-		$shared_patterns = get_option( Constants::ONEDESIGN_SHARED_PATTERNS, array() );
+		$shared_patterns = get_option( Constants::ONEDESIGN_SHARED_PATTERNS, [] );
 		foreach ( $shared_patterns as $pattern ) {
 			if ( ! class_exists( '\WP_Block_Patterns_Registry' ) ) {
 				require_once ABSPATH . 'wp-includes/class-wp-block-patterns-registry.php';
 			}
 			$res    = register_block_pattern(
 				sanitize_text_field( $pattern['slug'] ),
-				array(
+				[
 					'title'       => isset( $pattern['title'] ) ? sanitize_text_field( $pattern['title'] ) : '',
 					'content'     => $pattern['content'] ?? '',
 					'description' => isset( $pattern['description'] ) ? sanitize_textarea_field( $pattern['description'] ) : '',
-					'postTypes'   => isset( $pattern['post_types'] ) ? array_map( 'sanitize_textarea_field', $pattern['post_types'] ) : array(),
-				)
+					'postTypes'   => isset( $pattern['post_types'] ) ? array_map( 'sanitize_textarea_field', $pattern['post_types'] ) : [],
+				]
 			);
 			$logs[] = sprintf(
 				/* translators: 1: Pattern slug. 2: Result. */
@@ -221,17 +221,17 @@ class Hooks {
 			);
 		}
 
-		$shared_template_parts = get_option( Constants::ONEDESIGN_SHARED_TEMPLATE_PARTS, array() );
+		$shared_template_parts = get_option( Constants::ONEDESIGN_SHARED_TEMPLATE_PARTS, [] );
 		foreach ( $shared_template_parts as $template_part ) {
 			// Check if template part already exists.
 			$existing = get_posts(
-				array(
+				[
 					'post_type'   => 'wp_template_part',
 					'name'        => sanitize_text_field( $template_part['slug'] ),
 					'post_status' => 'any',
 					'numberposts' => 1,
 					'fields'      => 'ids',
-				)
+				]
 			);
 
 			if ( ! empty( $existing ) ) {
@@ -244,13 +244,13 @@ class Hooks {
 			}
 
 			// Create the template part post.
-			$post_data = array(
+			$post_data = [
 				'post_type'    => 'wp_template_part',
 				'post_title'   => isset( $template_part['title'] ) ? sanitize_text_field( $template_part['title'] ) : '',
 				'post_name'    => isset( $template_part['slug'] ) ? sanitize_text_field( $template_part['slug'] ) : '',
 				'post_status'  => 'publish',
 				'post_content' => $template_part['content'] ?? '',
-			);
+			];
 
 			$post_id = wp_insert_post( $post_data );
 
@@ -262,15 +262,15 @@ class Hooks {
 					$post_id->get_error_message()
 				);
 				continue;
-			} else {
-				$logs[] = sprintf(
-					/* translators: 1: Template part slug. 2: Post ID. */
-					__( 'Template part created successfully: %1$s (ID: %2$d)', 'onedesign' ),
-					sanitize_text_field( $template_part['slug'] ),
-					$post_id
-				);
-				$brand_site_post_ids[] = $post_id;
 			}
+
+			$logs[] = sprintf(
+				/* translators: 1: Template part slug. 2: Post ID. */
+				__( 'Template part created successfully: %1$s (ID: %2$d)', 'onedesign' ),
+				sanitize_text_field( $template_part['slug'] ),
+				$post_id
+			);
+			$brand_site_post_ids[] = $post_id;
 
 			$current_theme = get_option( 'stylesheet' );
 			$theme_slug    = get_option( 'template' );
@@ -308,7 +308,7 @@ class Hooks {
 	public function allowed_block_types( bool|array $allowed_block_types, \WP_Block_Editor_Context $editor_context ): array|bool {
 		// Allow all block types in the Pattern Library post type.
 		if ( isset( $editor_context->post->post_type ) && ( Template::SLUG === $editor_context->post->post_type ) ) {
-			return array();
+			return [];
 		}
 		return $allowed_block_types;
 	}
@@ -374,7 +374,7 @@ class Hooks {
 	public function ajax_register_block_patterns(): void {
 		// Verify nonce for security.
 		if ( ! check_ajax_referer( 'onedesign_nonce', 'security', false ) ) {
-			wp_send_json_error( array( 'message' => 'Invalid security token.' ), 403 );
+			wp_send_json_error( [ 'message' => 'Invalid security token.' ], 403 );
 			return;
 		}
 
@@ -382,7 +382,7 @@ class Hooks {
 		$this->register_block_patterns_if_not_exist();
 
 		// Return success.
-		wp_send_json_success( array( 'message' => 'Patterns registered successfully' ) );
+		wp_send_json_success( [ 'message' => 'Patterns registered successfully' ] );
 	}
 
 	/**
@@ -407,20 +407,22 @@ class Hooks {
 			}
 
 			// Prepare pattern args.
-			$pattern_args = array(
+			$pattern_args = [
 				'title'       => $pattern_data['title'] ?? '',
 				'content'     => $pattern_data['content'] ?? '',
-				'categories'  => $pattern_data['categories'] ?? array(),
-				'keywords'    => $pattern_data['keywords'] ?? array(),
+				'categories'  => $pattern_data['categories'] ?? [],
+				'keywords'    => $pattern_data['keywords'] ?? [],
 				'description' => $pattern_data['description'] ?? '',
-			);
+			];
 
 			// Register categories if they are not registered.
 			if ( ! empty( $pattern_args['categories'] ) ) {
 				foreach ( $pattern_args['categories'] as $category ) {
-					if ( ! term_exists( $category, 'wp_pattern_category' ) ) {
-						wp_insert_term( $category, 'wp_pattern_category' );
+					if ( term_exists( $category, 'wp_pattern_category' ) ) {
+						continue;
 					}
+
+					wp_insert_term( $category, 'wp_pattern_category' );
 				}
 			}
 
@@ -442,9 +444,11 @@ class Hooks {
 			}
 
 			// Only register if we have required content.
-			if ( ! empty( $pattern_args['title'] ) && ! empty( $pattern_args['content'] ) ) {
-				register_block_pattern( $pattern_name, $pattern_args );
+			if ( empty( $pattern_args['title'] ) || empty( $pattern_args['content'] ) ) {
+				continue;
 			}
+
+			register_block_pattern( $pattern_name, $pattern_args );
 		}
 	}
 }

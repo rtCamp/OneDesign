@@ -26,7 +26,7 @@ class Assets {
 	 *
 	 * @var array
 	 */
-	private static array $localized_data = array();
+	private static array $localized_data = [];
 
 	/**
 	 * Protected class constructor
@@ -40,8 +40,8 @@ class Assets {
 	 * Setup WordPress hooks
 	 */
 	public function setup_hooks(): void {
-		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_scripts' ), 20, 1 );
-		add_action( 'admin_enqueue_scripts', array( $this, 'add_admin_scripts' ), 20, 1 );
+		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_scripts' ], 20, 1 );
+		add_action( 'admin_enqueue_scripts', [ $this, 'add_admin_scripts' ], 20, 1 );
 	}
 
 	/**
@@ -50,12 +50,12 @@ class Assets {
 	 * @return void
 	 */
 	private static function build_localized_data(): void {
-		self::$localized_data = array(
+		self::$localized_data = [
 			'restUrl'      => esc_url( home_url( '/wp-json' ) ),
 			'restNonce'    => wp_create_nonce( 'wp_rest' ),
 			'apiKey'       => get_option( Constants::ONEDESIGN_API_KEY, 'default_api_key' ),
 			'settingsLink' => esc_url( admin_url( 'admin.php?page=onedesign-settings' ) ),
-		);
+		];
 	}
 
 	/**
@@ -84,12 +84,12 @@ class Assets {
 				'OneDesignSettings',
 				array_merge(
 					self::$localized_data,
-					array(
+					[
 						'multisites'              => Utils::get_all_multisites_info(),
 						'isMultisite'             => Utils::is_multisite(),
 						'isGoverningSiteSelected' => Utils::is_governing_site_selected(),
 						'currentSiteId'           => Utils::is_multisite() ? get_current_blog_id() : null,
-					)
+					]
 				)
 			);
 
@@ -122,7 +122,6 @@ class Assets {
 			);
 
 			wp_enqueue_script( 'onedesign-setup-script' );
-
 		}
 
 		if ( Utils::is_multisite() && 'plugins-network' === $current_screen->id && ! Utils::is_governing_site_selected() ) {
@@ -140,14 +139,13 @@ class Assets {
 				'OneDesignMultiSiteSettings',
 				array_merge(
 					self::$localized_data,
-					array(
+					[
 						'multisites' => Utils::get_all_multisites_info(),
-					)
+					]
 				)
 			);
 
 			wp_enqueue_script( 'onedesign-multisite-setup-script' );
-
 		}
 
 		$this->register_style( 'onedesign-admin-style', 'admin.css' );
@@ -164,7 +162,6 @@ class Assets {
 		$current_screen = Utils::get_current_screen();
 
 		if ( $current_screen && Pattern::SLUG === $current_screen->id ) {
-
 			$this->register_script(
 				'onedesign-patterns-library-script',
 				'patterns-library.js'
@@ -182,24 +179,25 @@ class Assets {
 			wp_enqueue_style( 'onedesign-editor-style' );
 		}
 
-		if ( Template::SLUG === $current_screen->id ) {
-
-			$this->register_script(
-				'onedesign-templates-library-script',
-				'templates-library.js'
-			);
-
-			wp_localize_script(
-				'onedesign-templates-library-script',
-				'TemplateLibraryData',
-				self::$localized_data
-			);
-
-			wp_enqueue_script( 'onedesign-templates-library-script' );
-
-			$this->register_style( 'onedesign-template-style', 'template.css' );
-			wp_enqueue_style( 'onedesign-template-style' );
+		if ( Template::SLUG !== $current_screen->id ) {
+			return;
 		}
+
+		$this->register_script(
+			'onedesign-templates-library-script',
+			'templates-library.js'
+		);
+
+		wp_localize_script(
+			'onedesign-templates-library-script',
+			'TemplateLibraryData',
+			self::$localized_data
+		);
+
+		wp_enqueue_script( 'onedesign-templates-library-script' );
+
+		$this->register_style( 'onedesign-template-style', 'template.css' );
+		wp_enqueue_style( 'onedesign-template-style' );
 	}
 
 	/**
@@ -211,14 +209,14 @@ class Assets {
 	 *
 	 * @return array
 	 */
-	public function get_asset_meta( $file, $deps = array(), $ver = false ): array {
+	public function get_asset_meta( $file, $deps = [], $ver = false ): array {
 		$asset_meta_file = sprintf( '%s/%s.asset.php', untrailingslashit( ONEDESIGN_BUILD_PATH ), basename( $file, '.' . pathinfo( $file )['extension'] ) );
 		$asset_meta      = is_readable( $asset_meta_file )
 			? require_once $asset_meta_file
-			: array(
-				'dependencies' => array(),
+			: [
+				'dependencies' => [],
 				'version'      => $this->get_file_version( $file, $ver ),
-			);
+			];
 
 		$asset_meta['dependencies'] = array_merge( $deps, $asset_meta['dependencies'] );
 
@@ -236,7 +234,7 @@ class Assets {
 	 *                                    Default 'false'.
 	 * @return bool Whether the script has been registered. True on success, false on failure.
 	 */
-	public function register_script( $handle, $file, $deps = array(), $ver = false, $in_footer = true ): bool {
+	public function register_script( $handle, $file, $deps = [], $ver = false, $in_footer = true ): bool {
 
 		$file_path = sprintf( '%s/%s', ONEDESIGN_BUILD_PATH, $file );
 
@@ -270,7 +268,7 @@ class Assets {
 	 *
 	 * @return bool Whether the style has been registered. True on success, false on failure.
 	 */
-	public function register_style( $handle, $file, $deps = array(), $ver = false, $media = 'all' ): bool {
+	public function register_style( $handle, $file, $deps = [], $ver = false, $media = 'all' ): bool {
 
 		$file_path = sprintf( '%s/%s', ONEDESIGN_BUILD_PATH, $file );
 
@@ -287,8 +285,8 @@ class Assets {
 	/**
 	 * Get file version.
 	 *
-	 * @param string             $file File path.
-	 * @param int|string|boolean $ver  File version.
+	 * @param string          $file File path.
+	 * @param int|string|bool $ver  File version.
 	 *
 	 * @return bool|int|string
 	 */

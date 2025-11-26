@@ -36,7 +36,7 @@ abstract class Base {
 		/**
 		 * Actions
 		 */
-		add_action( 'init', array( $this, 'register_post_type' ) );
+		add_action( 'init', [ $this, 'register_post_type' ] );
 	}
 
 	/**
@@ -45,22 +45,22 @@ abstract class Base {
 	 * @return void
 	 */
 	final public function register_post_type(): void {
-
+		// phpcs:ignore SlevomatCodingStandard.Classes.DisallowLateStaticBindingForConstants.DisallowedLateStaticBindingForConstant -- @todo we don't need this.
 		if ( empty( static::SLUG ) ) {
 			return;
 		}
 
 		$args = $this->get_args();
-		$args = ( ! empty( $args ) && is_array( $args ) ) ? $args : array();
+		$args = ! empty( $args ) && is_array( $args ) ? $args : [];
 
 		$labels = $this->get_labels();
-		$labels = ( ! empty( $labels ) && is_array( $labels ) ) ? $labels : array();
+		$labels = ! empty( $labels ) && is_array( $labels ) ? $labels : [];
 
 		if ( ! empty( $labels ) && is_array( $labels ) ) {
 			$args['labels'] = $labels;
 		}
 
-		// phpcs:ignore WordPress.NamingConventions.ValidPostTypeSlug.NotStringLiteral
+		// phpcs:ignore WordPress.NamingConventions.ValidPostTypeSlug.NotStringLiteral, SlevomatCodingStandard.Classes.DisallowLateStaticBindingForConstants.DisallowedLateStaticBindingForConstant -- @todo we don't need this.
 		register_post_type( static::SLUG, $args );
 	}
 
@@ -72,13 +72,13 @@ abstract class Base {
 	 * @return array
 	 */
 	public function get_args(): array {
-		return array(
+		return [
 			'show_in_rest'  => true,
 			'public'        => true,
 			'has_archive'   => true,
 			'menu_position' => 6,
-			'supports'      => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments' ),
-		);
+			'supports'      => [ 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments' ],
+		];
 	}
 
 	/**
@@ -87,7 +87,8 @@ abstract class Base {
 	 * @return string Slug of post type.
 	 */
 	public function get_slug(): string {
-		return ( ! empty( static::SLUG ) ) ? static::SLUG : '';
+		// phpcs:ignore SlevomatCodingStandard.Classes.DisallowLateStaticBindingForConstants.DisallowedLateStaticBindingForConstant -- @todo we don't need this.
+		return ! empty( static::SLUG ) ? static::SLUG : '';
 	}
 
 	/**
