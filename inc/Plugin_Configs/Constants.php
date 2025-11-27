@@ -7,8 +7,6 @@
 
 namespace OneDesign\Plugin_Configs;
 
-use OneDesign\Traits\Singleton;
-
 /**
  * Class Constants
  */
@@ -128,23 +126,4 @@ class Constants {
 	 * @var string
 	 */
 	public const ONEDESIGN_MULTISITE_GOVERNING_SITE = 'onedesign_multisite_governing_site';
-
-	/**
-	 * Use Singleton trait.
-	 */
-	use Singleton;
-
-	/**
-	 * Protected class constructor
-	 */
-	protected function __construct() {
-		$this->define_constants();
-	}
-
-	/**
-	 * Define plugin constants
-	 */
-	private function define_constants(): void {
-		// future constants can be defined here.
-	}
 }

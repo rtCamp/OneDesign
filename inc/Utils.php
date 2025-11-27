@@ -8,33 +8,11 @@
 namespace OneDesign;
 
 use OneDesign\Plugin_Configs\Constants;
-use OneDesign\Traits\Singleton;
 
 /**
  * Class Utils
  */
 class Utils {
-
-	/**
-	 * Use Singleton trait.
-	 */
-	use Singleton;
-
-	/**
-	 * Protected class constructor
-	 */
-	protected function __construct() {
-		$this->setup_hooks();
-	}
-
-	/**
-	 * Function to setup hooks.
-	 *
-	 * @return void
-	 */
-	public function setup_hooks(): void {
-		// Add any hooks if needed in the future.
-	}
 
 	/**
 	 * Build OneDesign REST namespace.
@@ -483,7 +461,7 @@ class Utils {
 	/**
 	 * Get current screen object.
 	 *
-	 * @return \OneDesign\WP_Screen|null Current screen object or null if not available.
+	 * @return \WP_Screen|null Current screen object or null if not available.
 	 */
 	public static function get_current_screen(): ?\WP_Screen {
 		if ( ! function_exists( 'get_current_screen' ) ) {

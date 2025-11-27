@@ -5,21 +5,17 @@
  * @package OneDesign
  */
 
-namespace OneDesign;
+namespace OneDesign\Modules\Core;
 
+use OneDesign\Contracts\Interfaces\Registrable;
 use OneDesign\Plugin_Configs\Constants;
-use OneDesign\Post_Types\{ Pattern, Template };
-use OneDesign\Traits\Singleton;
+use OneDesign\Modules\Post_Types\{ Pattern, Template };
+use OneDesign\Utils;
 
 /**
  * Class Assets
  */
-class Assets {
-
-	/**
-	 * Use Singleton trait.
-	 */
-	use Singleton;
+class Assets implements Registrable {
 
 	/**
 	 * Localized data for scripts.
@@ -29,17 +25,16 @@ class Assets {
 	private static array $localized_data = [];
 
 	/**
-	 * Protected class constructor
+	 * Class constructor.
 	 */
-	protected function __construct() {
-		$this->setup_hooks();
-		self::build_localized_data();
+	public function __construct() {
+		$this->build_localized_data();
 	}
 
 	/**
-	 * Setup WordPress hooks
+	 * {@inheritDoc}
 	 */
-	public function setup_hooks(): void {
+	public function register_hooks(): void {
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_scripts' ], 20, 1 );
 		add_action( 'admin_enqueue_scripts', [ $this, 'add_admin_scripts' ], 20, 1 );
 	}

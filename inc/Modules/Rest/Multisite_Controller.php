@@ -5,51 +5,31 @@
  * @package OneDesign
  */
 
-namespace OneDesign\Rest;
+namespace OneDesign\Modules\Rest;
 
 use OneDesign\Plugin_Configs\{Constants, Secret_Key };
-use OneDesign\Traits\Singleton;
 use OneDesign\Utils;
 use WP_REST_Response;
 use WP_REST_Server;
 
 /**
- * Class Multisite
+ * Class Multisite_Controller
  */
-class Multisite {
+class Multisite_Controller extends Abstract_REST_Controller {
 
 	/**
-	 * Use Singleton trait.
+	 * {@inheritDoc}
 	 */
-	use Singleton;
+	public function register_hooks(): void {
+		if ( ! Utils::is_multisite() ) {
+			return;
+		}
 
-	/**
-	 * REST API namespace.
-	 *
-	 * @var string
-	 */
-	const NAMESPACE = Utils::NAMESPACE . '/multisite';
-
-	/**
-	 * Protected class constructor
-	 */
-	protected function __construct() {
-		$this->setup_hooks();
+		parent::register_hooks();
 	}
 
 	/**
-	 * Setup hooks.
-	 *
-	 * @return void
-	 */
-	protected function setup_hooks(): void {
-		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
-	}
-
-	/**
-	 * Register REST API routes.
-	 *
-	 * @return void
+	 * {@inheritDoc}
 	 */
 	public function register_routes(): void {
 		/**
@@ -62,12 +42,12 @@ class Multisite {
 				[
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_multisite_governing_site' ],
-					'permission_callback' => [ Basic_Options::class, 'permission_callback' ],
+					'permission_callback' => [ Basic_Options_Controller::class, 'permission_callback' ],
 				],
 				[
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => [ $this, 'set_multisite_governing_site' ],
-					'permission_callback' => [ Basic_Options::class, 'permission_callback' ],
+					'permission_callback' => [ Basic_Options_Controller::class, 'permission_callback' ],
 					'args'                => [
 						'governing_site_id' => [
 							'required'          => true,
@@ -89,7 +69,7 @@ class Multisite {
 				[
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => [ $this, 'add_multisite_sites' ],
-					'permission_callback' => [ Basic_Options::class, 'permission_callback' ],
+					'permission_callback' => [ Basic_Options_Controller::class, 'permission_callback' ],
 					'args'                => [
 						'site_ids' => [
 							'required' => true,
@@ -110,7 +90,7 @@ class Multisite {
 				[
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_all_multisite_sites' ],
-					'permission_callback' => [ Basic_Options::class, 'permission_callback' ],
+					'permission_callback' => [ Basic_Options_Controller::class, 'permission_callback' ],
 				],
 			]
 		);

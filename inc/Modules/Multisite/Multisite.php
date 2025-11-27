@@ -5,34 +5,21 @@
  * @package OneDesign
  */
 
-namespace OneDesign;
+namespace OneDesign\Modules\Multisite;
 
+use OneDesign\Contracts\Interfaces\Registrable;
 use OneDesign\Plugin_Configs\Constants;
-use OneDesign\Traits\Singleton;
+use OneDesign\Utils;
 
 /**
  * Class Multisite
  */
-class Multisite {
+class Multisite implements Registrable {
 
 	/**
-	 * Use Singleton trait.
+	 * {@inheritDoc}
 	 */
-	use Singleton;
-
-	/**
-	 * Protected class constructor
-	 */
-	protected function __construct() {
-		$this->setup_hooks();
-	}
-
-	/**
-	 * Setup hooks.
-	 *
-	 * @return void
-	 */
-	protected function setup_hooks(): void {
+	public function register_hooks(): void {
 
 		// check if current site setup is multisite or not.
 		if ( ! Utils::is_multisite() ) {

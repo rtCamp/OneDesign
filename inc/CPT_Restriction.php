@@ -7,18 +7,13 @@
 
 namespace OneDesign;
 
-use OneDesign\Traits\Singleton;
-use OneDesign\Post_Types\{ Pattern, Template };
+use OneDesign\Contracts\Interfaces\Registrable;
+use OneDesign\Modules\Post_Types\{ Pattern, Template };
 
 /**
  * Class CPT_Restriction
  */
-class CPT_Restriction {
-
-	/**
-	 * Use Singleton trait.
-	 */
-	use Singleton;
+class CPT_Restriction implements Registrable {
 
 	/**
 	 * Slug for the Design Sync menu.
@@ -28,16 +23,9 @@ class CPT_Restriction {
 	const MENU_SLUG = 'onedesign-design-sync';
 
 	/**
-	 * Protected class constructor
+	 * {@inheritDoc}
 	 */
-	protected function __construct() {
-		$this->setup_hooks();
-	}
-
-	/**
-	 * Function to setup hooks.
-	 */
-	public function setup_hooks(): void {
+	public function register_hooks(): void {
 		add_filter( 'register_post_type_args', [ $this, 'restrict_cpt' ], 5, 2 );
 		add_action( 'init', [ $this, 'unregister_cpt' ], 20 );
 		add_action( 'current_screen', [ $this, 'limit_pattern_library_posts' ] );

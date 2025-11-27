@@ -5,30 +5,19 @@
  * @package OneDesign
  */
 
-namespace OneDesign\Post_Types;
+namespace OneDesign\Modules\Post_Types;
 
-use OneDesign\Traits\Singleton;
+use OneDesign\Contracts\Interfaces\Registrable;
 
 /**
  * Class Meta
  */
-class Meta {
-
-	use Singleton;
+class Meta implements Registrable {
 
 	/**
-	 * Construct method.
+	 * {@inheritDoc}
 	 */
-	protected function __construct() {
-		$this->setup_hooks();
-	}
-
-	/**
-	 * Function to setup hook for registering the meta.
-	 *
-	 * @return void
-	 */
-	public function setup_hooks(): void {
+	public function register_hooks(): void {
 		// Register all the meta based on post type here.
 		add_action( 'init', [ $this, 'register_custom_meta' ], 10 );
 	}

@@ -5,47 +5,18 @@
  * @package OneDesign
  */
 
-namespace OneDesign\Rest;
+namespace OneDesign\Modules\Rest;
 
 use OneDesign\Plugin_Configs\Constants;
-use OneDesign\Traits\Singleton;
 use OneDesign\Utils;
 
 /**
- * Class Templates
+ * Class Templates_Controller
  */
-class Templates {
+class Templates_Controller extends Abstract_REST_Controller {
 
 	/**
-	 * REST namespace.
-	 */
-	const NAMESPACE = Utils::NAMESPACE . '/templates';
-
-	/**
-	 * Use singleton trait.
-	 */
-	use Singleton;
-
-	/**
-	 * Constructor
-	 */
-	protected function __construct() {
-		$this->setup_hooks();
-	}
-
-	/**
-	 * Setup hooks.
-	 *
-	 * @return void
-	 */
-	protected function setup_hooks(): void {
-		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
-	}
-
-	/**
-	 * Register routes.
-	 *
-	 * @return void
+	 * {@inheritDoc}
 	 */
 	public function register_routes(): void {
 
@@ -60,7 +31,7 @@ class Templates {
 			[
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'get_all_templates' ],
-				'permission_callback' => [ Basic_Options::class, 'permission_callback' ],
+				'permission_callback' => [ Basic_Options_Controller::class, 'permission_callback' ],
 			]
 		);
 
@@ -73,7 +44,7 @@ class Templates {
 			[
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'get_templates_from_connected_sites' ],
-				'permission_callback' => [ Basic_Options::class, 'permission_callback' ],
+				'permission_callback' => [ Basic_Options_Controller::class, 'permission_callback' ],
 			]
 		);
 
@@ -120,7 +91,7 @@ class Templates {
 			[
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => [ $this, 'apply_templates_to_sites' ],
-				'permission_callback' => [ Basic_Options::class, 'permission_callback' ],
+				'permission_callback' => [ Basic_Options_Controller::class, 'permission_callback' ],
 				'args'                => [
 					'sites'     => [
 						'required' => true,
@@ -143,7 +114,7 @@ class Templates {
 			[
 				'methods'             => \WP_REST_Server::DELETABLE,
 				'callback'            => [ $this, 'remove_template' ],
-				'permission_callback' => [ Basic_Options::class, 'permission_callback' ],
+				'permission_callback' => [ Basic_Options_Controller::class, 'permission_callback' ],
 				'args'                => [
 					'template_ids' => [
 						'required' => true,
@@ -189,7 +160,7 @@ class Templates {
 			[
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => [ $this, 'resync_applied_templates' ],
-				'permission_callback' => [ Basic_Options::class, 'permission_callback' ],
+				'permission_callback' => [ Basic_Options_Controller::class, 'permission_callback' ],
 				'args'                => [
 					'sites'     => [
 						'required' => true,

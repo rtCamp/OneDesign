@@ -16,6 +16,7 @@
 		"languages/",
 		"readme.txt",
 		"onedesign.php",
+		"custom-functions.php",
 		"uninstall.php"
 	],
 	"dependencies": {

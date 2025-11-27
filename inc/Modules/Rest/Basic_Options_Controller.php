@@ -5,47 +5,20 @@
  * @package OneDesign
  */
 
-namespace OneDesign\Rest;
+namespace OneDesign\Modules\Rest;
 
 use OneDesign\Plugin_Configs\{ Constants, Secret_Key };
-use OneDesign\Traits\Singleton;
 use WP_REST_Server;
 use WP_REST_Response;
 use WP_REST_Request;
 
 /**
- * Class Basic_Options
+ * Class Basic_Options_Controller
  */
-class Basic_Options {
+class Basic_Options_Controller extends Abstract_REST_Controller {
 
 	/**
-	 * Use Singleton trait.
-	 */
-	use Singleton;
-
-	/**
-	 * REST API namespace.
-	 *
-	 * @var string
-	 */
-	const NAMESPACE = 'onedesign/v1';
-
-	/**
-	 * Protected class constructor
-	 */
-	protected function __construct() {
-		$this->setup_hooks();
-	}
-
-	/**
-	 * Function to setup hooks.
-	 */
-	public function setup_hooks(): void {
-		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
-	}
-
-	/**
-	 * Register REST API routes.
+	 * {@inheritDoc}
 	 */
 	public function register_routes(): void {
 		/**
