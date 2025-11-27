@@ -28,7 +28,7 @@ class Assets implements Registrable {
 	 * Class constructor.
 	 */
 	public function __construct() {
-		$this->build_localized_data();
+		self::build_localized_data();
 	}
 
 	/**
