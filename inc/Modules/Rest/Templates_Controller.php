@@ -16,6 +16,11 @@ use OneDesign\Utils;
 class Templates_Controller extends Abstract_REST_Controller {
 
 	/**
+	 * The namespace for the REST API.
+	 */
+	public const NAMESPACE = parent::NAMESPACE . '/templates';
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public function register_routes(): void {

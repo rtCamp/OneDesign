@@ -18,6 +18,20 @@ use WP_REST_Server;
 class Multisite_Controller extends Abstract_REST_Controller {
 
 	/**
+	 * The namespace for the REST API.
+	 */
+	public const NAMESPACE = parent::NAMESPACE . '/multisite';
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * Reuses the namespace constant.
+	 *
+	 * @var string
+	 */
+	protected $namespace = self::NAMESPACE;
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public function register_hooks(): void {
