@@ -5,101 +5,95 @@
  * @package OneDesign
  */
 
+declare( strict_types=1 );
+
+namespace OneDesign;
+
 // If uninstall not called from WordPress, exit.
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
 
-if ( ! function_exists( 'onedesign_delete_options_post_data' ) ) {
-
-	/**
-	 * Function to delete options and posts data.
-	 *
-	 * @return void
-	 */
-	function onedesign_delete_options_post_data(): void {
-		// get brand site post ids & delete posts.
-		$brand_site_post_ids = get_option( 'onedesign_brand_site_post_ids', [] );
-		if ( is_array( $brand_site_post_ids ) && ! empty( $brand_site_post_ids ) ) {
-			foreach ( $brand_site_post_ids as $post_id ) {
-
-				// delete post meta associated with the post.
-				$meta_keys = get_post_meta( $post_id );
-				if ( is_array( $meta_keys ) && ! empty( $meta_keys ) ) {
-					foreach ( $meta_keys as $meta_key => $meta_value ) {
-						delete_post_meta( $post_id, $meta_key );
-					}
-				}
-
-				wp_delete_post( $post_id, true );
-			}
-		}
-
-		$options_to_delete = [
-			'onedesign_site_type',
-			'onedesign_brand_site_patterns',
-			'onedesign_child_site_public_key',
-			'onedesign_child_sites',
-			'onedesign_child_site_api_key',
-			'onedesign_shared_sites',
-			'onedesign_site_type_transient',
-			'onedesign_governing_site_url',
-			'onedesign_shared_templates',
-			'onedesign_brand_site_post_ids',
-			'onedesign_shared_patterns',
-			'onedesign_shared_template_parts',
-			'onedesign_shared_synced_patterns',
-			'onedesign_multisite_governing_site',
-		];
-
-		foreach ( $options_to_delete as $option ) {
-			delete_option( $option );
-		}
+/**
+ * Multisite loop for uninstalling from all sites.
+ */
+function multisite_uninstall(): void {
+	if ( ! is_multisite() ) {
+		uninstall();
+		return;
 	}
-}
 
-if ( ! function_exists( 'onedesign_plugin_deletion' ) ) {
+	delete_network_plugin_data();
 
-	/**
-	 * Function to clean up options when the plugin is uninstalled.
-	 *
-	 * @return void
-	 */
-	function onedesign_plugin_deletion(): void {
+	$site_ids = get_sites(
+		[
+			'fields' => 'ids',
+			'number' => 0,
+		]
+	) ?: [];
 
-		onedesign_delete_options_post_data();
-
-		// if it's multisite, delete site options as well.
-		if ( ! is_multisite() ) {
-			return;
+	foreach ( $site_ids as $site_id ) {
+		// phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.switch_to_blog_switch_to_blog
+		if ( ! switch_to_blog( (int) $site_id ) ) {
+			continue;
 		}
 
-		$site_options_to_delete = [
-			'onedesign_multisite_governing_site',
-		];
-
-		foreach ( $site_options_to_delete as $site_option ) {
-			delete_site_option( $site_option );
-		}
-
-		// for each site delete options.
-		$all_sites = get_sites( [ 'fields' => 'ids' ] );
-		foreach ( $all_sites as $site_id ) {
-			if ( ! switch_to_blog( (int) $site_id ) ) {
-				continue;
-			}
-
-			onedesign_delete_options_post_data();
-
-			restore_current_blog();
-		}
+		uninstall();
+		restore_current_blog();
 	}
 }
 
 /**
- * Uninstall the plugin and clean up options.
+ * The (site-specific) uninstall function.
  */
-onedesign_plugin_deletion();
+function uninstall(): void {
+	delete_plugin_data();
+}
+
+/**
+ * Delete multisite network plugin data.
+ */
+function delete_network_plugin_data(): void {
+	$options = [
+		'onedesign_multisite_governing_site',
+	];
+
+	foreach ( $options as $option ) {
+		delete_site_option( $option );
+	}
+}
+
+/**
+ * Deletes meta, options, transients, etc.
+ */
+function delete_plugin_data(): void {
+	// First delete posts from brand sites.
+	$brand_site_post_ids = (array) get_option( 'onedesign_brand_site_post_ids', [] );
+	foreach ( $brand_site_post_ids as $post_id ) {
+		wp_delete_post( (int) $post_id, true );
+	}
+
+	$options = [
+		'onedesign_site_type',
+		'onedesign_brand_site_patterns',
+		'onedesign_child_site_public_key',
+		'onedesign_child_sites',
+		'onedesign_child_site_api_key',
+		'onedesign_shared_sites',
+		'onedesign_site_type_transient',
+		'onedesign_governing_site_url',
+		'onedesign_shared_templates',
+		'onedesign_brand_site_post_ids',
+		'onedesign_shared_patterns',
+		'onedesign_shared_template_parts',
+		'onedesign_shared_synced_patterns',
+		'onedesign_multisite_governing_site',
+	];
+
+	foreach ( $options as $option ) {
+		delete_option( $option );
+	}
+}
+
+// Run the uninstaller.
+multisite_uninstall();

@@ -7,29 +7,18 @@
 
 namespace OneDesign\Plugin_Configs;
 
-use OneDesign\Traits\Singleton;
+use OneDesign\Contracts\Interfaces\Registrable;
 use OneDesign\Utils;
 
 /**
  * Class Secret_Key
  */
-class Secret_Key {
-	/**
-	 * Use Singleton trait.
-	 */
-	use Singleton;
+class Secret_Key implements Registrable {
 
 	/**
-	 * Protected class constructor
+	 * {@inheritDoc}
 	 */
-	protected function __construct() {
-		$this->setup_hooks();
-	}
-
-	/**
-	 * Setup WordPress hooks
-	 */
-	public function setup_hooks(): void {
+	public function register_hooks(): void {
 		add_action( 'admin_init', [ self::class, 'generate_secret_key' ] );
 	}
 

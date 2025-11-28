@@ -43,11 +43,8 @@
 		"psr-4": {
 			"OneDesign\\": "inc/"
 		},
-		"classmap": [
-			"inc/"
-		],
 		"files": [
-			"./inc/helpers/custom-functions.php"
+			"custom-functions.php"
 		]
 	},
 	"require": {

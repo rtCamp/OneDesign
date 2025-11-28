@@ -5,37 +5,19 @@
  * @package OneDesign
  */
 
-namespace OneDesign\Post_Types;
+namespace OneDesign\Modules\Post_Types;
 
-use OneDesign\Traits\Singleton;
+use OneDesign\Contracts\Interfaces\Registrable;
 
 /**
  * Base class to register post types.
  */
-abstract class Base {
+abstract class Abstract_Post_Type implements Registrable {
 
 	/**
-	 * Use Singleton trait.
+	 * {@inheritDoc}
 	 */
-	use Singleton;
-
-	/**
-	 * Construct method.
-	 */
-	final protected function __construct() {
-		$this->setup_hooks();
-	}
-
-	/**
-	 * To register action/filters.
-	 *
-	 * @return void
-	 */
-	protected function setup_hooks(): void {
-
-		/**
-		 * Actions
-		 */
+	public function register_hooks(): void {
 		add_action( 'init', [ $this, 'register_post_type' ] );
 	}
 

@@ -5,12 +5,12 @@
  * @package OneDesign
  */
 
-namespace OneDesign\Post_Types;
+namespace OneDesign\Modules\Post_Types;
 
 /**
  * Class Pattern
  */
-class Pattern extends Base {
+class Pattern extends Abstract_Post_Type {
 
 	/**
 	 * Slug of post type.

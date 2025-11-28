@@ -6,20 +6,16 @@
  * @package OneDesign
  */
 
-namespace OneDesign;
+namespace OneDesign\Modules\Settings;
 
-use OneDesign\Traits\Singleton;
-use OneDesign\Post_Types\{ Pattern, Template };
+use OneDesign\Contracts\Interfaces\Registrable;
+use OneDesign\Modules\Post_Types\{ Pattern, Template };
+use OneDesign\Utils;
 
 /**
  * Class Settings
  */
-class Settings {
-
-	/**
-	 * Use Singleton trait.
-	 */
-	use Singleton;
+class Admin implements Registrable {
 
 	/**
 	 * Settings page slug.
@@ -29,16 +25,9 @@ class Settings {
 	const PAGE_SLUG = 'onedesign';
 
 	/**
-	 * Construct method.
+	 * {@inheritDoc}
 	 */
-	protected function __construct() {
-		$this->setup_hooks();
-	}
-
-	/**
-	 * Function to setup hooks.
-	 */
-	public function setup_hooks(): void {
+	public function register_hooks(): void {
 		add_action( 'admin_menu', [ $this, 'add_settings_page' ] );
 		add_action( 'admin_init', [ $this, 'handle_pattern_library_redirect' ] );
 		add_action( 'admin_init', [ $this, 'templates_page_redirection' ] );

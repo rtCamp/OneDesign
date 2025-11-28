@@ -6,10 +6,10 @@
 >
 	<description>Sniffs for OneDesign plugin</description>
 
-	<!--
-		What to scan: include any root-level PHP files, and the /inc folder -->
+	<!-- What to scan: include any root-level PHP files, and the /inc folder -->
 	<file>./inc/</file>
 	<file>./onedesign.php</file>
+	<file>./custom-functions.php</file>
 	<file>./uninstall.php</file>
 
 	<!-- These are excluded from the above paths.-->
@@ -37,19 +37,19 @@
 	<!-- Set severity to 1 to see everything that isn't effectively turned off. -->
 	<arg name="severity" value="1" />
 
-	
+
 
 	<!-- Ruleset Config: set these to match your project constraints. -->
 
 	<!--
 		Tests for PHP version compatibility.
-	https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards#Recomended-additional-rulesets
+		@see: https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards#Recomended-additional-rulesets
 	-->
 	<config name="testVersion" value="8.0-" />
 
 	<!--
 		Tests for WordPress version compatibility.
-	https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/wiki/Customizable-sniff-properties
+		@see: https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/wiki/Customizable-sniff-properties
 	-->
 	<config name="minimum_wp_version" value="6.8" />
 
@@ -122,7 +122,7 @@
 
 	<!--
 		Slevomat Coding Standards to keep our code clean and modern.
-		See: https://github.com/slevomat/coding-standard/tree/master#alphabetical-list-of-sniffs
+		@see: https://github.com/slevomat/coding-standard/tree/master#alphabetical-list-of-sniffs
 	-->
 	<rule ref="SlevomatCodingStandard.Arrays.ArrayAccess" />
 	<rule ref="SlevomatCodingStandard.Arrays.DisallowImplicitArrayCreation" />

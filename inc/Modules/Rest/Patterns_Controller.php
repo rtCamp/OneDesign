@@ -5,48 +5,23 @@
  * @package OneDesign
  */
 
-namespace OneDesign\Rest;
+namespace OneDesign\Modules\Rest;
 
 use OneDesign\Plugin_Configs\Constants;
-use OneDesign\Traits\Singleton;
 use OneDesign\Utils;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
 
 /**
- * Class Patterns
+ * Class Patterns_Controller
  */
-class Patterns {
+class Patterns_Controller extends Abstract_REST_Controller {
 
 	/**
-	 * Use Singleton trait.
+	 * {@inheritDoc}
 	 */
-	use Singleton;
-
-	/**
-	 * REST namespace.
-	 */
-	const NAMESPACE = Utils::NAMESPACE;
-
-	/**
-	 * Constructor.
-	 */
-	protected function __construct() {
-		$this->setup_hooks();
-	}
-
-	/**
-	 * Setup hooks for the class.
-	 */
-	public function setup_hooks(): void {
-		add_action( 'rest_api_init', [ $this, 'register_rest_routes' ] );
-	}
-
-	/**
-	 * Register REST routes for the plugin.
-	 */
-	public function register_rest_routes(): void {
+	public function register_routes(): void {
 
 		/**
 		 * Get all local patterns both registered and user-created.
@@ -57,7 +32,7 @@ class Patterns {
 			[
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'get_local_patterns' ],
-				'permission_callback' => [ Basic_Options::class, 'permission_callback' ],
+				'permission_callback' => [ Basic_Options_Controller::class, 'permission_callback' ],
 			]
 		);
 
@@ -83,7 +58,7 @@ class Patterns {
 			[
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'get_all_brand_site_patterns' ],
-				'permission_callback' => [ Basic_Options::class, 'permission_callback' ],
+				'permission_callback' => [ Basic_Options_Controller::class, 'permission_callback' ],
 			]
 		);
 
@@ -96,7 +71,7 @@ class Patterns {
 			[
 				'methods'             => WP_REST_Server::DELETABLE,
 				'callback'            => [ $this, 'request_remove_brand_site_patterns' ],
-				'permission_callback' => [ Basic_Options::class, 'permission_callback' ],
+				'permission_callback' => [ Basic_Options_Controller::class, 'permission_callback' ],
 				'args'                => [
 					'pattern_names' => [
 						'required'          => true,
@@ -147,7 +122,7 @@ class Patterns {
 			[
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'get_pattern_categories' ],
-				'permission_callback' => [ Basic_Options::class, 'permission_callback' ],
+				'permission_callback' => [ Basic_Options_Controller::class, 'permission_callback' ],
 			]
 		);
 
@@ -160,7 +135,7 @@ class Patterns {
 			[
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'get_configured_child_sites' ],
-				'permission_callback' => [ Basic_Options::class, 'permission_callback' ],
+				'permission_callback' => [ Basic_Options_Controller::class, 'permission_callback' ],
 			]
 		);
 
@@ -173,7 +148,7 @@ class Patterns {
 			[
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => [ $this, 'push_patterns_to_targets' ],
-				'permission_callback' => [ Basic_Options::class, 'permission_callback' ],
+				'permission_callback' => [ Basic_Options_Controller::class, 'permission_callback' ],
 				'args'                => [
 					'pattern_names'   => [
 						'required'          => true,

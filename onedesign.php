@@ -5,6 +5,7 @@
  * Author: rtCamp
  * Author URI: https://rtcamp.com
  * Plugin URI: https://github.com/rtCamp/OneDesign/
+ * Update URI: https://github.com/rtCamp/OneDesign/
  * License: GPL2+
  * License URI: https://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain: onedesign
@@ -47,11 +48,11 @@ if ( ! \OneDesign\Autoloader::autoload() ) {
 }
 
 // Load the plugin.
-if ( class_exists( 'OneDesign\Plugin' ) ) {
+if ( class_exists( 'OneDesign\Main' ) ) {
 	add_action(
 		'plugins_loaded',
 		static function (): void {
-			\OneDesign\Plugin::get_instance();
+			\OneDesign\Main::instance();
 
 			// @todo remove before submitting to .org.
 			load_plugin_textdomain( 'onedesign', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );

@@ -7,35 +7,19 @@
 
 namespace OneDesign;
 
+use OneDesign\Contracts\Interfaces\Registrable;
 use OneDesign\Plugin_Configs\Constants;
-use OneDesign\Traits\Singleton;
-use OneDesign\Post_Types\{ Pattern, Template };
+use OneDesign\Modules\Post_Types\{ Pattern, Template };
 
 /**
  * Class Hooks
  */
-class Hooks {
+class Hooks implements Registrable {
 
 	/**
-	 * Use Singleton trait.
+	 * {@inheritDoc}
 	 */
-	use Singleton;
-
-	/**
-	 * Protected class constructor
-	 *
-	 * @return void
-	 */
-	protected function __construct() {
-		$this->setup_hooks();
-	}
-
-	/**
-	 * Function to setup hooks.
-	 *
-	 * @return void
-	 */
-	public function setup_hooks(): void {
+	public function register_hooks(): void {
 		add_action( 'admin_footer', [ $this, 'print_pattern_library_button_in_editor_js_template' ] );
 		add_action( 'admin_footer', [ $this, 'add_templates_button_to_editor' ] );
 		add_action( 'wp_ajax_register_block_patterns', [ $this, 'ajax_register_block_patterns' ] );
