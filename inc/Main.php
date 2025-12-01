@@ -25,19 +25,20 @@ final class Main {
 	 */
 	private const REGISTRABLE_CLASSES = [
 		Modules\Core\Assets::class,
+		Modules\Core\Rest::class,
 		Modules\Settings\Admin::class,
-		Modules\Multisite\Multisite::class,
-		Modules\Rest\Rest::class,
+		Modules\Settings\Settings::class,
+		Modules\Multisite\Admin::class,
+		Modules\Multisite\Settings::class,
 		Modules\Rest\Basic_Options_Controller::class,
+		Modules\Rest\Multisite_Controller::class,
 		Modules\Rest\Patterns_Controller::class,
 		Modules\Rest\Templates_Controller::class,
-		Modules\Rest\Multisite_Controller::class,
+		Modules\Post_Types\Admin::class,
+		Modules\Post_Types\CPT_Restriction::class,
+		Modules\Post_Types\Meta::class,
 		Modules\Post_Types\Pattern::class,
 		Modules\Post_Types\Template::class,
-		Modules\Post_Types\Meta::class,
-		Hooks::class,
-		CPT_Restriction::class,
-		Plugin_Configs\Secret_Key::class,
 	];
 
 	/**

@@ -2,24 +2,35 @@
 /**
  * Hooks class to handle all the hooks related functionalities.
  *
- * @package OneDesign
+ * @package OneDesin\Modules\Post_Types;
  */
 
-namespace OneDesign;
+namespace OneDesign\Modules\Post_Types;
 
 use OneDesign\Contracts\Interfaces\Registrable;
-use OneDesign\Plugin_Configs\Constants;
-use OneDesign\Modules\Post_Types\{ Pattern, Template };
+use OneDesign\Modules\Settings\Admin as SettingsAdmin;
+use OneDesign\Modules\Settings\Settings;
 
 /**
- * Class Hooks
+ * Class Admin
  */
-class Hooks implements Registrable {
+class Admin implements Registrable {
+	/**
+	 * The menu slug for the admin menu.
+	 */
+	private const MENU_SLUG = SettingsAdmin::MENU_SLUG;
+
+	/**
+	 * Screens used for redirects.
+	 */
+	private const PATTERN_REDIRECT_SCREEN  = 'onedesign-pattern-library';
+	private const TEMPLATE_REDIRECT_SCREEN = 'onedesign-template-library';
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public function register_hooks(): void {
+		add_action( 'admin_menu', [ $this, 'add_settings_page' ] );
 		add_action( 'admin_footer', [ $this, 'print_pattern_library_button_in_editor_js_template' ] );
 		add_action( 'admin_footer', [ $this, 'add_templates_button_to_editor' ] );
 		add_action( 'wp_ajax_register_block_patterns', [ $this, 'ajax_register_block_patterns' ] );
@@ -31,113 +42,41 @@ class Hooks implements Registrable {
 
 		// Create templates, patterns and template parts from saved options.
 		add_action( 'after_setup_theme', [ $this, 'create_template' ], 99 );
-
-		// add container for modal for site selection on activation.
-		add_action( 'admin_footer', [ $this, 'add_site_selection_modal' ] );
-
-		// add body class for site selection modal.
-		add_filter( 'admin_body_class', [ $this, 'add_body_class_for_modal' ] );
-		add_filter( 'admin_body_class', [ $this, 'add_body_class_for_missing_sites' ] );
-
-		// add setup page link to plugins page.
-		add_filter( 'plugin_action_links_' . ONEDESIGN_PLUGIN_LOADER_PLUGIN_BASENAME, [ $this, 'add_setup_page_link' ] );
+		// Plugin specific redirects.
+		add_action( 'admin_init', [ $this, 'handle_pattern_library_redirect' ] );
+		add_action( 'admin_init', [ $this, 'templates_page_redirection' ] );
 	}
 
 	/**
-	 * Add setup page link to plugins page.
-	 *
-	 * @param array $links Existing plugin action links.
-	 *
-	 * @return array Modified plugin action links.
-	 */
-	public function add_setup_page_link( $links ): array {
-		$setup_link = sprintf(
-			'<a href="%s">%s</a>',
-			esc_url( admin_url( 'admin.php?page=onedesign-settings' ) ),
-			__( 'Settings', 'onedesign' )
-		);
-		array_unshift( $links, $setup_link );
-		return $links;
-	}
-
-	/**
-	 * Add site selection modal to admin footer.
+	 * Add a settings page.
 	 *
 	 * @return void
 	 */
-	public function add_site_selection_modal(): void {
-		$current_screen = Utils::get_current_screen();
-		if ( ! $current_screen || 'plugins' !== $current_screen->base ) {
+	public function add_settings_page(): void {
+		// Add plugin specific submenu pages.
+		if ( ! Settings::is_governing_site() ) {
 			return;
 		}
 
-		// get current site type.
-		$site_type = Utils::get_current_site_type();
-		if ( ! empty( $site_type ) ) {
-			return;
-		}
+		add_submenu_page(
+			self::MENU_SLUG,
+			__( 'Pattern Library', 'onedesign' ),
+			__( 'Pattern Library', 'onedesign' ),
+			'manage_options',
+			self::PATTERN_REDIRECT_SCREEN,
+			'__return_null',
+			2
+		);
 
-		?>
-		<div class="wrap">
-			<div id="onedesign-site-selection-modal" class="onedesign-modal"></div>
-		</div>
-		<?php
-	}
-
-	/**
-	 * Create global variable onedesign_sites with site info.
-	 *
-	 * @param string $classes Existing body classes.
-	 *
-	 * @return string
-	 */
-	public function add_body_class_for_modal( $classes ): string {
-		$current_screen = Utils::get_current_screen();
-		if ( ! $current_screen || 'plugins' !== $current_screen->base ) {
-			return $classes;
-		}
-
-		// get current site type.
-		$site_type = Utils::get_current_site_type();
-
-		if ( ! empty( $site_type ) ) {
-			return $classes;
-		}
-
-		// add onedesign-site-selection-modal class to body.
-		$classes .= ' onedesign-site-selection-modal ';
-		return $classes;
-	}
-
-	/**
-	 * Add body class for missing sites.
-	 *
-	 * @param string $classes Existing body classes.
-	 *
-	 * @return string
-	 */
-	public function add_body_class_for_missing_sites( $classes ): string {
-		$current_screen = Utils::get_current_screen();
-
-		if ( ! $current_screen ) {
-			return $classes;
-		}
-
-		// get onedesign_shared_sites option.
-		$shared_sites = get_option( Constants::ONEDESIGN_SHARED_SITES, [] );
-
-		// if shared_sites is empty or not an array, return the classes.
-		if ( empty( $shared_sites ) || ! is_array( $shared_sites ) ) {
-			$classes .= ' onedesign-missing-brand-sites ';
-
-			// remove submenu pages.
-			remove_submenu_page( 'onedesign', 'onedesign-pattern-library' );
-			remove_submenu_page( 'onedesign', 'onedesign-template-library' );
-
-			return $classes;
-		}
-
-		return $classes;
+		add_submenu_page(
+			self::MENU_SLUG,
+			__( 'Templates', 'onedesign' ),
+			__( 'Template Library', 'onedesign' ),
+			'manage_options',
+			self::TEMPLATE_REDIRECT_SCREEN,
+			'__return_null',
+			2
+		);
 	}
 
 	/**
@@ -147,7 +86,7 @@ class Hooks implements Registrable {
 	 */
 	public function create_template(): void {
 
-		if ( Utils::is_governing_site() ) {
+		if ( Settings::is_governing_site() ) {
 			return;
 		}
 
@@ -291,7 +230,7 @@ class Hooks implements Registrable {
 	 */
 	public function allowed_block_types( bool|array $allowed_block_types, \WP_Block_Editor_Context $editor_context ): array|bool {
 		// Allow all block types in the Pattern Library post type.
-		if ( isset( $editor_context->post->post_type ) && ( Template::SLUG === $editor_context->post->post_type ) ) {
+		if ( isset( $editor_context->post->post_type ) && ( Template::get_slug() === $editor_context->post->post_type ) ) {
 			return [];
 		}
 		return $allowed_block_types;
@@ -312,8 +251,8 @@ class Hooks implements Registrable {
 	 * @return void
 	 */
 	public function print_pattern_library_button_in_editor_js_template(): void {
-		$current_screen = Utils::get_current_screen();
-		if ( ! $current_screen || Pattern::SLUG !== $current_screen->post_type ) {
+		$current_screen = get_current_screen();
+		if ( ! $current_screen instanceof \WP_Screen || Pattern::get_slug() !== $current_screen->post_type ) {
 			return;
 		}
 		?>
@@ -334,8 +273,8 @@ class Hooks implements Registrable {
 	 * @return void
 	 */
 	public function add_templates_button_to_editor(): void {
-		$current_screen = Utils::get_current_screen();
-		if ( ! $current_screen || Template::SLUG !== $current_screen->post_type ) {
+		$current_screen = get_current_screen();
+		if ( ! $current_screen instanceof \WP_Screen || Template::get_slug() !== $current_screen->post_type ) {
 			return;
 		}
 		?>
@@ -359,7 +298,6 @@ class Hooks implements Registrable {
 		// Verify nonce for security.
 		if ( ! check_ajax_referer( 'onedesign_nonce', 'security', false ) ) {
 			wp_send_json_error( [ 'message' => 'Invalid security token.' ], 403 );
-			return;
 		}
 
 		// Call the registration function.
@@ -434,5 +372,112 @@ class Hooks implements Registrable {
 
 			register_block_pattern( $pattern_name, $pattern_args );
 		}
+	}
+
+	/**
+	 * Handle the redirect to create or open the Templates post.
+	 *
+	 * This function checks if the Templates post exists and redirects to it,
+	 * or creates a new one if it doesn't exist.
+	 *
+	 * @return void
+	 */
+	public function templates_page_redirection(): void {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! isset( $_GET['page'] ) || self::TEMPLATE_REDIRECT_SCREEN !== strtolower( sanitize_text_field( $_GET['page'] ) ) ) {
+			return;
+		}
+
+		// Check if a Pattern Library post already exists.
+		$existing_posts = get_posts(
+			[
+				'post_type'        => Template::get_slug(),
+				'post_status'      => [ 'publish', 'draft', 'pending', 'private' ],
+				'numberposts'      => 1,
+				'suppress_filters' => false,
+			]
+		);
+
+		if ( ! empty( $existing_posts ) ) {
+			// Redirect to edit the existing post.
+			wp_safe_redirect( admin_url( 'post.php?post=' . $existing_posts[0]->ID . '&action=edit' ) );
+			exit;
+		}
+
+		// If no post exists, create a new one.
+		$new_post_id = wp_insert_post(
+			[
+				'post_type'    => Template::get_slug(),
+				'post_title'   => esc_html__( 'Templates', 'onedesign' ),
+				'post_content' => '',
+				'post_status'  => 'draft',
+			]
+		);
+
+		if ( is_wp_error( $new_post_id ) ) {
+			wp_die( esc_html__( 'Error creating template post.', 'onedesign' ) );
+		}
+
+		// Redirect to the newly created post for editing.
+		wp_safe_redirect( admin_url( 'post.php?post=' . $new_post_id . '&action=edit' ) );
+		exit;
+	}
+
+	/**
+	 * Handle the redirect to create or open the Pattern Library post.
+	 *
+	 * This function checks if the Pattern Library post exists and redirects to it,
+	 * or creates a new one if it doesn't exist.
+	 *
+	 * @return void
+	 */
+	public function handle_pattern_library_redirect(): void {
+		$pages = [ self::PATTERN_REDIRECT_SCREEN, self::MENU_SLUG ];
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! isset( $_GET['page'] ) || ! in_array( strtolower( sanitize_text_field( $_GET['page'] ) ), $pages, true ) ) {
+			return;
+		}
+
+		$this->create_and_open_pattern_library_post();
+	}
+
+	/**
+	 * Callback function to create and open a new Pattern Library post.
+	 */
+	private function create_and_open_pattern_library_post(): void {
+		// Check if a Pattern Library post already exists.
+		$existing_posts = get_posts(
+			[
+				'post_type'        => Pattern::get_slug(),
+				'post_status'      => [ 'publish', 'draft', 'pending', 'private' ],
+				'numberposts'      => 1,
+				'suppress_filters' => false,
+			]
+		);
+
+		if ( ! empty( $existing_posts ) ) {
+			// Redirect to edit the existing post.
+			wp_safe_redirect( admin_url( 'post.php?post=' . $existing_posts[0]->ID . '&action=edit' ) );
+			exit;
+		}
+
+		// If no post exists, create a new one.
+		$new_post_id = wp_insert_post(
+			[
+				'post_type'    => Pattern::get_slug(),
+				'post_title'   => esc_html__( 'Pattern Library', 'onedesign' ),
+				'post_content' => '<!-- wp:heading {"level":2} --><h2>Click on the "Patterns Selection" to push patterns to brand site.</h2><!-- /wp:heading -->',
+				'post_status'  => 'draft',
+			]
+		);
+
+		if ( is_wp_error( $new_post_id ) ) {
+			wp_die( esc_html__( 'Error creating Pattern Library post.', 'onedesign' ) );
+		}
+
+		// Redirect to the newly created post for editing.
+		wp_safe_redirect( admin_url( 'post.php?post=' . $new_post_id . '&action=edit' ) );
+		exit;
 	}
 }

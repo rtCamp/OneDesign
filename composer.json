@@ -42,10 +42,7 @@
 	"autoload": {
 		"psr-4": {
 			"OneDesign\\": "inc/"
-		},
-		"files": [
-			"custom-functions.php"
-		]
+		}
 	},
 	"require": {
 		"php": "^8"

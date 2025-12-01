@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is to handle OneDesign Multisite related functionality.
+ * Multisite-specific settings and utilities.
  *
  * @package OneDesign
  */
@@ -8,86 +8,102 @@
 namespace OneDesign\Modules\Multisite;
 
 use OneDesign\Contracts\Interfaces\Registrable;
-use OneDesign\Plugin_Configs\Constants;
-use OneDesign\Utils;
+use OneDesign\Modules\Settings\Settings as AdminSettings;
 
 /**
- * Class Multisite
+ * Class Settings
  */
-class Multisite implements Registrable {
+class Settings implements Registrable {
+	/**
+	 * Multisite governing site id
+	 *
+	 * @var string
+	 */
+	public const OPTION_MULTISITE_GOVERNING_SITE = 'onedesign_multisite_governing_site';
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public function register_hooks(): void {
-
 		// check if current site setup is multisite or not.
-		if ( ! Utils::is_multisite() ) {
+		if ( ! is_multisite() ) {
 			return;
 		}
 
-		// add governing site selection modal on network admin plugins page.
-		add_action( 'admin_footer', [ $this, 'render_governing_site_modal' ] );
-
-		// add admin_body_class class of onedesign-multisite-selection-modal on network admin plugins page.
-		add_filter( 'admin_body_class', [ $this, 'add_admin_body_class' ] );
-
 		// add onedesign_multisite_api_key_generated action to change same key in governing site.
-		add_action( 'onedesign_multisite_api_key_generated', [ $this, 'sync_api_key_to_governing_site' ], 10, 2 );
+		add_action( 'onedesign_regenerate_api_key', [ $this, 'sync_api_key_to_governing_site' ], 10, 2 );
 
 		// auto assign brand-site on new site creation if governing site is set.
-		add_action( 'wp_initialize_site', [ $this, 'assign_brand_site_on_new_site_creation' ], 10, 2 );
+		add_action( 'wp_initialize_site', [ $this, 'assign_brand_site_on_new_site_creation' ], 10 );
 
 		// listen to option changes for blogname, siteurl and home to update into governing site table.
 		add_action( 'updated_option', [ $this, 'update_site_details_in_governing_site_table' ], 10, 3 );
 	}
 
 	/**
-	 * Render governing site selection modal.
+	 * Get the governing site for multisite setup.
 	 *
-	 * @return void
+	 * @return ?int Governing site ID, or 0 if not set. null if not multisite.
 	 */
-	public function render_governing_site_modal(): void {
-
-		if ( ! is_network_admin() ) {
-			return;
+	public static function get_multisite_governing_site_id(): ?int {
+		if ( ! is_multisite() ) {
+			return null;
 		}
 
-		$current_screen = Utils::get_current_screen();
-
-		if ( $current_screen && 'plugins-network' !== $current_screen->id ) {
-			return;
-		}
-
-		if ( Utils::is_governing_site_selected() ) {
-			return;
-		}
-
-		?>
-		<div class="wrap">
-			<div id="onedesign-multisite-selection-modal" class="onedesign-modal"></div>
-		</div>
-		<?php
+		$governing_site_id = get_site_option( self::OPTION_MULTISITE_GOVERNING_SITE, 0 );
+		return is_numeric( $governing_site_id ) ? (int) $governing_site_id : 0;
 	}
 
 	/**
-	 * Add admin body class for governing site selection modal.
+	 * Set the governing site ID for multisite.
 	 *
-	 * @param string $classes Existing admin body classes.
-	 * @return string Modified admin body classes.
+	 * @param int $site_id The site ID to set as governing site.
 	 */
-	public function add_admin_body_class( string $classes ): string {
-
-		if ( Utils::is_governing_site_selected() ) {
-			return $classes;
+	public static function set_multisite_governing_site_id( int $site_id ): bool {
+		if ( ! is_multisite() ) {
+			return false;
 		}
 
-		$current_screen = Utils::get_current_screen();
+		return update_site_option( self::OPTION_MULTISITE_GOVERNING_SITE, $site_id );
+	}
 
-		if ( is_network_admin() && $current_screen && 'plugins-network' === $current_screen->id ) {
-			$classes .= ' onedesign-multisite-selection-modal ';
+	/**
+	 * Check if governing site is selected in multisite setup.
+	 *
+	 * @return bool True if governing site is selected, false otherwise.
+	 */
+	public static function is_governing_site_selected(): bool {
+		$governing_site_id = self::get_multisite_governing_site_id();
+		return ( (int) $governing_site_id ) > 0;
+	}
+
+	/**
+	 * Get information of all multisites in the network.
+	 *
+	 * @return array Array of multisite information.
+	 */
+	public static function get_all_multisites_info(): array {
+		if ( ! is_multisite() ) {
+			return [];
 		}
-		return $classes;
+
+		$sites      = get_sites( [ 'number' => 0 ] );
+		$sites_info = [];
+
+		foreach ( $sites as $site ) {
+			$site_details = get_blog_details( $site->blog_id );
+			if ( ! $site_details ) {
+				continue;
+			}
+
+			$sites_info[] = [
+				'id'   => (string) $site_details->blog_id,
+				'name' => $site_details->blogname,
+				'url'  => $site_details->siteurl,
+			];
+		}
+
+		return $sites_info;
 	}
 
 	/**
@@ -99,7 +115,7 @@ class Multisite implements Registrable {
 	 */
 	public function sync_api_key_to_governing_site( string $secret_key, int $blog_id ): void {
 		// get the governing site id.
-		$governing_site_id = get_site_option( Constants::ONEDESIGN_MULTISITE_GOVERNING_SITE, 0 );
+		$governing_site_id = self::get_multisite_governing_site_id();
 
 		// go to governing site and update shared_sites option secret_key of blog_id site.
 		if ( ! $governing_site_id || ! $secret_key ) {
@@ -109,7 +125,7 @@ class Multisite implements Registrable {
 		if ( ! switch_to_blog( (int) $governing_site_id ) ) {
 			return;
 		}
-		$shared_sites = get_option( Constants::ONEDESIGN_SHARED_SITES, [] );
+		$shared_sites = AdminSettings::get_shared_sites();
 		foreach ( $shared_sites as &$site ) {
 			if ( (int) $site['id'] === (int) $blog_id ) {
 				$site['api_key'] = $secret_key;
@@ -117,7 +133,7 @@ class Multisite implements Registrable {
 			}
 		}
 
-		update_option( Constants::ONEDESIGN_SHARED_SITES, $shared_sites, false );
+		AdminSettings::set_shared_sites( $shared_sites );
 
 		restore_current_blog();
 	}
@@ -131,7 +147,7 @@ class Multisite implements Registrable {
 	 */
 	public function assign_brand_site_on_new_site_creation( \WP_Site $new_site ): void {
 
-		$governing_site_id = get_site_option( Constants::ONEDESIGN_MULTISITE_GOVERNING_SITE, 0 );
+		$governing_site_id = self::get_multisite_governing_site_id();
 
 		if ( ! $governing_site_id || $new_site->blog_id === $governing_site_id ) {
 			return;
@@ -141,7 +157,7 @@ class Multisite implements Registrable {
 			return;
 		}
 
-		update_option( Constants::ONEDESIGN_SITE_TYPE, 'brand-site', false );
+		update_option( AdminSettings::OPTION_SITE_TYPE, AdminSettings::SITE_TYPE_CONSUMER, false );
 
 		restore_current_blog();
 	}
@@ -157,7 +173,7 @@ class Multisite implements Registrable {
 	 */
 	public function update_site_details_in_governing_site_table( string $option_name, $old_value, $new_value ): void {
 
-		$governing_site_id = get_site_option( Constants::ONEDESIGN_MULTISITE_GOVERNING_SITE, 0 );
+		$governing_site_id = self::get_multisite_governing_site_id();
 
 		// If governing site is not set or we are on governing site, return.
 		if ( ! $governing_site_id || get_current_blog_id() === (int) $governing_site_id ) {
@@ -191,7 +207,7 @@ class Multisite implements Registrable {
 		}
 
 		// Get shared sites from governing site.
-		$shared_sites = get_option( Constants::ONEDESIGN_SHARED_SITES, [] );
+		$shared_sites = AdminSettings::get_shared_sites();
 
 		foreach ( $shared_sites as &$site ) {
 			if ( (int) $site['id'] !== $current_site_id ) {
@@ -203,14 +219,14 @@ class Multisite implements Registrable {
 			} elseif ( in_array( $option_name, [ 'siteurl', 'home' ], true ) ) {
 				$site['url'] = esc_url_raw( $new_value );
 			} elseif ( 'site_icon' === $option_name ) {
-				$site['logo']    = $logo_url;
+				$site['logo']    = $logo_url ?: '';
 				$site['logo_id'] = $logo_id;
 			}
 			break;
 		}
 
 		// Save the updated shared_sites option.
-		update_option( Constants::ONEDESIGN_SHARED_SITES, $shared_sites, false );
+		AdminSettings::set_shared_sites( $shared_sites );
 
 		// Restore blog.
 		restore_current_blog();

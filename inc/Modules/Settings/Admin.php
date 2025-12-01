@@ -9,28 +9,44 @@
 namespace OneDesign\Modules\Settings;
 
 use OneDesign\Contracts\Interfaces\Registrable;
-use OneDesign\Modules\Post_Types\{ Pattern, Template };
-use OneDesign\Utils;
+use OneDesign\Modules\Core\Assets;
+use OneDesign\Modules\Multisite\Settings as MU_Settings;
 
 /**
  * Class Settings
  */
 class Admin implements Registrable {
+	/**
+	 * The menu slug for the admin menu.
+	 *
+	 * @todo replace with a cross-plugin menu.
+	 */
+	public const MENU_SLUG = 'onedesign';
 
 	/**
-	 * Settings page slug.
+	 * The screen ID for the settings page.
+	 */
+	public const SCREEN_ID = self::MENU_SLUG . '-settings';
+
+	/**
+	 * Path to the SVG logo for the menu.
 	 *
+	 * @todo Replace with actual logo.
 	 * @var string
 	 */
-	const PAGE_SLUG = 'onedesign';
+	private const SVG_LOGO_PATH = '';
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public function register_hooks(): void {
 		add_action( 'admin_menu', [ $this, 'add_settings_page' ] );
-		add_action( 'admin_init', [ $this, 'handle_pattern_library_redirect' ] );
-		add_action( 'admin_init', [ $this, 'templates_page_redirection' ] );
+		add_action( 'admin_menu', [ $this, 'remove_default_submenu' ], 999 );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ], 20, 1 );
+		add_action( 'admin_footer', [ $this, 'inject_site_selection_modal' ] );
+
+		add_filter( 'plugin_action_links_' . ONEDESIGN_PLUGIN_BASENAME, [ $this, 'add_action_links' ], 2 );
+		add_filter( 'admin_body_class', [ $this, 'add_body_classes' ] );
 	}
 
 	/**
@@ -43,134 +59,34 @@ class Admin implements Registrable {
 			__( 'OneDesign', 'onedesign' ),
 			__( 'OneDesign', 'onedesign' ),
 			'manage_options',
-			self::PAGE_SLUG,
+			self::MENU_SLUG,
 			'__return_null',
-			'',
+			self::SVG_LOGO_PATH,
 			2
 		);
 
-		// Add submenu for opening pattern library only for governing sites.
-		if ( Utils::is_governing_site() ) {
-			add_submenu_page(
-				self::PAGE_SLUG,
-				__( 'Pattern Library', 'onedesign' ),
-				__( 'Pattern Library', 'onedesign' ),
-				'manage_options',
-				'onedesign-pattern-library',
-				'__return_null'
-			);
-			add_submenu_page(
-				self::PAGE_SLUG,
-				__( 'Templates', 'onedesign' ),
-				__( 'Template Library', 'onedesign' ),
-				'manage_options',
-				'onedesign-template-library',
-				'__return_null'
-			);
-		}
-
 		add_submenu_page(
-			self::PAGE_SLUG,
+			self::MENU_SLUG,
 			__( 'Settings', 'onedesign' ),
 			__( 'Settings', 'onedesign' ),
 			'manage_options',
-			'onedesign-settings',
-			[ $this, 'settings_page_content' ]
+			self::SCREEN_ID,
+			[ $this, 'screen_callback' ],
+			3
 		);
-
-		remove_submenu_page( 'onedesign', 'onedesign' );
 	}
 
 	/**
-	 * Handle the redirect to create or open the Templates post.
-	 *
-	 * This function checks if the Templates post exists and redirects to it,
-	 * or creates a new one if it doesn't exist.
-	 *
-	 * @return void
+	 * Remove the default submenu added by WordPress.
 	 */
-	public function templates_page_redirection(): void {
-		$pages = [ 'onedesign-template-library' ];
-
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( ! isset( $_GET['page'] ) || ! in_array( $_GET['page'], $pages, true ) ) {
-			return;
-		}
-
-		// Only run for users with proper permissions.
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
-
-		// Check if a Pattern Library post already exists.
-		$existing_posts = get_posts(
-			[
-				'post_type'        => Template::SLUG,
-				'post_status'      => [ 'publish', 'draft', 'pending', 'private' ],
-				'numberposts'      => 1,
-				'suppress_filters' => false,
-			]
-		);
-
-		if ( ! empty( $existing_posts ) ) {
-			// Redirect to edit the existing post.
-			wp_safe_redirect( admin_url( 'post.php?post=' . $existing_posts[0]->ID . '&action=edit' ) );
-			exit;
-		}
-
-		// If no post exists, create a new one.
-		$new_post_id = wp_insert_post(
-			[
-				'post_type'    => Template::SLUG,
-				'post_title'   => esc_html__( 'Templates', 'onedesign' ),
-				'post_content' => '',
-				'post_status'  => 'draft',
-			]
-		);
-
-		if ( is_wp_error( $new_post_id ) ) {
-			wp_die( esc_html__( 'Error creating template post.', 'onedesign' ) );
-		}
-
-		// Redirect to the newly created post for editing.
-		wp_safe_redirect( admin_url( 'post.php?post=' . $new_post_id . '&action=edit' ) );
-		exit;
+	public function remove_default_submenu(): void {
+		remove_submenu_page( self::MENU_SLUG, self::MENU_SLUG );
 	}
 
 	/**
-	 * Handle the redirect to create or open the Pattern Library post.
-	 *
-	 * This function checks if the Pattern Library post exists and redirects to it,
-	 * or creates a new one if it doesn't exist.
-	 *
-	 * @return void
+	 * Admin page content callback.
 	 */
-	public function handle_pattern_library_redirect(): void {
-		$pages = [ 'onedesign-pattern-library', 'onedesign' ];
-
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( ! isset( $_GET['page'] ) || ! in_array( $_GET['page'], $pages, true ) ) {
-			return;
-		}
-
-		// Only run for users with proper permissions.
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
-
-		// Your existing create/redirect logic here.
-		$this->create_and_open_pattern_library_post();
-	}
-
-	/**
-	 * Render settings page content.
-	 *
-	 * @return void
-	 */
-	public function settings_page_content(): void {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'onedesign' ) );
-		}
+	public function screen_callback(): void {
 		?>
 		<div class="wrap">
 			<h1><?php esc_html_e( 'Settings', 'onedesign' ); ?></h1>
@@ -180,43 +96,180 @@ class Admin implements Registrable {
 	}
 
 	/**
-	 * Callback function to create and open a new Pattern Library post.
+	 * Enqueue admin scripts.
 	 *
-	 * @return void
+	 * @param string $hook Current admin page hook.
 	 */
-	public function create_and_open_pattern_library_post(): void {
-		// Check if a Pattern Library post already exists.
-		$existing_posts = get_posts(
+	public function enqueue_scripts( string $hook ): void {
+		$current_screen = get_current_screen();
+
+		if ( ! $current_screen instanceof \WP_Screen ) {
+			return;
+		}
+
+		if ( ( 'plugins.php' === $hook || str_contains( $hook, 'plugins' ) || str_contains( $hook, 'onedesign' ) ) && 'plugins-network' !== $current_screen->id ) {
+			// Enqueue the onboarding modal.
+			$this->enqueue_onboarding_scripts();
+		}
+
+		if ( strpos( $hook, 'onedesign-settings' ) !== false ) {
+			$this->enqueue_settings_scripts();
+		}
+
+		// @todo Move other scripts from Assets to here.
+	}
+
+	/**
+	 * Inject site selection modal into the admin footer.
+	 */
+	public function inject_site_selection_modal(): void {
+		$current_screen = get_current_screen();
+		if ( ! $current_screen || 'plugins' !== $current_screen->base ) {
+			return;
+		}
+
+		// Bail if the site type is already set.
+		if ( ! empty( Settings::get_site_type() ) ) {
+			return;
+		}
+
+		?>
+		<div class="wrap">
+			<div id="onedesign-site-selection-modal" class="onedesign-modal"></div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Add action links to the settings on the plugins page.
+	 *
+	 * @param string[] $links Existing links.
+	 *
+	 * @return string[]
+	 */
+	public function add_action_links( $links ): array {
+		// Defense against other plugins.
+		if ( ! is_array( $links ) ) {
+			_doing_it_wrong( __METHOD__, esc_html__( 'Expected an array.', 'onedesign' ), '1.0.0' );
+
+			$links = [];
+		}
+
+		$links[] = sprintf(
+			'<a href="%s">%s</a>',
+			esc_url( admin_url( sprintf( 'admin.php?page=%s', self::SCREEN_ID ) ) ),
+			__( 'Settings', 'onedesign' )
+		);
+
+		return $links;
+	}
+
+	/**
+	 * Add body classes for the admin area.
+	 *
+	 * @param string $classes Existing body classes.
+	 */
+	public function add_body_classes( $classes ): string {
+		$current_screen = get_current_screen();
+
+		if ( ! $current_screen ) {
+			return $classes;
+		}
+
+		// Cast to string in case it's null.
+		$classes = $this->add_body_class_for_modal( (string) $classes, $current_screen );
+		$classes = $this->add_body_class_for_missing_sites( (string) $classes, $current_screen );
+
+		return $classes;
+	}
+
+	/**
+	 * Enqueue the scripts and styles for the settings screen.
+	 */
+	public function enqueue_settings_scripts(): void {
+		wp_localize_script(
+			Assets::SETTINGS_SCRIPT_HANDLE,
+			'OneDesignSettings',
+			array_merge(
+				Assets::get_localized_data(),
+				[
+					'multisites'              => MU_Settings::get_all_multisites_info(),
+					'isMultisite'             => is_multisite(),
+					'isGoverningSiteSelected' => MU_Settings::is_governing_site_selected(),
+					'currentSiteId'           => is_multisite() ? get_current_blog_id() : null,
+				]
+			)
+		);
+
+		wp_enqueue_script( Assets::SETTINGS_SCRIPT_HANDLE );
+		wp_enqueue_style( Assets::SETTINGS_SCRIPT_HANDLE );
+
+		// only load media uploader in governing site settings page.
+		if ( ! Settings::is_governing_site() ) {
+			return;
+		}
+
+		wp_enqueue_media();
+	}
+
+	/**
+	 * Enqueue scripts and styles for the onboarding modal.
+	 */
+	private function enqueue_onboarding_scripts(): void {
+		// Bail if the site type is already set.
+		if ( ! empty( Settings::get_site_type() ) ) {
+			return;
+		}
+
+		wp_localize_script(
+			Assets::ONBOARDING_SCRIPT_HANDLE,
+			'OneDesignSettings',
 			[
-				'post_type'        => Pattern::SLUG,
-				'post_status'      => [ 'publish', 'draft', 'pending', 'private' ],
-				'numberposts'      => 1,
-				'suppress_filters' => false,
+				'nonce'     => wp_create_nonce( 'wp_rest' ),
+				'setup_url' => admin_url( sprintf( 'admin.php?page=%s', self::SCREEN_ID ) ),
+				'site_type' => Settings::get_site_type(), // @todo We can probably remove this.
 			]
 		);
 
-		if ( ! empty( $existing_posts ) ) {
-			// Redirect to edit the existing post.
-			wp_safe_redirect( admin_url( 'post.php?post=' . $existing_posts[0]->ID . '&action=edit' ) );
-			exit;
+		wp_enqueue_script( Assets::ONBOARDING_SCRIPT_HANDLE );
+		wp_enqueue_style( Assets::ONBOARDING_SCRIPT_HANDLE );
+	}
+
+	/**
+	 * Add body class if the modal is going to be shown.
+	 *
+	 * @param string     $classes        Existing body classes.
+	 * @param \WP_Screen $current_screen Current screen object.
+	 */
+	private function add_body_class_for_modal( string $classes, \WP_Screen $current_screen ): string {
+		if ( 'plugins' !== $current_screen->base ) {
+			return $classes;
 		}
 
-		// If no post exists, create a new one.
-		$new_post_id = wp_insert_post(
-			[
-				'post_type'    => Pattern::SLUG,
-				'post_title'   => esc_html__( 'Pattern Library', 'onedesign' ),
-				'post_content' => '<!-- wp:heading {"level":2} --><h2>Click on the "Patterns Selection" to push patterns to brand site.</h2><!-- /wp:heading -->',
-				'post_status'  => 'draft',
-			]
-		);
-
-		if ( is_wp_error( $new_post_id ) ) {
-			wp_die( esc_html__( 'Error creating Pattern Library post.', 'onedesign' ) );
+		// Bail if the site type is already set.
+		if ( ! empty( Settings::get_site_type() ) ) {
+			return $classes;
 		}
 
-		// Redirect to the newly created post for editing.
-		wp_safe_redirect( admin_url( 'post.php?post=' . $new_post_id . '&action=edit' ) );
-		exit;
+		// Add onedesign-site-selection-modal class to body.
+		$classes .= ' onedesign-site-selection-modal ';
+		return $classes;
+	}
+
+	/**
+	 * Add body class for missing sites.
+	 *
+	 * @param string     $classes Existing body classes.
+	 * @param \WP_Screen $current_screen Current screen object.
+	 */
+	private function add_body_class_for_missing_sites( string $classes, \WP_Screen $current_screen ): string {
+		// Bail if the shared sites are already set.
+		$shared_sites = Settings::get_shared_sites();
+		if ( ! empty( $shared_sites ) ) {
+			return $classes;
+		}
+
+		$classes .= ' onedesign-missing-brand-sites ';
+		return $classes;
 	}
 }

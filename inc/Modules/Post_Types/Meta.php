@@ -67,7 +67,7 @@ class Meta implements Registrable {
 	private function get_post_meta_array(): array {
 		return [
 			[
-				'post_type'    => [ Pattern::SLUG ],
+				'post_type'    => [ Pattern::get_slug() ],
 				'meta'         => 'brand_site',
 				'type'         => 'array',
 				'show_in_rest' => [
