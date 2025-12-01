@@ -93,7 +93,7 @@ abstract class Abstract_REST_Controller extends \WP_REST_Controller implements R
 
 		// If it's a healthcheck with no governing site, allow it and set the governing site.
 		if ( empty( $governing_site_url ) ) {
-			if ( '/ ' . $this->namespace . '/health-check' === $request->get_route() ) {
+			if ( '/' . $this->namespace . '/health-check' === $request->get_route() ) {
 				Settings::set_parent_site_url( $request_origin );
 				return true;
 			}
