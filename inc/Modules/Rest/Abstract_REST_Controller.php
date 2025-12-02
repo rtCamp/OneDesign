@@ -79,8 +79,15 @@ abstract class Abstract_REST_Controller extends \WP_REST_Controller implements R
 
 		$request_origin = $request->get_header( 'origin' );
 		$request_origin = ! empty( $request_origin ) ? esc_url_raw( wp_unslash( $request_origin ) ) : '';
+		$user_agent     = $request->get_header( 'user-agent' );
+		$user_agent     = ! empty( $user_agent ) ? sanitize_text_field( wp_unslash( $user_agent ) ) : '';
 
-		if ( empty( $request_origin ) ) {
+		/**
+		 * If both origin and user-agent are missing, deny access.
+		 *
+		 * Here checking both because server side requests will not have origin header.
+		 */
+		if ( empty( $request_origin ) && empty( $user_agent ) ) {
 			return false;
 		}
 
@@ -100,8 +107,6 @@ abstract class Abstract_REST_Controller extends \WP_REST_Controller implements R
 			return false;
 		}
 
-		$user_agent = $request->get_header( 'user-agent' );
-		$user_agent = ! empty( $user_agent ) ? sanitize_text_field( wp_unslash( $user_agent ) ) : '';
 		// if token is valid and request is from different domain then check if it matches governing site url.
 		if ( self::is_same_domain( $governing_site_url, $request_origin ) || false !== strpos( $user_agent, $governing_site_url ) ) {
 			return true;

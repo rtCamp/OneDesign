@@ -50,7 +50,7 @@ final class Encryptor {
 		$tag        = '';
 		$ciphertext = openssl_encrypt( $value, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag );
 		if ( false === $ciphertext ) {
-			throw new \RuntimeException( 'Failed to encrypt value.' );
+			throw new \RuntimeException( esc_html__( 'Failed to encrypt value.', 'onedesign' ) );
 		}
 
 		return base64_encode( $iv . $tag . $ciphertext );
@@ -68,7 +68,7 @@ final class Encryptor {
 	public static function decrypt( string $value ): string {
 		$decoded = base64_decode( $value, true );
 		if ( false === $decoded || strlen( $decoded ) < self::IV_LENGTH + self::TAG_LENGTH ) {
-			throw new \RuntimeException( 'Encrypted payload is invalid.' );
+			throw new \RuntimeException( esc_html__( 'Encrypted payload is invalid.', 'onedesign' ) );
 		}
 
 		$key        = self::derive_key();
@@ -78,7 +78,7 @@ final class Encryptor {
 
 		$plaintext = openssl_decrypt( $ciphertext, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag );
 		if ( false === $plaintext ) {
-			throw new \RuntimeException( 'Failed to decrypt value.' );
+			throw new \RuntimeException( esc_html__( 'Failed to decrypt value.', 'onedesign' ) );
 		}
 
 		return $plaintext;

@@ -79,7 +79,7 @@ const OnboardingScreen = () => {
 				data: { onedesign_site_type: value },
 			} ).then( ( settings ) => {
 				if ( ! settings?.onedesign_site_type ) {
-					throw new Error( 'No site type in response' );
+					throw new Error( __( 'No site type in response', 'onedesign' ) );
 				}
 
 				setSiteType( settings.onedesign_site_type );

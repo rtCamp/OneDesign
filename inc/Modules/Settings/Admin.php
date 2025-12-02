@@ -11,6 +11,7 @@ namespace OneDesign\Modules\Settings;
 use OneDesign\Contracts\Interfaces\Registrable;
 use OneDesign\Modules\Core\Assets;
 use OneDesign\Modules\Multisite\Settings as MU_Settings;
+use OneDesign\Modules\Post_Types\Admin as CPT_Admin;
 
 /**
  * Class Settings
@@ -41,6 +42,7 @@ class Admin implements Registrable {
 	 */
 	public function register_hooks(): void {
 		add_action( 'admin_menu', [ $this, 'add_settings_page' ] );
+		add_action( 'admin_menu', [ $this, 'register_settings_page' ], 20 ); // 20 priority to make sure settings page respect its position.
 		add_action( 'admin_menu', [ $this, 'remove_default_submenu' ], 999 );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ], 20, 1 );
 		add_action( 'admin_footer', [ $this, 'inject_site_selection_modal' ] );
@@ -64,7 +66,14 @@ class Admin implements Registrable {
 			self::SVG_LOGO_PATH,
 			2
 		);
+	}
 
+	/**
+	 * Register the settings page.
+	 */
+	public function register_settings_page(): void {
+
+		// Add the settings submenu page.
 		add_submenu_page(
 			self::MENU_SLUG,
 			__( 'Settings', 'onedesign' ),
@@ -72,7 +81,7 @@ class Admin implements Registrable {
 			'manage_options',
 			self::SCREEN_ID,
 			[ $this, 'screen_callback' ],
-			3
+			999
 		);
 	}
 
@@ -268,6 +277,10 @@ class Admin implements Registrable {
 		if ( ! empty( $shared_sites ) ) {
 			return $classes;
 		}
+
+		// Remove submenu pages.
+		remove_submenu_page( self::MENU_SLUG, CPT_Admin::PATTERN_REDIRECT_SCREEN );
+		remove_submenu_page( self::MENU_SLUG, CPT_Admin::TEMPLATE_REDIRECT_SCREEN );
 
 		$classes .= ' onedesign-missing-brand-sites ';
 		return $classes;

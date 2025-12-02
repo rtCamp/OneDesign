@@ -23,8 +23,8 @@ class Admin implements Registrable {
 	/**
 	 * Screens used for redirects.
 	 */
-	private const PATTERN_REDIRECT_SCREEN  = 'onedesign-pattern-library';
-	private const TEMPLATE_REDIRECT_SCREEN = 'onedesign-template-library';
+	public const PATTERN_REDIRECT_SCREEN  = 'onedesign-pattern-library';
+	public const TEMPLATE_REDIRECT_SCREEN = 'onedesign-template-library';
 
 	/**
 	 * {@inheritDoc}

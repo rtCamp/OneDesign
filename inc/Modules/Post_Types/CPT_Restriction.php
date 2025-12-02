@@ -16,13 +16,6 @@ use OneDesign\Modules\Settings\Settings;
 class CPT_Restriction implements Registrable {
 
 	/**
-	 * Slug for the Design Sync menu.
-	 *
-	 * @var string
-	 */
-	const MENU_SLUG = 'onedesign-design-sync';
-
-	/**
 	 * {@inheritDoc}
 	 */
 	public function register_hooks(): void {
