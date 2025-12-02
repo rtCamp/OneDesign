@@ -95,11 +95,11 @@ class Assets implements Registrable {
 	}
 
 	/**
-	 * Add admin scripts.
+	 * Register admin assets to WordPress.
 	 *
-	 * @param string $hook_suffix The current admin page.
+	 * Assets are registered once centrally, and enqueued in the modules that need them.
 	 */
-	public function register_assets( $hook_suffix ): void {
+	public function register_assets(): void {
 
 		$this->register_script( self::SETTINGS_SCRIPT_HANDLE, 'settings' );
 		$this->register_style( self::SETTINGS_SCRIPT_HANDLE, 'settings' );
