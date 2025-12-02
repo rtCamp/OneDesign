@@ -63,7 +63,7 @@ if ( class_exists( 'OneDesign\Main' ) ) {
 		static function (): void {
 			\OneDesign\Main::instance();
 
-			// @todo remove before submitting to .org.
+			//phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- @todo remove before submitting to .org.
 			load_plugin_textdomain( 'onedesign', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 		}
 	);
