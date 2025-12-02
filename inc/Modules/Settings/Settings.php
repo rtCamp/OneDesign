@@ -133,6 +133,9 @@ final class Settings implements Registrable {
 									'type'   => 'string',
 									'format' => 'uri',
 								],
+								'logo_id' => [
+									'type' => 'integer',
+								],
 								'api_key' => [
 									'type' => 'string',
 								],
@@ -182,6 +185,7 @@ final class Settings implements Registrable {
 	 * name: string,
 	 * url: string,
 	 * logo: string,
+	 * logo_id: int,
 	 * api_key: string
 	 * }[]
 	 */
@@ -201,6 +205,7 @@ final class Settings implements Registrable {
 			$site_name    = isset( $site_data['name'] ) ? sanitize_text_field( $site_data['name'] ) : '';
 			$site_url     = isset( $site_data['url'] ) ? esc_url_raw( $site_data['url'] ) : '';
 			$site_logo    = isset( $site_data['logo'] ) ? esc_url_raw( $site_data['logo'] ) : '';
+			$site_logo_id = isset( $site_data['logo_id'] ) ? absint( $site_data['logo_id'] ) : 0;
 			$site_api_key = isset( $site_data['api_key'] ) ? sanitize_text_field( $site_data['api_key'] ) : '';
 
 			// Only save if required fields are filled.
@@ -213,6 +218,7 @@ final class Settings implements Registrable {
 				'name'    => $site_name,
 				'url'     => untrailingslashit( $site_url ),
 				'logo'    => $site_logo,
+				'logo_id' => $site_logo_id,
 				'api_key' => $site_api_key,
 			];
 		}
@@ -231,6 +237,7 @@ final class Settings implements Registrable {
 	 *  api_key: string,
 	 *  id: string,
 	 *  logo: string,
+	 *  logo_id: int,
 	 *  name: string,
 	 *  url: string,
 	 * }>
@@ -248,6 +255,7 @@ final class Settings implements Registrable {
 				'api_key' => $brand['api_key'] ?? '',
 				'id'      => $brand['id'] ?? '',
 				'logo'    => $brand['logo'] ?? '',
+				'logo_id' => $brand['logo_id'] ?? 0,
 				'name'    => $brand['name'] ?? '',
 				'url'     => $brand['url'] ?? '',
 			];
@@ -265,6 +273,7 @@ final class Settings implements Registrable {
 	 *   api_key: string,
 	 *   id: string,
 	 *   logo: string,
+	 *   logo_id: int,
 	 *   name: string,
 	 *   url: string,
 	 * }
@@ -286,6 +295,7 @@ final class Settings implements Registrable {
 	 *   api_key?: string,
 	 *   id?: string,
 	 *   logo?: string,
+	 *   logo_id?: int,
 	 *   name?: string,
 	 *   url?: string,
 	 *   is_editable?: bool
