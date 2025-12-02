@@ -22,7 +22,6 @@
 		<include>
 			<directory suffix=".php">inc</directory>
 			<file>onedesign.php</file>
-			<file>custom-functions.php</file>
 			<file>uninstall.php</file>
 		</include>
 		<report>

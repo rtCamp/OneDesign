@@ -7,8 +7,8 @@
 
 namespace OneDesign\Modules\Rest;
 
-use OneDesign\Plugin_Configs\{Constants, Secret_Key };
-use OneDesign\Utils;
+use OneDesign\Modules\Multisite\Settings as MU_Settings;
+use OneDesign\Modules\Settings\Settings;
 use WP_REST_Response;
 use WP_REST_Server;
 
@@ -35,7 +35,7 @@ class Multisite_Controller extends Abstract_REST_Controller {
 	 * {@inheritDoc}
 	 */
 	public function register_hooks(): void {
-		if ( ! Utils::is_multisite() ) {
+		if ( ! is_multisite() ) {
 			return;
 		}
 
@@ -118,12 +118,12 @@ class Multisite_Controller extends Abstract_REST_Controller {
 	public function get_multisite_governing_site(): WP_REST_Response {
 
 		// get site wide option of onedesign_multisite_governing_site.
-		$governing_site = get_site_option( Constants::ONEDESIGN_MULTISITE_GOVERNING_SITE, '' );
+		$governing_site = MU_Settings::get_multisite_governing_site_id();
 
 		return new WP_REST_Response(
 			[
 				'success'        => true,
-				'governing_site' => $governing_site,
+				'governing_site' => (int) $governing_site,
 			]
 		);
 	}
@@ -148,7 +148,7 @@ class Multisite_Controller extends Abstract_REST_Controller {
 		}
 
 		// update site wide option of onedesign_multisite_governing_site.
-		$is_updated = update_site_option( Constants::ONEDESIGN_MULTISITE_GOVERNING_SITE, $governing_site_id );
+		$is_updated = MU_Settings::set_multisite_governing_site_id( (int) $governing_site_id );
 
 		if ( ! $is_updated ) {
 			return new \WP_Error(
@@ -159,7 +159,7 @@ class Multisite_Controller extends Abstract_REST_Controller {
 		}
 
 		// set all existing sites site-type as brand-site and current site as governing-site.
-		$multisite_info = Utils::get_all_multisites_info();
+		$multisite_info = MU_Settings::get_all_multisites_info();
 
 		foreach ( $multisite_info as $site ) {
 			if ( ! switch_to_blog( (int) $site['id'] ) ) {
@@ -167,14 +167,14 @@ class Multisite_Controller extends Abstract_REST_Controller {
 			}
 
 			if ( intval( $site['id'] ) === intval( $governing_site_id ) ) {
-				update_option( Constants::ONEDESIGN_SITE_TYPE, 'governing-site', false );
-				delete_option( Constants::ONEDESIGN_GOVERNING_SITE_URL );
-				delete_option( Constants::ONEDESIGN_SHARED_SITES );
+				update_option( Settings::OPTION_SITE_TYPE, Settings::SITE_TYPE_GOVERNING, false );
+				delete_option( Settings::OPTION_CONSUMER_PARENT_SITE_URL );
+				delete_option( Settings::OPTION_GOVERNING_SHARED_SITES );
 			} else {
-				update_option( Constants::ONEDESIGN_SITE_TYPE, 'brand-site', false );
-				update_option( Constants::ONEDESIGN_API_KEY, Secret_Key::generate_key(), false );
-				delete_option( Constants::ONEDESIGN_GOVERNING_SITE_URL );
-				delete_option( Constants::ONEDESIGN_SHARED_SITES );
+				update_option( Settings::OPTION_SITE_TYPE, Settings::SITE_TYPE_CONSUMER, false );
+				Settings::regenerate_api_key();
+				delete_option( Settings::OPTION_CONSUMER_PARENT_SITE_URL );
+				delete_option( Settings::OPTION_GOVERNING_SHARED_SITES );
 			}
 
 			restore_current_blog();
@@ -199,7 +199,7 @@ class Multisite_Controller extends Abstract_REST_Controller {
 
 		$site_ids = array_map( 'absint', (array) $request->get_param( 'site_ids' ) );
 
-		if ( empty( $site_ids ) || ! is_array( $site_ids ) ) {
+		if ( empty( $site_ids ) ) {
 			return new \WP_Error(
 				'invalid_site_ids',
 				__( 'Invalid site info provided.', 'onedesign' ),
@@ -208,7 +208,7 @@ class Multisite_Controller extends Abstract_REST_Controller {
 		}
 
 		// get governing site id.
-		$governing_site_id = get_site_option( Constants::ONEDESIGN_MULTISITE_GOVERNING_SITE, 0 );
+		$governing_site_id = MU_Settings::get_multisite_governing_site_id();
 
 		if ( ! $governing_site_id ) {
 			return new \WP_Error(
@@ -229,7 +229,7 @@ class Multisite_Controller extends Abstract_REST_Controller {
 		}
 		$governing_site_url = $governing_site_details->siteurl;
 
-		$shared_sites = get_option( Constants::ONEDESIGN_SHARED_SITES, [] );
+		$shared_sites = Settings::get_shared_sites();
 
 		foreach ( $site_ids as $site_id ) {
 
@@ -238,19 +238,20 @@ class Multisite_Controller extends Abstract_REST_Controller {
 				continue;
 			}
 
-			$shared_sites[] = [
-				'id'          => $site_id,
+			$site_url                  = trailingslashit( get_bloginfo( 'url' ) );
+			$shared_sites[ $site_url ] = [
+				'id'          => (string) $site_id,
 				'name'        => get_bloginfo( 'name' ),
-				'url'         => get_bloginfo( 'url' ),
-				'api_key'     => get_option( Constants::ONEDESIGN_API_KEY, '' ),
+				'url'         => $site_url,
+				'api_key'     => Settings::get_api_key(),
 				'is_editable' => false,
 			];
 
-			update_option( Constants::ONEDESIGN_SITE_TYPE, 'brand-site', false );
-			update_option( Constants::ONEDESIGN_GOVERNING_SITE_URL, $governing_site_url, false );
+			update_option( Settings::OPTION_SITE_TYPE, Settings::SITE_TYPE_CONSUMER, false );
+			Settings::set_parent_site_url( $governing_site_url );
 
 			// remove shared sites options if exists to avoid conflicts.
-			delete_option( Constants::ONEDESIGN_SHARED_SITES );
+			delete_option( Settings::OPTION_GOVERNING_SHARED_SITES );
 
 			restore_current_blog();
 		}
@@ -264,7 +265,7 @@ class Multisite_Controller extends Abstract_REST_Controller {
 			);
 		}
 
-		update_option( Constants::ONEDESIGN_SHARED_SITES, $shared_sites, false );
+		Settings::set_shared_sites( $shared_sites );
 
 		restore_current_blog();
 
@@ -283,7 +284,7 @@ class Multisite_Controller extends Abstract_REST_Controller {
 	 */
 	public function get_all_multisite_sites(): WP_REST_Response {
 
-		$all_multisites = Utils::get_all_multisites_info();
+		$all_multisites = MU_Settings::get_all_multisites_info();
 
 		return new WP_REST_Response(
 			[

@@ -73,8 +73,27 @@ const scripts = {
 		'templates-library': path.resolve( process.cwd(), 'assets', 'src', 'admin', 'templates', 'index.js' ),
 		'patterns-library': path.resolve( process.cwd(), 'assets', 'src', 'admin', 'patterns', 'index.js' ),
 		settings: path.resolve( process.cwd(), 'assets', 'src', 'admin', 'settings', 'index.js' ),
-		plugin: path.resolve( process.cwd(), 'assets', 'src', 'admin', 'plugin', 'index.js' ),
+		onboarding: path.resolve( process.cwd(), 'assets', 'src', 'admin', 'onboarding', 'index.tsx' ),
 		'multisite-plugin': path.resolve( process.cwd(), 'assets', 'src', 'admin', 'multisite-plugin', 'index.js' ),
+	},
+	module: {
+		rules:
+			sharedConfig?.module?.rules?.filter( ( rule ) => {
+				// Only keep JS/TS/JSX/TSX rules for scripts config, exclude CSS/SCSS
+				return (
+					! rule.test ||
+					( ! rule.test.toString().includes( 'scss' ) &&
+						! rule.test.toString().includes( 'css' ) )
+				);
+			} ) || [],
+	},
+	resolve: {
+		...sharedConfig.resolve,
+		extensions: [ '.tsx', '.ts', '.jsx', '.js' ],
+		alias: {
+			...( sharedConfig.resolve?.alias || {} ),
+			'@': path.resolve( process.cwd(), 'assets', 'src' ),
+		},
 	},
 };
 

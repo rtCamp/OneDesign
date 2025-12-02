@@ -75,13 +75,12 @@ function delete_plugin_data(): void {
 
 	$options = [
 		'onedesign_site_type',
+		'onedesign_consumer_api_key',
+		'onedesign_parent_site_url',
+		'onedesign_shared_sites',
+
 		'onedesign_brand_site_patterns',
 		'onedesign_child_site_public_key',
-		'onedesign_child_sites',
-		'onedesign_child_site_api_key',
-		'onedesign_shared_sites',
-		'onedesign_site_type_transient',
-		'onedesign_governing_site_url',
 		'onedesign_shared_templates',
 		'onedesign_brand_site_post_ids',
 		'onedesign_shared_patterns',

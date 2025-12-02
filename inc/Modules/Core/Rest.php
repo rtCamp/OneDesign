@@ -7,7 +7,7 @@
 
 declare( strict_types = 1 );
 
-namespace OneDesign\Modules\Rest;
+namespace OneDesign\Modules\Core;
 
 use OneDesign\Contracts\Interfaces\Registrable;
 

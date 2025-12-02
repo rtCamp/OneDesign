@@ -29,10 +29,13 @@ Code contributions, bug reports, and feature requests are welcome! The following
 │
 │   # Non-php plugin assets.
 ├── assets
-│   ├── images
-│   │   └── logo.svg
 │   └── src
 │       ├── admin
+│       │   ├── multisite-plugin
+│       │   │   └── index.js
+│       │   ├── onboarding
+│       │   │   ├── index.tsx
+│       │   │   └── page.tsx
 │       │   ├── patterns
 │       │   │   ├── App.js
 │       │   │   ├── components
@@ -47,6 +50,7 @@ Code contributions, bug reports, and feature requests are welcome! The following
 │       │   ├── plugin
 │       │   │   └── index.js
 │       │   ├── settings
+│       │   │   ├── components/
 │       │   │   └── index.js
 │       │   └── templates
 │       │       ├── App.js
@@ -59,20 +63,29 @@ Code contributions, bug reports, and feature requests are welcome! The following
 │       │       ├── index.js
 │       │       └── template-event.js
 │       ├── components
+│       │   ├── Dashicons.js
+│       │   ├── MultiSites.js
 │       │   ├── SiteModal.js
 │       │   ├── SiteSettings.js
 │       │   └── SiteTable.js
 │       ├── css
 │       │   ├── admin.scss
 │       │   ├── editor.scss
+│       │   ├── onboarding.scss
 │       │   └── template.scss
+│       ├── hooks
+│       │   └── useSitesManagement.js
+│       ├── images
+│       │   └── logo.svg
 │       ├── js
 │       │   ├── admin.js
+│       │   ├── constants.js
 │       │   ├── editor.js
 │       │   ├── main.js
 │       │   └── utils.js
-│       └── store
-│           └── index.js
+│       ├── store
+│       │   └── index.js
+│       └── types/
 │
 │   # Project documentation.
 ├── docs/
@@ -83,30 +96,38 @@ Code contributions, bug reports, and feature requests are welcome! The following
 │
 │   # PHP source files.
 ├── inc
-│   ├── classes
-│   │   ├── class-assets.php
-│   │   ├── class-cpt-restriction.php
-│   │   ├── class-hooks.php
-│   │   ├── class-plugin.php
-│   │   ├── class-rest.php
-│   │   ├── class-settings.php
-│   │   ├── class-utils.php
-│   │   ├── plugin-configs
-│   │   │   ├── class-constants.php
-│   │   │   └── class-secret-key.php
-│   │   ├── post-type
-│   │   │   ├── class-base.php
-│   │   │   ├── class-pattern-library.php
-│   │   │   ├── class-meta.php
-│   │   │   └── class-template.php
-│   │   └── rest
-│   │       ├── class-basic-options.php
-│   │       ├── class-patterns.php
-│   │       └── class-templates.php
-│   ├── helpers
-│   │   └── custom-functions.php
-│   └── traits
-│       └── trait-singleton.php
+│   ├── Autoloader.php
+│   ├── Encryptor.php
+│   ├── Main.php
+│   ├── Contracts
+│   │   ├── Interfaces
+│   │   │   └── Registrable.php
+│   │   └── Traits
+│   │       └── Singleton.php
+│   └── Modules
+│       ├── Core
+│       │   ├── Assets.php
+│       │   └── Rest.php
+│       ├── Multisite
+│       │   ├── Admin.php
+│       │   └── Settings.php
+│       ├── Post_Types
+│       │   ├── Abstract_Post_Type.php
+│       │   ├── Admin.php
+│       │   ├── Constants.php
+│       │   ├── CPT_Restriction.php
+│       │   ├── Meta.php
+│       │   ├── Pattern.php
+│       │   └── Template.php
+│       ├── Rest
+│       │   ├── Abstract_REST_Controller.php
+│       │   ├── Basic_Options_Controller.php
+│       │   ├── Multisite_Controller.php
+│       │   ├── Patterns_Controller.php
+│       │   └── Templates_Controller.php
+│       └── Settings
+│           ├── Admin.php
+│           └── Settings.php
 │
 │   # Tests
 ├── tests/
@@ -123,7 +144,10 @@ Code contributions, bug reports, and feature requests are welcome! The following
 ├── node_modules/ # Node.js dependencies
 ├── vendor/       # Composer dependencies
 │
+├── wp-assets/    # WordPress plugin assets (banners, screenshots)
+│
 ├── onedesign.php # Root plugin entrypoint.
+├── uninstall.php # The plugin uninstaller.
 │
 │   # Important config files.
 │   # .dist suffixes mean there may be a user-customized version without the suffix.
@@ -137,6 +161,7 @@ Code contributions, bug reports, and feature requests are welcome! The following
 ├── phpcs.xml.dist
 ├── phpstan.neon.dist
 ├── README.md
+├── tsconfig.json
 └── webpack.config.js
 
 ```

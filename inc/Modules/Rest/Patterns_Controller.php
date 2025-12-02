@@ -7,8 +7,8 @@
 
 namespace OneDesign\Modules\Rest;
 
-use OneDesign\Plugin_Configs\Constants;
-use OneDesign\Utils;
+use OneDesign\Modules\Post_Types\Constants;
+use OneDesign\Modules\Settings\Settings;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
@@ -45,7 +45,7 @@ class Patterns_Controller extends Abstract_REST_Controller {
 			[
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'get_brand_site_patterns' ],
-				'permission_callback' => 'onedesign_validate_api_key',
+				'permission_callback' => [ $this, 'check_api_permissions' ],
 			]
 		);
 
@@ -100,7 +100,7 @@ class Patterns_Controller extends Abstract_REST_Controller {
 			[
 				'methods'             => WP_REST_Server::DELETABLE,
 				'callback'            => [ $this, 'remove_brand_site_patterns' ],
-				'permission_callback' => 'onedesign_validate_api_key',
+				'permission_callback' => [ $this, 'check_api_permissions' ],
 				'args'                => [
 					'pattern_names' => [
 						'required'          => true,
@@ -184,7 +184,7 @@ class Patterns_Controller extends Abstract_REST_Controller {
 			[
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => [ $this, 'receive_patterns' ],
-				'permission_callback' => 'onedesign_validate_api_key',
+				'permission_callback' => [ $this, 'check_api_permissions' ],
 				'args'                => [
 					'patterns_data'    => [
 						'required'          => true,
@@ -211,7 +211,7 @@ class Patterns_Controller extends Abstract_REST_Controller {
 	 */
 	public function request_remove_brand_site_patterns( WP_REST_Request $request ): \WP_Error|WP_REST_Response {
 
-		if ( ! Utils::is_governing_site() ) {
+		if ( ! Settings::is_governing_site() ) {
 			return new \WP_Error( 'not_parent_site', __( 'This site is not configured as a parent site.', 'onedesign' ), [ 'status' => 403 ] );
 		}
 
@@ -223,7 +223,7 @@ class Patterns_Controller extends Abstract_REST_Controller {
 		}
 
 		// Use the option name from your settings class.
-		$child_sites = $this->get_compatible_sites_object();
+		$child_sites = Settings::get_shared_sites();
 		foreach ( $child_sites as $site ) {
 			if ( isset( $site['id'] ) && (string) $site['id'] === (string) $site_id ) {
 				$remote_api_key = $site['api_key'] ?? '';
@@ -238,7 +238,7 @@ class Patterns_Controller extends Abstract_REST_Controller {
 			return new \WP_Error( 'site_not_found', __( 'Target site not found in configuration.', 'onedesign' ), [ 'status' => 404 ] );
 		}
 
-		$remote_url = Utils::build_api_endpoint( $site['url'], 'remove-brand-site-patterns' );
+		$remote_url = $this->build_api_endpoint( $site['url'], 'remove-brand-site-patterns' );
 
 		$response = wp_safe_remote_request(
 			$remote_url,
@@ -336,12 +336,12 @@ class Patterns_Controller extends Abstract_REST_Controller {
 	 */
 	public function get_all_brand_site_patterns(): \WP_Error|WP_REST_Response {
 
-		if ( ! Utils::is_governing_site() ) {
+		if ( ! Settings::is_governing_site() ) {
 			return new \WP_Error( 'not_parent_site', __( 'This site is not configured as a parent site.', 'onedesign' ), [ 'status' => 403 ] );
 		}
 
 		// Call every child site to get their patterns.
-		$child_sites = $this->get_compatible_sites_object();
+		$child_sites = Settings::get_shared_sites();
 		if ( empty( $child_sites ) ) {
 			return new \WP_Error( 'no_child_sites', __( 'No child sites configured to receive patterns.', 'onedesign' ), [ 'status' => 404 ] );
 		}
@@ -351,7 +351,7 @@ class Patterns_Controller extends Abstract_REST_Controller {
 		foreach ( $child_sites as $site ) {
 			$site_patterns  = [];
 			$remote_api_key = $site['api_key'] ?? '';
-			$remote_url     = Utils::build_api_endpoint( $site['url'], 'brand-site-patterns' ) . '?timestamp=' . time(); // Add timestamp to avoid caching issues.
+			$remote_url     = $this->build_api_endpoint( $site['url'], 'brand-site-patterns' ) . '?timestamp=' . time(); // Add timestamp to avoid caching issues.
 
 			if ( empty( $remote_api_key ) ) {
 				continue; // Skip sites without API key.
@@ -532,14 +532,14 @@ class Patterns_Controller extends Abstract_REST_Controller {
 	 */
 	public function get_configured_child_sites(): WP_REST_Response {
 
-		if ( ! Utils::is_governing_site() ) {
+		if ( ! Settings::is_governing_site() ) {
 			return new WP_REST_Response( [], 200 ); // Return empty if not a parent site.
 		}
 
 		// Use the option name from your settings class.
-		$child_sites = $this->get_compatible_sites_object();
+		$child_sites = Settings::get_shared_sites();
 
-		return new WP_REST_Response( $child_sites, 200 );
+		return new WP_REST_Response( array_values( $child_sites ), 200 );
 	}
 
 	/**
@@ -551,7 +551,7 @@ class Patterns_Controller extends Abstract_REST_Controller {
 	 */
 	public function push_patterns_to_targets( WP_REST_Request $request ) {
 
-		if ( ! Utils::is_governing_site() ) {
+		if ( ! Settings::is_governing_site() ) {
 			return new \WP_Error( 'not_parent_site', __( 'This site is not configured as a parent site.', 'onedesign' ), [ 'status' => 403 ] );
 		}
 
@@ -560,7 +560,7 @@ class Patterns_Controller extends Abstract_REST_Controller {
 		$target_site_ids = $request->get_param( 'target_site_ids' );
 
 		// Use the option name from your settings class.
-		$configured_child_sites = $this->get_compatible_sites_object();
+		$configured_child_sites = array_values( Settings::get_shared_sites() );
 
 		// Get all patterns (both registered and user-created).
 		$local_patterns_map = $this->get_all_local_patterns_map();
@@ -600,7 +600,7 @@ class Patterns_Controller extends Abstract_REST_Controller {
 			$target_site = array_filter(
 				$configured_child_sites,
 				static function ( $site ) use ( $site_id ) {
-					return isset( $site['id'] ) && $site['id'] === $site_id;
+					return ! empty( $site['id'] ) && $site['id'] === $site_id;
 				}
 			);
 
@@ -616,7 +616,7 @@ class Patterns_Controller extends Abstract_REST_Controller {
 
 			// The 'api_key' in $target_site is the token for the remote child site.
 			$remote_api_key = $target_site['api_key'] ?? '';
-			$remote_url     = Utils::build_api_endpoint( $target_site['url'], 'receive-patterns' );
+			$remote_url     = $this->build_api_endpoint( $target_site['url'], 'receive-patterns' );
 
 			if ( empty( $remote_api_key ) ) {
 				$results[ $site_id ] = [
@@ -818,7 +818,7 @@ class Patterns_Controller extends Abstract_REST_Controller {
 	public function receive_patterns( WP_REST_Request $request ): \WP_Error|WP_REST_Response {
 
 		// This endpoint is primarily for child sites, but a site could technically receive even if set as parent if token matches.
-		if ( ! Utils::is_brand_site() ) {
+		if ( ! Settings::is_consumer_site() ) {
 			return new \WP_Error( 'not_child_site', __( 'This site is not configured as a child site to receive patterns.', 'onedesign' ), [ 'status' => 403 ] );
 		}
 
@@ -874,19 +874,5 @@ class Patterns_Controller extends Abstract_REST_Controller {
 			],
 			200
 		);
-	}
-
-	/**
-	 * Get child sites configured for this parent site.
-	 *
-	 * @return array List of configured child sites.
-	 */
-	public function get_compatible_sites_object(): array {
-		$children = get_option( Constants::ONEDESIGN_SHARED_SITES, [] );
-		if ( empty( $children ) || ! is_array( $children ) ) {
-			return []; // Return an empty array if no children configured.
-		}
-
-		return $children;
 	}
 }

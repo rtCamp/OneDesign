@@ -7,10 +7,10 @@
 
 namespace OneDesign\Modules\Rest;
 
-use OneDesign\Plugin_Configs\{ Constants, Secret_Key };
-use WP_REST_Server;
-use WP_REST_Response;
+use OneDesign\Modules\Settings\Settings;
 use WP_REST_Request;
+use WP_REST_Response;
+use WP_REST_Server;
 
 /**
  * Class Basic_Options_Controller
@@ -86,7 +86,7 @@ class Basic_Options_Controller extends Abstract_REST_Controller {
 			[
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'health_check' ],
-				'permission_callback' => 'onedesign_validate_api_key_health_check',
+				'permission_callback' => [ $this, 'check_api_permissions' ],
 			]
 		);
 
@@ -99,12 +99,12 @@ class Basic_Options_Controller extends Abstract_REST_Controller {
 			[
 				[
 					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => [ Secret_Key::class, 'get_secret_key' ],
+					'callback'            => [ $this, 'get_secret_key' ],
 					'permission_callback' => [ self::class, 'permission_callback' ],
 				],
 				[
 					'methods'             => WP_REST_Server::EDITABLE,
-					'callback'            => [ Secret_Key::class, 'regenerate_secret_key' ],
+					'callback'            => [ $this, 'regenerate_secret_key' ],
 					'permission_callback' => [ self::class, 'permission_callback' ],
 				],
 			]
@@ -147,12 +147,10 @@ class Basic_Options_Controller extends Abstract_REST_Controller {
 	 */
 	public function get_site_type(): WP_REST_Response|\WP_Error {
 
-		$site_type = get_option( Constants::ONEDESIGN_SITE_TYPE, '' );
-
 		return rest_ensure_response(
 			[
 				'success'   => true,
-				'site_type' => $site_type,
+				'site_type' => Settings::get_site_type(),
 			]
 		);
 	}
@@ -167,12 +165,11 @@ class Basic_Options_Controller extends Abstract_REST_Controller {
 	public function set_site_type( WP_REST_Request $request ): WP_REST_Response|\WP_Error {
 
 		$site_type = sanitize_text_field( $request->get_param( 'site_type' ) );
-
-		update_option( Constants::ONEDESIGN_SITE_TYPE, $site_type, false );
+		$success   = update_option( Settings::OPTION_SITE_TYPE, $site_type, false );
 
 		return rest_ensure_response(
 			[
-				'success'   => true,
+				'success'   => $success,
 				'site_type' => $site_type,
 			]
 		);
@@ -184,11 +181,11 @@ class Basic_Options_Controller extends Abstract_REST_Controller {
 	 * @return \WP_REST_Response|\WP_Error
 	 */
 	public function get_shared_sites(): WP_REST_Response|\WP_Error {
-		$shared_sites = get_option( Constants::ONEDESIGN_SHARED_SITES, [] );
+		$shared_sites = Settings::get_shared_sites();
 		return rest_ensure_response(
 			[
 				'success'      => true,
-				'shared_sites' => $shared_sites,
+				'shared_sites' => array_values( $shared_sites ),
 			]
 		);
 	}
@@ -209,10 +206,10 @@ class Basic_Options_Controller extends Abstract_REST_Controller {
 		// check if same url exists more than once or not.
 		$urls = [];
 		foreach ( $sites_data as $site ) {
-			if ( isset( $site['siteUrl'] ) && in_array( $site['siteUrl'], $urls, true ) ) {
+			if ( isset( $site['url'] ) && in_array( $site['url'], $urls, true ) ) {
 				return new \WP_Error( 'duplicate_site_url', __( 'Brand Site already exists.', 'onedesign' ), [ 'status' => 400 ] );
 			}
-			$urls[] = $site['siteUrl'] ?? '';
+			$urls[] = $site['url'] ?? '';
 		}
 
 		// add unique id to each site if not exists.
@@ -224,12 +221,12 @@ class Basic_Options_Controller extends Abstract_REST_Controller {
 			$site['id'] = wp_generate_uuid4();
 		}
 
-		update_option( Constants::ONEDESIGN_SHARED_SITES, $sites_data, false );
+		Settings::set_shared_sites( $sites_data );
 
 		return rest_ensure_response(
 			[
 				'success'    => true,
-				'sites_data' => $sites_data,
+				'sites_data' => array_values( $sites_data ),
 			]
 		);
 	}
@@ -255,7 +252,7 @@ class Basic_Options_Controller extends Abstract_REST_Controller {
 		 * @return \WP_REST_Response|\WP_Error
 		 */
 	public function get_governing_site(): WP_REST_Response|\WP_Error {
-		$governing_site_url = get_option( Constants::ONEDESIGN_GOVERNING_SITE_URL, '' );
+		$governing_site_url = Settings::get_parent_site_url();
 
 		return rest_ensure_response(
 			[
@@ -271,12 +268,46 @@ class Basic_Options_Controller extends Abstract_REST_Controller {
 	 * @return \WP_REST_Response|\WP_Error
 	 */
 	public function remove_governing_site(): WP_REST_Response|\WP_Error {
-		update_option( Constants::ONEDESIGN_GOVERNING_SITE_URL, '', false );
+		delete_option( Settings::OPTION_CONSUMER_PARENT_SITE_URL );
 
 		return rest_ensure_response(
 			[
 				'success' => true,
 				'message' => __( 'Governing site removed successfully.', 'onedesign' ),
+			]
+		);
+	}
+
+	/**
+	 * Get the secret key.
+	 *
+	 * @return \WP_REST_Response| \WP_Error
+	 */
+	public function get_secret_key(): \WP_REST_Response|\WP_Error {
+		$secret_key = Settings::get_api_key();
+
+		return new \WP_REST_Response(
+			[
+				'success'    => true,
+				'secret_key' => $secret_key,
+			]
+		);
+	}
+
+	/**
+	 * Regenerate the secret key.
+	 *
+	 * @return \WP_REST_Response|\WP_Error
+	 */
+	public function regenerate_secret_key(): \WP_REST_Response|\WP_Error {
+
+		$regenerated_key = Settings::regenerate_api_key();
+
+		return new \WP_REST_Response(
+			[
+				'success'    => true,
+				'message'    => __( 'Secret key regenerated successfully.', 'onedesign' ),
+				'secret_key' => $regenerated_key,
 			]
 		);
 	}

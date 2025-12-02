@@ -7,8 +7,8 @@
 
 namespace OneDesign\Modules\Rest;
 
-use OneDesign\Plugin_Configs\Constants;
-use OneDesign\Utils;
+use OneDesign\Modules\Post_Types\Constants;
+use OneDesign\Modules\Settings\Settings;
 
 /**
  * Class Templates_Controller
@@ -63,12 +63,12 @@ class Templates_Controller extends Abstract_REST_Controller {
 				[
 					'methods'             => \WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_shared_templates' ],
-					'permission_callback' => 'onedesign_validate_api_key',
+					'permission_callback' => [ $this, 'check_api_permissions' ],
 				],
 				[
 					'methods'             => \WP_REST_Server::CREATABLE,
 					'callback'            => [ $this, 'create_templates' ],
-					'permission_callback' => 'onedesign_validate_api_key',
+					'permission_callback' => [ $this, 'check_api_permissions' ],
 					'args'                => [
 						'templates'      => [
 							'required' => true,
@@ -142,7 +142,7 @@ class Templates_Controller extends Abstract_REST_Controller {
 			[
 				'methods'             => \WP_REST_Server::DELETABLE,
 				'callback'            => [ $this, 'remove_template_from_brand_site' ],
-				'permission_callback' => 'onedesign_validate_api_key',
+				'permission_callback' => [ $this, 'check_api_permissions' ],
 				'args'                => [
 					'template_ids'  => [
 						'required' => true,
@@ -188,7 +188,7 @@ class Templates_Controller extends Abstract_REST_Controller {
 			[
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => [ $this, 'create_synced_patterns' ],
-				'permission_callback' => 'onedesign_validate_api_key',
+				'permission_callback' => [ $this, 'check_api_permissions' ],
 				'args'                => [
 					'synced_patterns' => [
 						'required' => false,
@@ -435,7 +435,7 @@ class Templates_Controller extends Abstract_REST_Controller {
 		$response_data = [];
 
 		// get site info from child sites option.
-		$site_info = Utils::get_site_by_id( $site );
+		$site_info = $this->get_site_by_id( $site );
 		if ( ! $site_info ) {
 			return new \WP_REST_Response(
 				[
@@ -446,7 +446,7 @@ class Templates_Controller extends Abstract_REST_Controller {
 			);
 		}
 
-		$request_url = Utils::build_api_endpoint( $site_info['url'], 'remove-site-templates', self::NAMESPACE );
+		$request_url = $this->build_api_endpoint( $site_info['url'], 'remove-site-templates', self::NAMESPACE );
 		$api_key     = $site_info['api_key'] ?? '';
 
 		$response = wp_safe_remote_request(
@@ -610,7 +610,7 @@ class Templates_Controller extends Abstract_REST_Controller {
 		$parsed_templates = [];
 		$already_tracked  = [];
 		foreach ( $shared_templates as $template ) {
-			$parsed_templates = array_merge( $parsed_templates, onedesign_parse_block_template( $template['content'], $already_tracked ) );
+			$parsed_templates = array_merge( $parsed_templates, $this->parse_block_template( $template['content'], $already_tracked ) );
 		}
 
 		$template_parts  = array_filter( $parsed_templates, static fn( $t ) => 'template-part' === $t['type'] );
@@ -618,7 +618,7 @@ class Templates_Controller extends Abstract_REST_Controller {
 		$synced_patterns = array_filter( $parsed_templates, static fn( $t ) => 'block' === $t['type'] );
 
 		// get site info from child sites option.
-		$brand_sites = Utils::get_sites_info();
+		$brand_sites = Settings::get_shared_sites();
 
 		$error_log     = [];
 		$response_data = [];
@@ -631,14 +631,14 @@ class Templates_Controller extends Abstract_REST_Controller {
 				continue;
 			}
 
-			$request_url         = Utils::build_api_endpoint( $site['url'], 'shared', self::NAMESPACE );
-			$new_templates       = Utils::modify_template_template_part_pattern_slug( $shared_templates, $site['name'] );
-			$new_patterns        = Utils::modify_template_template_part_pattern_slug( $patterns, $site['name'] );
-			$new_template_parts  = Utils::modify_template_template_part_pattern_slug( $template_parts, $site['name'] );
-			$new_synced_patterns = Utils::modify_template_template_part_pattern_slug( $synced_patterns, $site['name'] );
+			$request_url         = $this->build_api_endpoint( $site['url'], 'shared', self::NAMESPACE );
+			$new_templates       = $this->modify_template_template_part_pattern_slug( $shared_templates, $site['name'] );
+			$new_patterns        = $this->modify_template_template_part_pattern_slug( $patterns, $site['name'] );
+			$new_template_parts  = $this->modify_template_template_part_pattern_slug( $template_parts, $site['name'] );
+			$new_synced_patterns = $this->modify_template_template_part_pattern_slug( $synced_patterns, $site['name'] );
 
 			// first make a request to create synced patterns to brand site.
-			$synced_patterns_request_url = Utils::build_api_endpoint( $site['url'], 'create-synced-patterns', self::NAMESPACE );
+			$synced_patterns_request_url = $this->build_api_endpoint( $site['url'], 'create-synced-patterns', self::NAMESPACE );
 			$synced_patterns_response    = wp_safe_remote_post(
 				$synced_patterns_request_url,
 				[
@@ -665,9 +665,9 @@ class Templates_Controller extends Abstract_REST_Controller {
 			if ( isset( $synced_patterns_response['created_posts'] ) && is_array( $synced_patterns_response['created_posts'] ) ) {
 				$created_posts = $synced_patterns_response['created_posts'];
 
-				$new_templates      = Utils::replace_block_refs( $new_templates, $created_posts );
-				$new_template_parts = Utils::replace_block_refs( $new_template_parts, $created_posts );
-				$new_patterns       = Utils::replace_block_refs( $new_patterns, $created_posts );
+				$new_templates      = $this->replace_block_refs( $new_templates, $created_posts );
+				$new_template_parts = $this->replace_block_refs( $new_template_parts, $created_posts );
+				$new_patterns       = $this->replace_block_refs( $new_patterns, $created_posts );
 			}
 			$response = wp_safe_remote_post(
 				$request_url,
@@ -733,11 +733,11 @@ class Templates_Controller extends Abstract_REST_Controller {
 	 * @return \WP_REST_Response
 	 */
 	public function get_templates_from_connected_sites(): \WP_REST_Response {
-		$connected_sites = Utils::get_sites_info();
+		$connected_sites = Settings::get_shared_sites();
 		$sites_response  = [];
 		$error_log       = [];
 		foreach ( $connected_sites as $site ) {
-			$request_url      = Utils::build_api_endpoint( $site['url'], 'shared', self::NAMESPACE ) . '?timestamp=' . time(); // Add timestamp to avoid caching issues.
+			$request_url      = $this->build_api_endpoint( $site['url'], 'shared', self::NAMESPACE ) . '?timestamp=' . time(); // Add timestamp to avoid caching issues.
 			$api_key          = $site['api_key'];
 			$response         = wp_safe_remote_get(
 				$request_url,
@@ -835,5 +835,384 @@ class Templates_Controller extends Abstract_REST_Controller {
 			'success' => true,
 			'data'    => $data,
 		];
+	}
+
+	/**
+	 * Get site info by site ID.
+	 *
+	 * @param string $site_id Site ID.
+	 *
+	 * @return array|null Site info array or null if not found.
+	 */
+	private function get_site_by_id( string $site_id ): array|null {
+		$sites    = Settings::get_shared_sites();
+		$filtered = array_filter(
+			$sites,
+			static function ( $site ) use ( $site_id ): bool {
+				return (string) $site['id'] === (string) $site_id;
+			}
+		);
+
+		return ! empty( $filtered ) ? array_values( $filtered )[0] : null;
+	}
+
+	/**
+	 * Modify the slug and id of templates, template parts, and patterns to ensure uniqueness across shared sites.
+	 * Also modifies references within the content.
+	 *
+	 * @param array  $templates Array of template objects.
+	 * @param string $shared_site_name The name of the site to which template is going to be shared.
+	 *
+	 * @return array The modified template array with unique slugs, ids, and updated content references.
+	 */
+	private function modify_template_template_part_pattern_slug( array $templates, string $shared_site_name ): array {
+		foreach ( $templates as $index => $template ) {
+
+			// set original slug field to keep track of original slugs.
+			if ( isset( $template['slug'] ) && ! isset( $template['original_slug'] ) ) {
+				$templates[ $index ]['original_slug'] = $template['slug'];
+			}
+
+			// set original id field to keep track of original ids.
+			if ( isset( $template['id'] ) && ! isset( $template['original_id'] ) ) {
+				$templates[ $index ]['original_id'] = $template['id'];
+			}
+
+			// Modify top-level slug and id.
+			if ( isset( $template['slug'] ) ) {
+				$templates[ $index ]['slug'] = self::generate_unique_slug_for_template_patterns_template_parts(
+					$template['slug'],
+					$shared_site_name
+				);
+			}
+
+			if ( isset( $template['id'] ) ) {
+				$templates[ $index ]['id'] = self::generate_unique_slug_for_template_patterns_template_parts(
+					$template['id'],
+					$shared_site_name,
+					false
+				);
+			}
+
+			/**
+			 * Removes the "theme" attribute from WordPress block comments in the content.
+			 *
+			 * For example, transforms:
+			 * <!-- wp:template-part {"slug":"onedesign-onepress-2-ut","theme":"rtcamp-2024","area":"uncategorized"} /-->
+			 * into:
+			 * <!-- wp:template-part {"slug":"onedesign-onepress-2-ut","area":"uncategorized"} /-->
+			 */
+			$content = '';
+			if ( $template instanceof \WP_Block_Template && isset( $template->content ) ) {
+				$content = $template->content;
+			} elseif ( is_array( $template ) && isset( $template['content'] ) ) {
+				$content = $template['content'];
+			}
+
+			if ( ! empty( $content ) && is_string( $content ) ) {
+				// Remove theme attribute from block comments.
+				$pattern = '/<!--\s*wp:(template-part|pattern)\s*(\{[^}]*\})\s*\/?-->/';
+
+				$content = preg_replace_callback(
+					$pattern,
+					static function ( $matches ): string|null {
+						$block_type      = $matches[1];
+						$attributes_json = $matches[2];
+
+						// Decode the attributes.
+						$attributes = json_decode( $attributes_json, true );
+						if ( ! $attributes ) {
+							return $matches[0]; // Return original if JSON decode fails.
+						}
+
+						// Remove theme attribute if present.
+						if ( isset( $attributes['theme'] ) ) {
+							unset( $attributes['theme'] );
+						}
+
+						// Re-encode and return.
+						return '<!-- wp:' . $block_type . ' ' . wp_json_encode( $attributes, JSON_UNESCAPED_SLASHES ) . ' /-->';
+					},
+					$content
+				);
+
+				// Assign cleaned content back.
+				if ( $template instanceof \WP_Block_Template ) {
+					$templates[ $index ]->content = $content;
+				} else {
+					$templates[ $index ]['content'] = $content;
+				}
+			}
+
+			// Modify content references (uses the cleaned content from above).
+			$current_content = '';
+			if ( $template instanceof \WP_Block_Template && isset( $templates[ $index ]->content ) ) {
+				$current_content = $templates[ $index ]->content;
+			} elseif ( is_array( $template ) && isset( $templates[ $index ]['content'] ) ) {
+				$current_content = $templates[ $index ]['content'];
+			}
+
+			if ( empty( $current_content ) ) {
+				continue;
+			}
+
+			$modified_content = $this->modify_content_references(
+				$current_content,
+				$shared_site_name
+			);
+
+			if ( $template instanceof \WP_Block_Template ) {
+				$templates[ $index ]->content = $modified_content;
+			} else {
+				$templates[ $index ]['content'] = $modified_content;
+			}
+		}
+
+		return $templates;
+	}
+
+	/**
+	 * Modify template part and pattern references within block content.
+	 *
+	 * @param string|array|\WP_Block_Template $content The block content containing WordPress block markup.
+	 * @param string                          $shared_site_name The name of the site to which template is going to be shared.
+	 *
+	 * @return array|string|null Modified content with updated slugs and themes.
+	 */
+	private function modify_content_references( string|array|\WP_Block_Template $content, string $shared_site_name ): array|string|null {
+
+		$content_string = '';
+
+		if ( is_string( $content ) ) {
+			$content_string = $content;
+		} elseif ( is_object( $content ) ) {
+			// Handle WP_Block_Template object.
+			if ( isset( $content->content ) ) {
+				$content_string = $content->content;
+			} elseif ( isset( $content->post_content ) ) {
+				// Handle WP_Post object (for patterns/blocks).
+				$content_string = $content->post_content;
+			} else {
+				// Return empty string if we can't find content.
+				return '';
+			}
+		} elseif ( is_array( $content ) ) {
+			// Handle array format.
+			if ( ! isset( $content['content'] ) ) {
+				return '';
+			}
+
+			$content_string = $content['content'];
+		} else {
+			// Unsupported content type.
+			return '';
+		}
+
+		// Pattern to match template-part and pattern blocks.
+		$pattern = '/<!--\s*wp:(template-part|pattern)\s*(\{[^}]*\})\s*\/?-->/';
+
+		return preg_replace_callback(
+			$pattern,
+			static function ( $matches ) use ( $shared_site_name ): string|null {
+				$block_type      = $matches[1];
+				$attributes_json = $matches[2];
+
+				// Decode the attributes.
+				$attributes = json_decode( $attributes_json, true );
+
+				if ( ! $attributes ) {
+					return $matches[0]; // Return original if JSON decode fails.
+				}
+
+				// Modify slug if present.
+				if ( isset( $attributes['slug'] ) ) {
+					$attributes['slug'] = self::generate_unique_slug_for_template_patterns_template_parts(
+						$attributes['slug'],
+						$shared_site_name
+					);
+				}
+
+				// Encode back to JSON.
+				$new_attributes_json = wp_json_encode( $attributes, JSON_UNESCAPED_SLASHES );
+
+				// Return the modified block.
+				return "<!-- wp:{$block_type} {$new_attributes_json} /-->";
+			},
+			$content_string
+		);
+	}
+
+	/**
+	 * Generate a unique slug for template patterns and template parts.
+	 *
+	 * @param string $base_slug The base slug (e.g., 'header', 'footer').
+	 * @param string $sharing_site_name The name of the site to which template is going to be shared.
+	 * @param bool   $is_slug Whether this is for slug (true) or id (false).
+	 *
+	 * @return string Unique slug combining current site name, sharing site name, and base slug.
+	 */
+	private static function generate_unique_slug_for_template_patterns_template_parts( string $base_slug, string $sharing_site_name, bool $is_slug = true ): string {
+		// Sanitize the base slug to ensure it's URL-friendly.
+		$sanitized_slug = sanitize_title( $base_slug );
+
+		// Convert sharing site name to lowercase and sanitize it.
+		$sanitized_site_name = sanitize_title( strtolower( $sharing_site_name ) );
+
+		// Combine the sanitized base slug with the sanitized site name.
+		$unique_slug = '';
+		if ( $is_slug ) {
+			$unique_slug = self::get_current_site_name() . '-' . $sanitized_site_name . '-' . $sanitized_slug;
+		} else {
+			$unique_slug = self::get_current_site_name() . '-' . $sanitized_site_name . '//' . $sanitized_slug;
+		}
+
+		return $unique_slug;
+	}
+
+	/**
+	 * Get current site name in lowercase.
+	 *
+	 * @return string Current site name in lowercase.
+	 */
+	private static function get_current_site_name(): string {
+		$site_name = get_bloginfo( 'name' );
+		// convert to lowercase letters.
+		return sanitize_title( strtolower( $site_name ) );
+	}
+
+	/**
+	 * Parse the block template content to extract blocks, template parts, and patterns.
+	 *
+	 * This function identifies and extracts blocks, template parts, and patterns from the provided content.
+	 * It handles nested structures and ensures that each unique content is processed only once to avoid duplication.
+	 *
+	 * @param string $content The block template content to parse.
+	 * @param array  $already_tracked An array to keep track of already processed content to avoid duplication.
+	 *                                This should be passed by reference to maintain state across recursive calls.
+	 *
+	 * @return array An array of parsed elements, each containing type, attributes, and content.
+	 */
+	private function parse_block_template( string $content, array &$already_tracked ): array {
+		$results = [];
+
+		// to process template parts and patterns.
+		$pattern = '/<!--\s*wp:(template-part|pattern|block)\s*(\{[^}]*\})?\s*\/?-->/';
+
+		if ( preg_match_all( $pattern, $content, $matches, PREG_SET_ORDER ) ) {
+			foreach ( $matches as $match ) {
+				$block_type      = $match[1];
+				$attributes_json = isset( $match[2] ) ? $match[2] : '{}';
+
+				// Decode JSON attributes.
+				$attributes = json_decode( $attributes_json, true );
+
+				$result = [
+					'type'       => $block_type,
+					'full_match' => $match[0],
+					'attributes' => $attributes ? $attributes : [],
+				];
+
+				// Create unique tracking key based on content identity.
+				$tracking_key = '';
+
+				if ( 'template-part' === $block_type ) {
+					$template_id           = $result['attributes']['theme'] . '//' . $result['attributes']['slug'];
+					$result['content']     = get_block_template(
+						id: $template_id,
+						template_type: 'wp_template_part'
+					) ?? '';
+					$result['id']          = $result['content']->id ?? null;
+					$result['slug']        = $result['content']->slug ?? null;
+					$result['theme']       = $result['content']->theme ?? null;
+					$result['title']       = $result['content']->title ?? null;
+					$result['description'] = $result['content']->description ?? null;
+					$result['post_types']  = $result['content']->post_types ?? null;
+					$result['area']        = $result['content']->area ?? null;
+					$tracking_key          = 'template-part_' . $template_id;
+				}
+
+				if ( 'pattern' === $block_type ) {
+					$result['content']     = \WP_Block_Patterns_Registry::get_instance()->get_registered( $result['attributes']['slug'] ) ?? '';
+					$result['title']       = $result['content']['title'] ?? null;
+					$result['slug']        = $result['content']['slug'] ?? null;
+					$result['description'] = $result['content']['description'] ?? null;
+					$result['name']        = $result['content']['name'] ?? null;
+					$result['post_types']  = $result['content']->post_types ?? null;
+					$tracking_key          = 'pattern_' . $result['attributes']['slug'];
+				}
+
+				if ( 'block' === $block_type ) {
+					$result['content']     = get_post( $attributes['ref'] );
+					$result['id']          = $result['content']->ID ?? null;
+					$result['slug']        = $result['content']->post_name ?? null;
+					$result['title']       = $result['content']->post_title ?? null;
+					$result['description'] = $result['content']->post_excerpt ?? null;
+					$result['content']     = $result['content']->post_content ?? null;
+					$tracking_key          = 'block_' . $attributes['ref'];
+				}
+
+				// Check if this specific content has already been processed.
+				if ( in_array( $tracking_key, $already_tracked, true ) ) {
+					continue;
+				}
+
+				// Add to tracking to prevent processing again.
+				$already_tracked[] = $tracking_key;
+
+				// Add to results only if not already processed.
+				$results[] = $result;
+
+				// Recursively parse nested blocks and merge them at the same level.
+				if ( empty( $result['content'] ) ) {
+					continue;
+				}
+
+				$nested_blocks = [];
+
+				if ( isset( $result['content']->content ) ) {
+					$nested_blocks = $this->parse_block_template( $result['content']->content, $already_tracked );
+				}
+
+				if ( isset( $result['content']->post_content ) ) {
+					$nested_blocks = $this->parse_block_template( $result['content']->post_content, $already_tracked );
+				}
+
+				// Flatten the nested results into the main array.
+				$results = array_merge( $results, $nested_blocks );
+			}
+		}
+
+		return $results;
+	}
+
+	/**
+	 * Replace wp:block ref IDs - handles multiple WordPress block comment formats.
+	 *
+	 * @param array  $items        Array of items to process. Passed by reference.
+	 * @param array  $id_map       Map of old_id => new_id.
+	 * @param string $content_key  Key for the content field (default: 'content').
+	 * @return array Modified items with updated block refs.
+	 */
+	private function replace_block_refs( array $items, array $id_map = [], string $content_key = 'content' ): array {
+		if ( empty( $id_map ) ) {
+			return $items;
+		}
+
+		foreach ( $items as $key => $item ) {
+			if ( ! isset( $item[ $content_key ] ) || empty( $item[ $content_key ] ) ) {
+				continue;
+			}
+
+			$content = $item[ $content_key ];
+
+			foreach ( $id_map as $old_id => $new_id ) {
+				$pattern1 = '/(<!--\s*wp:block\s*\{\s*"ref"\s*:\s*)' . preg_quote( $old_id, '/' ) . '(\s*\}\s*\/-->)/';
+				$content  = preg_replace( $pattern1, '${1}' . $new_id . '${2}', $content );
+			}
+
+			$items[ $key ][ $content_key ] = $content;
+		}
+
+		return $items;
 	}
 }

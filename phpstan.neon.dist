@@ -21,7 +21,6 @@ parameters:
 				- onedesign.php
 		paths:
 				- onedesign.php
-				- custom-functions.php
 				- uninstall.php
 				- inc/
 		excludePaths:
@@ -33,3 +32,5 @@ parameters:
 		ignoreErrors:
 				- # Too noisy for now.
 					identifier: missingType.generics
+				- # Too noisy for now.
+					identifier: missingType.iterableValue

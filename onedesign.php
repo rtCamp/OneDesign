@@ -31,12 +31,21 @@ function constants(): void {
 	 * Version of the plugin.
 	 */
 	define( 'ONEDESIGN_VERSION', '1.0.0' );
-	define( 'ONEDESIGN_DIR_PATH', plugin_dir_path( __FILE__ ) );
-	define( 'ONEDESIGN_RELATIVE_PATH', dirname( plugin_basename( __FILE__ ) ) );
-	define( 'ONEDESIGN_DIR_URL', plugin_dir_url( __FILE__ ) );
-	define( 'ONEDESIGN_BUILD_URI', plugin_dir_url( __FILE__ ) . 'build/' );
-	define( 'ONEDESIGN_BUILD_PATH', plugin_dir_path( __FILE__ ) . 'build/' );
-	define( 'ONEDESIGN_PLUGIN_LOADER_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+
+	/**
+	 * Root path to the plugin directory.
+	 */
+	define( 'ONEDESIGN_DIR', plugin_dir_path( __FILE__ ) );
+
+	/**
+	 * Root URL to the plugin directory.
+	 */
+	define( 'ONEDESIGN_URL', plugin_dir_url( __FILE__ ) );
+
+	/**
+	 * Plugin basename.
+	 */
+	define( 'ONEDESIGN_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 }
 
 constants();
@@ -54,7 +63,7 @@ if ( class_exists( 'OneDesign\Main' ) ) {
 		static function (): void {
 			\OneDesign\Main::instance();
 
-			// @todo remove before submitting to .org.
+			//phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- @todo remove before submitting to .org.
 			load_plugin_textdomain( 'onedesign', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 		}
 	);
