@@ -65,7 +65,7 @@ const OnboardingScreen = () => {
 					message: __( 'Error fetching site type.', 'onedesign' ),
 				} );
 			} );
-	}, [ nonce ] );
+	} );
 
 	const handleSiteTypeChange = async ( value: SiteType | '' ) => {
 		// Optimistically set site type.
