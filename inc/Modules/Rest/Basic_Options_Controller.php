@@ -185,7 +185,7 @@ class Basic_Options_Controller extends Abstract_REST_Controller {
 		return rest_ensure_response(
 			[
 				'success'      => true,
-				'shared_sites' => $shared_sites,
+				'shared_sites' => array_values( $shared_sites ),
 			]
 		);
 	}
@@ -226,7 +226,7 @@ class Basic_Options_Controller extends Abstract_REST_Controller {
 		return rest_ensure_response(
 			[
 				'success'    => true,
-				'sites_data' => $sites_data,
+				'sites_data' => array_values( $sites_data ),
 			]
 		);
 	}

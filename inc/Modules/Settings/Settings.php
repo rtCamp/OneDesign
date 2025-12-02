@@ -251,7 +251,7 @@ final class Settings implements Registrable {
 				continue;
 			}
 
-			$brands_to_return[] = [
+			$brands_to_return[ $brand['url'] ] = [
 				'api_key' => $brand['api_key'] ?? '',
 				'id'      => $brand['id'] ?? '',
 				'logo'    => $brand['logo'] ?? '',

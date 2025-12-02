@@ -539,7 +539,7 @@ class Patterns_Controller extends Abstract_REST_Controller {
 		// Use the option name from your settings class.
 		$child_sites = Settings::get_shared_sites();
 
-		return new WP_REST_Response( $child_sites, 200 );
+		return new WP_REST_Response( array_values( $child_sites ), 200 );
 	}
 
 	/**
@@ -560,7 +560,7 @@ class Patterns_Controller extends Abstract_REST_Controller {
 		$target_site_ids = $request->get_param( 'target_site_ids' );
 
 		// Use the option name from your settings class.
-		$configured_child_sites = Settings::get_shared_sites();
+		$configured_child_sites = array_values( Settings::get_shared_sites() );
 
 		// Get all patterns (both registered and user-created).
 		$local_patterns_map = $this->get_all_local_patterns_map();
@@ -600,7 +600,7 @@ class Patterns_Controller extends Abstract_REST_Controller {
 			$target_site = array_filter(
 				$configured_child_sites,
 				static function ( $site ) use ( $site_id ) {
-					return isset( $site['id'] ) && $site['id'] === $site_id;
+					return ! empty( $site['id'] ) && $site['id'] === $site_id;
 				}
 			);
 
