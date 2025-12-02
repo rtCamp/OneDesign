@@ -53,8 +53,8 @@ class Admin implements Registrable {
 	 * @return void
 	 */
 	public function add_settings_page(): void {
-		// Add plugin specific submenu pages.
-		if ( ! Settings::is_governing_site() ) {
+		// Only add plugin-specific submenu pages if sites have been connecting.
+		if ( ! Settings::is_governing_site() || ! Settings::get_shared_sites() ) {
 			return;
 		}
 

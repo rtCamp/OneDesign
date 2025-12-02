@@ -11,8 +11,6 @@ namespace OneDesign\Modules\Settings;
 use OneDesign\Contracts\Interfaces\Registrable;
 use OneDesign\Modules\Core\Assets;
 use OneDesign\Modules\Multisite\Settings as MU_Settings;
-use OneDesign\Modules\Post_Types\Admin as CPT_Admin;
-
 /**
  * Class Settings
  */
@@ -277,10 +275,6 @@ class Admin implements Registrable {
 		if ( ! empty( $shared_sites ) ) {
 			return $classes;
 		}
-
-		// Remove submenu pages.
-		remove_submenu_page( self::MENU_SLUG, CPT_Admin::PATTERN_REDIRECT_SCREEN );
-		remove_submenu_page( self::MENU_SLUG, CPT_Admin::TEMPLATE_REDIRECT_SCREEN );
 
 		$classes .= ' onedesign-missing-brand-sites ';
 		return $classes;

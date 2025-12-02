@@ -2,6 +2,8 @@
 /**
  * WordPress-safe encryption utilities.
  *
+ * Runtime exceptions are _not_ translated to allow this class to be used whenever needed.
+ *
  * @package OneDesign
  */
 
@@ -50,7 +52,7 @@ final class Encryptor {
 		$tag        = '';
 		$ciphertext = openssl_encrypt( $value, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag );
 		if ( false === $ciphertext ) {
-			throw new \RuntimeException( esc_html__( 'Failed to encrypt value.', 'onedesign' ) );
+			throw new \RuntimeException( 'Failed to encrypt value.' );
 		}
 
 		return base64_encode( $iv . $tag . $ciphertext );
@@ -68,7 +70,7 @@ final class Encryptor {
 	public static function decrypt( string $value ): string {
 		$decoded = base64_decode( $value, true );
 		if ( false === $decoded || strlen( $decoded ) < self::IV_LENGTH + self::TAG_LENGTH ) {
-			throw new \RuntimeException( esc_html__( 'Encrypted payload is invalid.', 'onedesign' ) );
+			throw new \RuntimeException( 'Encrypted payload is invalid.' );
 		}
 
 		$key        = self::derive_key();
@@ -78,7 +80,7 @@ final class Encryptor {
 
 		$plaintext = openssl_decrypt( $ciphertext, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag );
 		if ( false === $plaintext ) {
-			throw new \RuntimeException( esc_html__( 'Failed to decrypt value.', 'onedesign' ) );
+			throw new \RuntimeException( 'Failed to decrypt value.' );
 		}
 
 		return $plaintext;
