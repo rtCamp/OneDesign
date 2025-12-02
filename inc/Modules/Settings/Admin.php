@@ -39,8 +39,8 @@ class Admin implements Registrable {
 	 * {@inheritDoc}
 	 */
 	public function register_hooks(): void {
-		add_action( 'admin_menu', [ $this, 'add_settings_page' ] );
-		add_action( 'admin_menu', [ $this, 'register_settings_page' ], 20 ); // 20 priority to make sure settings page respect its position.
+		add_action( 'admin_menu', [ $this, 'add_admin_menu' ] );
+		add_action( 'admin_menu', [ $this, 'add_submenu' ], 20 ); // 20 priority to make sure settings page respect its position.
 		add_action( 'admin_menu', [ $this, 'remove_default_submenu' ], 999 );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ], 20, 1 );
 		add_action( 'admin_footer', [ $this, 'inject_site_selection_modal' ] );
@@ -54,7 +54,7 @@ class Admin implements Registrable {
 	 *
 	 * @return void
 	 */
-	public function add_settings_page(): void {
+	public function add_admin_menu(): void {
 		add_menu_page(
 			__( 'OneDesign', 'onedesign' ),
 			__( 'OneDesign', 'onedesign' ),
@@ -69,7 +69,7 @@ class Admin implements Registrable {
 	/**
 	 * Register the settings page.
 	 */
-	public function register_settings_page(): void {
+	public function add_submenu(): void {
 
 		// Add the settings submenu page.
 		add_submenu_page(
