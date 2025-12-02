@@ -42,7 +42,7 @@ class Admin implements Registrable {
 	public function enqueue_scripts( string $hook ): void {
 		$current_screen = get_current_screen();
 
-		if ( ! $current_screen instanceof \WP_Screen || 'plugins-network' !== $current_screen->id || ! MU_Settings::is_governing_site_selected() ) {
+		if ( ! $current_screen instanceof \WP_Screen || 'plugins-network' !== $current_screen->id || MU_Settings::is_governing_site_selected() ) {
 			return;
 		}
 
