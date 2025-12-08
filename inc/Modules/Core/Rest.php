@@ -40,6 +40,7 @@ final class Rest implements Registrable {
 			$headers,
 			[
 				'X-OneDesign-Token',
+				'X-OneDesign-Source',
 			]
 		);
 	}

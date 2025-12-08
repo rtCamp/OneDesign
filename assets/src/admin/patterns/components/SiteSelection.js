@@ -93,10 +93,12 @@ const SiteSelection = ( {
 			} )
 			.map( ( site ) => site.id );
 
+		setIsSiteSelected( selectableSiteIds.length > 0 );
 		editPost( { meta: { brand_site: selectableSiteIds } } );
 	};
 
 	const deselectAllSites = () => {
+		setIsSiteSelected( false );
 		editPost( { meta: { brand_site: [] } } );
 	};
 

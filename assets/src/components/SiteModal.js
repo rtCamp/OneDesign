@@ -110,12 +110,13 @@ const SiteModal = ( { formData, setFormData, onSubmit, onClose, editing, origina
 		try {
 			// Perform health-check
 			const healthCheck = await fetch(
-				`${ formData.url }/wp-json/onedesign/v1/health-check`,
+				`${ formData.url }/wp-json/onedesign/v1/health-check?timestamp=${ Date.now() }`,
 				{
 					method: 'GET',
 					headers: {
 						'Content-Type': 'application/json',
 						'X-OneDesign-Token': formData.api_key,
+						'X-OneDesign-Source': 'Settings',
 					},
 				},
 			);

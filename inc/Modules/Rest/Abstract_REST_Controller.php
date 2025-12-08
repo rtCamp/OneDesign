@@ -101,6 +101,14 @@ abstract class Abstract_REST_Controller extends \WP_REST_Controller implements R
 		// If it's a healthcheck with no governing site, allow it and set the governing site.
 		if ( empty( $governing_site_url ) ) {
 			if ( '/' . $this->namespace . '/health-check' === $request->get_route() ) {
+
+				// Need to check x-onedesign-source header to confirm request source is from settings page as we are performing health check before sharing patterns/templates.
+				$source = $request->get_header( 'X_ONEDESIGN_SOURCE' );
+				$source = ! empty( $source ) ? sanitize_text_field( wp_unslash( $source ) ) : '';
+				if ( 'Settings' !== $source ) {
+					return false;
+				}
+
 				Settings::set_parent_site_url( $request_origin );
 				return true;
 			}
