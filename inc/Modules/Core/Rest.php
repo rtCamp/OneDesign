@@ -31,16 +31,21 @@ final class Rest implements Registrable {
 	 * @return array<int, string> Modified headers.
 	 */
 	public function allowed_cors_headers( $headers ): array {
-		// Skip if the headers are already present.
-		if ( in_array( 'X-OneDesign-Token', $headers, true ) ) {
-			return $headers;
+
+		$headers_to_add = [
+			'X-OneDesign-Token',
+			'X-OneDesign-Source',
+		];
+
+		// Only add headers that aren't already present.
+		foreach ( $headers_to_add as $header ) {
+			if ( in_array( $header, $headers, true ) ) {
+				continue;
+			}
+
+			$headers[] = $header;
 		}
 
-		return array_merge(
-			$headers,
-			[
-				'X-OneDesign-Token',
-			]
-		);
+		return $headers;
 	}
 }

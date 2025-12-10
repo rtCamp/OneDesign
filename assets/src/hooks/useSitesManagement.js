@@ -38,6 +38,7 @@ const useSitesManagement = ( { NONCE, API_NAMESPACE } ) => {
 								headers: {
 									'Content-Type': 'application/json',
 									'X-OneDesign-Token': siteApiKey,
+									'X-OneDesign-Source': 'Patterns-Templates-Sharing',
 								},
 							},
 						);
