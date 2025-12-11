@@ -380,7 +380,7 @@ const TemplateModal = () => {
 												template.title.toLowerCase().includes( searchQuery.toLowerCase() ) ||
 											( template.description && template.description.toLowerCase().includes( searchQuery.toLowerCase() ) ),
 											) }
-											currentPage={ 1 }
+											currentPage={ currentPage }
 											PER_PAGE={ PER_PAGE }
 											selectedTemplates={ selectedTemplates }
 											handleTemplateSelection={ handleTemplateSelection }
