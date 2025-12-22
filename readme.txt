@@ -109,9 +109,6 @@ All blocks used in the patterns must be available on all target sites. Ensure co
 
 == Changelog ==
 
-= 1.1.0-beta.1 =
-Feat: Refactor for WPCS and best practices
-
 = 1.0.0-beta =
 * Initial release
 * Centralized pattern management dashboard
@@ -132,8 +129,6 @@ Initial release of OneDesign. Perfect for enterprises managing design consistenc
 
 == Requirements ==
 
-* WordPress 6.8 or higher
-* PHP 8.0 or higher
 * Full Site Editing (FSE) compatible theme across all sites
 * Same theme variables and variations across network
 * All blocks used in patterns must be available on all sites
