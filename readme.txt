@@ -2,9 +2,9 @@
 Contributors: rtcamp, parthnvaswani, up1512001, singhakanshu00, danish17, aviral-mittal, vaishaliagola27, rishavjeet, vishal4669, iamimmanuelraj, vishalkakadiya
 Donate link: https://rtcamp.com/
 Tags: OnePress, Pattern distribution, Pattern sync, OneDesign, Design consistency
-Requires at least: 6.5
-Tested up to: 6.8
-Stable tag: 1.0.0
+Requires at least: 6.8
+Tested up to: 6.9
+Stable tag: 1.1.0-beta.1
 Requires PHP: 8.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -109,7 +109,10 @@ All blocks used in the patterns must be available on all target sites. Ensure co
 
 == Changelog ==
 
-= 1.0 =
+= 1.1.0-beta.1 =
+Feat: Refactor for WPCS and best practices
+
+= 1.0.0-beta =
 * Initial release
 * Centralized pattern management dashboard
 * Support for WordPress multisite and standalone installations
@@ -121,13 +124,16 @@ All blocks used in the patterns must be available on all target sites. Ensure co
 
 == Upgrade Notice ==
 
-= 1.0 =
+= 1.1.0-beta.1 =
+Feat: Refactor for WPCS and best practices
+
+= 1.0.0-beta =
 Initial release of OneDesign. Perfect for enterprises managing design consistency across multiple WordPress sites.
 
 == Requirements ==
 
-* WordPress 6.2.6 or higher
-* PHP 7.4 or higher
+* WordPress 6.8 or higher
+* PHP 8.0 or higher
 * Full Site Editing (FSE) compatible theme across all sites
 * Same theme variables and variations across network
 * All blocks used in patterns must be available on all sites
