@@ -9,13 +9,13 @@ This plugin is licensed under the GPL v2 or later.
 
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](http://www.gnu.org/licenses/gpl-2.0.html)
 
-This tool enables synchronization of block patterns across multiple sites in a WordPress multisite network.
+This tool enables synchronization of block patterns and templates across multiple sites in a WordPress multisite network.
 
 ## Description
-OneDesign allows you to define patterns on a Governing site and apply them to brand sites, maintaining consistency across your network. The plugin provides an intuitive interface for browsing, searching, and applying patterns, making it easy to maintain design consistency across all your network sites.
+OneDesign allows you to define patterns and templates on a Governing site and apply them to brand sites, maintaining consistency across your network. The plugin provides an intuitive interface for browsing, searching, and applying patterns and templates, making it easy to maintain design consistency across all your network sites.
 
 ## Why OneDesign?
-Managing multiple websites—whether for different brands, regions, or languages shouldn’t mean reinventing the wheel each time. Instead of designing layouts from scratch for each site, OneDesign lets you create once and deploy anywhere, in just one click.
+Managing multiple websites—whether for different brands, regions, or languages shouldn't mean reinventing the wheel each time. Instead of designing layouts from scratch for each site, OneDesign lets you create once and deploy anywhere, in just one click.
 
 Built for enterprise teams, OneDesign unifies your design, editorial, and development processes across all web properties. The result? A shared design system that dramatically cuts down on development, decision-making, and opportunity costs—saving you hundreds of thousands of dollars.
 
@@ -45,29 +45,33 @@ Built for enterprise teams, OneDesign unifies your design, editorial, and develo
 
 - **Multisite Pattern Sync**: Define patterns on the governing site and apply to multiple brand sites
 
+- **Template Sharing & Sync**: Share complete templates between sites with automatic pattern and template part synchronization
+
+- **Intelligent Template Sync**: Templates automatically resync when updated on the governing site, ensuring brand sites stay current
+
 - **Pattern Management**: View and manage already applied patterns
 
 ## Requirements
 | Requirement   | Version                                            |
 |---------------|----------------------------------------------------|
-| WordPress     | >= 6.2.6                                          |
-| PHP           | >= 7.4                                             |
-| Tested Up to  | >= 6.8.2                                           |
-| Stable Tag    | 1.0                                                |
+| WordPress     | >= 6.8                                         |
+| PHP           | >= 8.0                                             |
+| Tested Up to  | >= 6.9                                           |
+| Stable Tag    | 1.1.0-beta.1                                             |
 | Prerequisites | <ul><li>A FSE (Full Site Editing) compatible theme across all sites. With same variables and variations.</li><li>All the blocks used in the patterns must be available on all sites.</li></ul> |
 
 ## Installation
 1. Download the OneDesign plugin ZIP from Releases of GitHub Repository.
 2. Upload the `OneDesign` directory to the `/wp-content/plugins/` directory
-3. For multisite installations, network activate the plugin through the ‘Plugins’ menu in WordPress
-4. For single site installations, activate the plugin through the ‘Plugins’ menu in WordPress
+3. For multisite installations, network activate the plugin through the 'Plugins' menu in WordPress
+4. For single site installations, activate the plugin through the 'Plugins' menu in WordPress
 
 ## How It Works
 
 ### Setting Up Governing and Brand Sites
 1. Install and activate the OneDesign plugin on all sites in your network
-2. From the OneDesign settings, designate one site as the “Governing Site” (source of patterns)
-3. Designate all other sites as “Brand Sites” (where patterns will be applied)
+2. From the OneDesign settings, designate one site as the "Governing Site" (source of patterns)
+3. Designate all other sites as "Brand Sites" (where patterns will be applied)
 4. Copy the API keys generated for each Brand Site from their respective settings pages
 5. In the Governing Site settings, register each Brand Site by adding:
    - Site name
@@ -87,14 +91,33 @@ Built for enterprise teams, OneDesign unifies your design, editorial, and develo
    - Use the search functionality to find specific patterns
 2. **Applying Patterns:**
    - Select the patterns you want to sync by clicking on them
-   - Click “Apply to Sites” to open the site selection modal
+   - Click "Apply to Sites" to open the site selection modal
    - Choose the destination sites from the modal
-   - Click “Apply Patterns” to distribute the selected patterns
+   - Click "Apply Patterns" to distribute the selected patterns
 3. **Removing Patterns:**
-   - Access the list of applied patterns by selecting the site’s tab
+   - Access the list of applied patterns by selecting the site's tab
    - Select the patterns you want to remove
-   - Click “Remove Selected Patterns”
+   - Click "Remove Selected Patterns"
    - Confirm the removal, and the patterns will be deleted from that site
+
+### Working with Templates
+
+OneDesign extends beyond patterns to support full template synchronization across your network.
+
+1. **Sharing Templates:**
+   - Navigate to the Template Library from the OneDesign menu
+   - Select the templates you want to share with brand sites
+   - Click "Share Templates" to distribute them across your network
+   
+2. **Automatic Pattern & Template Part Creation:**
+   - When you share a template, all patterns and template parts used within it are automatically created on the brand site
+   - This ensures complete design consistency without manual pattern-by-pattern synchronization
+   
+3. **Template Updates & Re-sync:**
+   - If you modify a template on the governing site after it's been shared, simply re-sync it
+   - Go to perticular brand site tab on which you need to re-sync and click "Sync Shared Templates" 
+   - All changes, including updated patterns and template parts, will be pushed to connected brand sites
+   - Brand sites automatically receive the latest version, maintaining consistency across your network
   
 ### Video Demo
 
@@ -110,14 +133,27 @@ Contributions are **Welcome** and **encouraged!** To learn more about contributi
 For development guidelines, please refer to our [Development Guide](./docs/DEVELOPMENT.md).
 
 ## Frequently Asked Questions
+
 ### How are patterns transferred between sites?
 Patterns are transferred securely via WordPress REST API, ensuring that all pattern data, including blocks and settings, are properly synchronized.
+
 ### Can I customize which patterns are available to specific sites?
 Yes, you can control which patterns are applied to each brand site by managing the selections in the Pattern Library.
+
 ### Are there any limits to how many patterns I can sync?
 There are no hard limits on the number of patterns you can sync, but performance may vary depending on your server resources and the complexity of the patterns.
+
 ### Can I also remove patterns from specific sites?
 Yes. You are able to do that from the dashboard itself.
+
+### Can I share complete templates instead of individual patterns?
+Yes! OneDesign supports full template sharing. When you share a template, all patterns and template parts within that template are automatically created on the brand site, ensuring complete design consistency.
+
+### What happens when I update a template on the governing site?
+You can re-sync templates after making changes on the governing site. Simply select the template and use the sync function to push all updates, including modified patterns and template parts, to all connected brand sites.
+
+### Do I need to manually sync patterns used in templates?
+No. When you share a template, OneDesign automatically creates all required patterns and template parts on the brand site. You only need to share the template itself.
 
 ### Troubleshooting
 1. **Patterns not showing up in the library**
