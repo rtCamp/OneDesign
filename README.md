@@ -115,7 +115,7 @@ OneDesign extends beyond patterns to support full template synchronization acros
    
 3. **Template Updates & Re-sync:**
    - If you modify a template on the governing site after it's been shared, simply re-sync it
-   - Go to perticular brand site tab on which you need to re-sync and click "Sync Shared Templates" 
+   - Go to particular brand site tab on which you need to re-sync and click "Sync Shared Templates" 
    - All changes, including updated patterns and template parts, will be pushed to connected brand sites
    - Brand sites automatically receive the latest version, maintaining consistency across your network
   
