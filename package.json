@@ -35,7 +35,7 @@
 		"@babel/core": "^7.28.5",
 		"@types/react": "^18.3.27",
 		"@types/react-dom": "^18.3.7",
-		"@wordpress/babel-preset-default": "^8.35.0",
+		"@wordpress/babel-preset-default": "^8.37.0",
 		"@wordpress/browserslist-config": "^6.35.0",
 		"@wordpress/env": "^10.35.0",
 		"@wordpress/eslint-plugin": "^22.21.0",
