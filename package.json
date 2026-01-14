@@ -37,7 +37,7 @@
 		"@types/react-dom": "^18.3.7",
 		"@wordpress/babel-preset-default": "^8.37.0",
 		"@wordpress/browserslist-config": "^6.35.0",
-		"@wordpress/env": "^10.35.0",
+		"@wordpress/env": "^10.37.0",
 		"@wordpress/eslint-plugin": "^22.21.0",
 		"@wordpress/scripts": "^31.0.0",
 		"browserslist": "^4.28.0",
