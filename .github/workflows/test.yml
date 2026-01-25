@@ -106,7 +106,7 @@ jobs:
       # Since Composer dependencies are installed using `composer update` and no lock file is in version control,
       # passing a custom cache suffix ensures that the cache is flushed at least once per week.
       - name: Install Composer dependencies
-        uses: ramsey/composer-install@a2636af0004d1c0499ffca16ac0b4cc94df70565 # v3.1.0
+        uses: ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520 # v3.1.1
 
       - name: Run PHPCS
         id: phpcs
@@ -164,7 +164,7 @@ jobs:
             phpstan-result-cache-
 
       - name: Install Composer dependencies
-        uses: ramsey/composer-install@a2636af0004d1c0499ffca16ac0b4cc94df70565 # v3.1.0
+        uses: ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520 # v3.1.1
 
       - name: Make Composer packages available globally
         run: echo "${PWD}/vendor/bin" >> "$GITHUB_PATH"
@@ -240,7 +240,7 @@ jobs:
           coverage: none
 
       - name: Install Composer dependencies
-        uses: ramsey/composer-install@a2636af0004d1c0499ffca16ac0b4cc94df70565 # v3.1.0
+        uses: ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520 # v3.1.1
 
       - name: Setup Node
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v5.0.0
