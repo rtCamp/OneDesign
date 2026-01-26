@@ -109,7 +109,7 @@ All blocks used in the patterns must be available on all target sites. Ensure co
 
 == Changelog ==
 
-For the full changelog, please visit <a href="https://github.com/rtCamp/OneLogs/blob/main/CHANGELOG.md" target="_blank">GitHub repository</a>.
+For the full changelog, please visit <a href="https://github.com/rtCamp/OneDesign/blob/main/CHANGELOG.md" target="_blank">GitHub repository</a>.
 
 == Upgrade Notice ==
 
