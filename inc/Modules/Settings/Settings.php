@@ -336,7 +336,7 @@ final class Settings implements Registrable {
 
 		$api_key = ! empty( $api_key ) ? Encryptor::decrypt( $api_key ) : self::regenerate_api_key();
 
-		return $api_key;
+		return $api_key ?: '';
 	}
 
 	/**
@@ -358,7 +358,7 @@ final class Settings implements Registrable {
 			do_action( 'onedesign_regenerate_api_key', $api_key, get_current_blog_id() );
 		}
 
-		return $api_key ?: '';
+		return $api_key;
 	}
 
 	/**
