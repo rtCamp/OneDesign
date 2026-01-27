@@ -4,7 +4,7 @@ Donate link: https://rtcamp.com/
 Tags: OnePress, Pattern distribution, Pattern sync, OneDesign, Design consistency
 Requires at least: 6.8
 Tested up to: 6.9
-Stable tag: 1.1.0-beta.1
+Stable tag: 1.1.0
 Requires PHP: 8.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -109,23 +109,9 @@ All blocks used in the patterns must be available on all target sites. Ensure co
 
 == Changelog ==
 
-= 1.0.0-beta =
-* Initial release
-* Centralized pattern management dashboard
-* Support for WordPress multisite and standalone installations
-* Secure REST API with authentication keys
-* Pattern browser with search and filtering
-* Bulk pattern operations
-* Pattern status monitoring and synchronization
-* Full Site Editing (FSE) theme compatibility
+For the full changelog, please visit <a href="https://github.com/rtCamp/OneDesign/blob/main/CHANGELOG.md" target="_blank">GitHub repository</a>.
 
 == Upgrade Notice ==
-
-= 1.1.0-beta.1 =
-Feat: Refactor for WPCS and best practices
-
-= 1.0.0-beta =
-Initial release of OneDesign. Perfect for enterprises managing design consistency across multiple WordPress sites.
 
 == Requirements ==
 

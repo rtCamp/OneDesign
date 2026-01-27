@@ -20,7 +20,7 @@ updates:
       composer-minor-patch:
         dependency-type: 'production'
         update-types: [minor, patch]
-      # We don't bundle major production assets; minor and patch updates are grouped above.
+      # We don't bundle minor or major production assets, so they're tested individually.
       composer-patch:
         dependency-type: 'production'
         update-types: [patch]
