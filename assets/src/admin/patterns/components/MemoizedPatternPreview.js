@@ -105,7 +105,16 @@ const MemoizedPatternPreview = memo(
 				} }
 			>
 				<div className="onedesign-pattern-title-wrapper">
-					{ isCheckBoxRequired && <CheckboxControl checked={ isSelected } /> }
+					{ isCheckBoxRequired &&
+						<CheckboxControl
+							checked={ isSelected }
+							onChange={ () => onSelect( pattern ) }
+							onClick={ ( e ) => {
+								e.stopPropagation();
+							} }
+							__nextHasNoMarginBottom
+						/>
+					}
 					<span className="onedesign-pattern-title">{ patternTitle }</span>
 				</div>
 

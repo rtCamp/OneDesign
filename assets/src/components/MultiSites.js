@@ -181,6 +181,7 @@ const MultiSites = ( { setBrandSites, brandSites, setNotice } ) => {
 										label={ `${ site.name } ( ${ site?.url } )` }
 										checked={ selectedSites.includes( site.id ) }
 										onChange={ () => toggleSiteSelection( site.id ) }
+										__nextHasNoMarginBottom
 									/>
 								) ) }
 						</div>

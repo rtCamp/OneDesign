@@ -116,6 +116,7 @@ const MemoizedTemplatePreview = memo(
 						onClick={ ( e ) => {
 							e.stopPropagation();
 						} }
+						__nextHasNoMarginBottom
 					/> }
 					<span className="onedesign-template-title">{ templateTitle }</span>
 				</div>

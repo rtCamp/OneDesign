@@ -282,13 +282,17 @@ const SiteModal = ( { formData, setFormData, onSubmit, onClose, editing, origina
 						onChange={ ( value ) => setFormData( { ...formData, name: value } ) }
 						error={ errors.name }
 						help={ __( 'This is the name of the site that will be registered.', 'onedesign' ) }
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
 					/>
 					<TextControl
 						label={ __( 'Site URL*', 'onedesign' ) }
 						value={ formData.url }
 						onChange={ ( value ) => setFormData( { ...formData, url: value } ) }
 						error={ errors.url }
-						help={ __( 'It must start with http or https and end with /, like: https://onedesign.com/', 'onedesign' ) }
+						help={ __( 'It must start with http or https and end with /, like: https://rtcamp.com/', 'onedesign' ) }
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
 					/>
 
 					{ /* Logo Media Selection */ }
@@ -296,6 +300,7 @@ const SiteModal = ( { formData, setFormData, onSubmit, onClose, editing, origina
 						id="site-logo"
 						label={ __( 'Site Logo', 'onedesign' ) }
 						help={ __( 'Select a logo for this brand site.', 'onedesign' ) }
+						__nextHasNoMarginBottom
 					>
 						<div style={ { marginTop: '8px' } }>
 							{ formData.logo && (
@@ -353,6 +358,7 @@ const SiteModal = ( { formData, setFormData, onSubmit, onClose, editing, origina
 						onChange={ ( value ) => setFormData( { ...formData, api_key: value } ) }
 						error={ errors.api_key }
 						help={ __( 'This is the api key that will be used to authenticate the site for onedesign.', 'onedesign' ) }
+						__nextHasNoMarginBottom
 					/>
 
 					<Button
