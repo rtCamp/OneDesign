@@ -440,6 +440,7 @@ const PatternModal = () => {
 									value={ searchTerm }
 									onChange={ handleSearchChange }
 									placeholder={ __( 'Search patterns…', 'onedesign' ) }
+									__nextHasNoMarginBottom
 								/>
 								{ renderSearchResults() }
 							</div>

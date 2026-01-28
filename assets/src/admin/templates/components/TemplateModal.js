@@ -352,6 +352,7 @@ const TemplateModal = () => {
 								onChange={ ( value ) => setSearchQuery( value ) }
 								placeholder={ __( 'Search Templates', 'onedesign' ) }
 								className="onedesign-template-search"
+								__nextHasNoMarginBottom
 							/>
 							<TabPanel
 								className="onedesign-template-tabs"
