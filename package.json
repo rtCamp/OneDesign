@@ -19,15 +19,15 @@
 		"uninstall.php"
 	],
 	"dependencies": {
-		"@wordpress/api-fetch": "^7.38.0",
-		"@wordpress/block-editor": "^15.11.0",
+		"@wordpress/api-fetch": "^7.39.0",
+		"@wordpress/block-editor": "^15.12.0",
 		"@wordpress/blocks": "^15.11.0",
 		"@wordpress/components": "^30.9.0",
 		"@wordpress/data": "^10.38.0",
 		"@wordpress/element": "^6.38.0",
 		"@wordpress/i18n": "^6.11.0",
 		"@wordpress/icons": "^11.5.0",
-		"@wordpress/plugins": "^7.38.0",
+		"@wordpress/plugins": "^7.39.0",
 		"dompurify": "^3.3.1",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
