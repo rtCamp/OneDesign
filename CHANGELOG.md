@@ -2,7 +2,7 @@
 
 ## 1.1.1
 
-- Feat: updated dependency
+- Feat: update Composer and NPM dependencies
 
 ## 1.1.0
 
