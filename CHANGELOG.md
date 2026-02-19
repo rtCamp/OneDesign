@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1
+
+- Feat: updated dependency
+
 ## 1.1.0
 
 - Feat: Refactor for WPCS and best practices
