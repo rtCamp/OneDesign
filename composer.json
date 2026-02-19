@@ -62,7 +62,7 @@
 		"szepeviktor/phpstan-wordpress": "^2.0.2",
 		"wp-coding-standards/wpcs": "^3.1",
 		"wp-phpunit/wp-phpunit": "^6.5",
-		"wpackagist-plugin/plugin-check": "~1.6.0",
+		"wpackagist-plugin/plugin-check": "~1.8.0",
 		"yoast/phpunit-polyfills": "^4.0"
 	},
 	"scripts": {
