@@ -39,7 +39,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup Node
-        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v5.0.0
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v5.0.0
         with:
           cache: "npm"
           node-version-file: ".nvmrc"
@@ -98,7 +98,7 @@ jobs:
         run: echo "date=$(/bin/date -u --date='last Mon' "+%F")" >> "$GITHUB_OUTPUT"
 
       - name: Cache PHPCS scan cache
-        uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: tests/_output/phpcs-cache.json
           key: ${{ runner.os }}-date-${{ steps.get-date.outputs.date }}-phpcs-cache-${{ hashFiles('**/composer.json', 'phpcs.xml.dist') }}
@@ -156,7 +156,7 @@ jobs:
         run: echo "date=$(/bin/date -u --date='last Mon' "+%F")" >> "$GITHUB_OUTPUT"
 
       - name: Cache PHP Static Analysis scan cache
-        uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: tests/_output # This is defined in the base.neon file.
           key: "phpstan-result-cache-${{ runner.os }}-date-${{ steps.get-date.outputs.date }}"
@@ -174,7 +174,7 @@ jobs:
         run: composer phpstan -- -vvv --error-format=checkstyle | cs2pr
 
       - name: "Save result cache"
-        uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         if: ${{ !cancelled() }}
         with:
           path: tests/_output
@@ -243,7 +243,7 @@ jobs:
         uses: ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520 # v3.1.1
 
       - name: Setup Node
-        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v5.0.0
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v5.0.0
         with:
           cache: "npm"
           node-version-file: ".nvmrc"
@@ -286,7 +286,7 @@ jobs:
 
       - name: Upload HTML coverage report as artifact
         if: ${{ matrix.coverage }}
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: wp-code-coverage-${{ matrix.php }}-${{ matrix.wp }}
           path: tests/_output/html
