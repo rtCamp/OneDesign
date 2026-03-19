@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a0476da62f7458ff6e73ca109d03b94c",
+    "content-hash": "731ca21239748779f3f5117a78c3625b",
     "packages": [],
     "packages-dev": [
         {
@@ -1161,11 +1161,11 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.39",
+            "version": "2.1.40",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/c6f73a2af4cbcd99c931d0fb8f08548cc0fa8224",
-                "reference": "c6f73a2af4cbcd99c931d0fb8f08548cc0fa8224",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/9b2c7aeb83a75d8680ea5e7c9b7fca88052b766b",
+                "reference": "9b2c7aeb83a75d8680ea5e7c9b7fca88052b766b",
                 "shasum": ""
             },
             "require": {
@@ -1210,7 +1210,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-02-11T14:48:56+00:00"
+            "time": "2026-02-23T15:04:35+00:00"
         },
         {
             "name": "phpstan/phpstan-deprecation-rules",
@@ -3140,7 +3140,7 @@
         },
         {
             "name": "wp-phpunit/wp-phpunit",
-            "version": "6.9.1",
+            "version": "6.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wp-phpunit/wp-phpunit.git",
@@ -3188,15 +3188,15 @@
         },
         {
             "name": "wpackagist-plugin/plugin-check",
-            "version": "1.6.0",
+            "version": "1.9.0",
             "source": {
                 "type": "svn",
                 "url": "https://plugins.svn.wordpress.org/plugin-check/",
-                "reference": "tags/1.6.0"
+                "reference": "tags/1.9.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/plugin-check.1.6.0.zip"
+                "url": "https://downloads.wordpress.org/plugin/plugin-check.1.9.0.zip"
             },
             "require": {
                 "composer/installers": "^1.0 || ^2.0"
