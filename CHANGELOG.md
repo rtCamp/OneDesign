@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.3
+
+- Fix: Update NPM dependencies to resolve vulnerabilities
+
 ## 1.1.2
 
 - Security: Resolve vulnerabilities in transitive NPM dependencies
