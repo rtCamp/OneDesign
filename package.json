@@ -91,6 +91,9 @@
 		},
 		"@wp-playground/cli": {
 			"ajv": ">=8.18.0"
-		}
+		},
+		"fast-xml-parser": "^5.5.10",
+		"picomatch": "^4.0.4",
+		"yaml": "^2.8.3"
 	}
 }
