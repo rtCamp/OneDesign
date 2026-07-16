@@ -7,23 +7,25 @@ import { __ } from '@wordpress/i18n';
  * This File contains the code to add the Pattern Library Button.
  */
 
-window.addEventListener( 'DOMContentLoaded', function() {
+window.addEventListener( 'DOMContentLoaded', function () {
 	'use strict';
 
 	const TemplateLibrary = {
 		libraryCacheElements() {
 			this.libraryCache = {};
 			this.libraryCache.gutenberg = document.getElementById( 'editor' );
-			this.libraryCache.gutenbergEditorHeader = document.querySelector( '.edit-post-layout' );
+			this.libraryCache.gutenbergEditorHeader =
+				document.querySelector( '.edit-post-layout' );
 			this.libraryCache.switchModeTemplate = document.getElementById(
-				'onedesign-template-button',
+				'onedesign-template-button'
 			).innerHTML;
 			this.libraryCache.switchMode = this.createElementFromHTML(
-				this.libraryCache.switchModeTemplate,
+				this.libraryCache.switchModeTemplate
 			);
-			this.libraryCache.switchModeButton = this.libraryCache.switchMode.querySelector(
-				'#template-main-button',
-			);
+			this.libraryCache.switchModeButton =
+				this.libraryCache.switchMode.querySelector(
+					'#template-main-button'
+				);
 			this.addCustomEventOnButtonClick();
 
 			wp.data.subscribe( () => {
@@ -38,7 +40,11 @@ window.addEventListener( 'DOMContentLoaded', function() {
 			return div.firstChild;
 		},
 		buildButton() {
-			if ( ! this.libraryCache.gutenberg.querySelector( '#onedesign-template-render' ) ) {
+			if (
+				! this.libraryCache.gutenberg.querySelector(
+					'#onedesign-template-render'
+				)
+			) {
 				this.libraryCache?.gutenberg
 					?.querySelector( '.edit-post-header-toolbar' )
 					?.appendChild( this.libraryCache.switchMode );
@@ -48,14 +54,25 @@ window.addEventListener( 'DOMContentLoaded', function() {
 			this.libraryCacheElements();
 		},
 		addCustomEventOnButtonClick() {
-			this.libraryCache.switchModeButton.addEventListener( 'click', () => {
-				window.console.log( 'Template event fired...' );
-				const TemplateLibraryOpenEvent = new CustomEvent( 'TemplateLibraryOpen', {
-					detail: { message: __( 'Open the Pattern Library Modal!', 'onedesign' ) },
-				} );
+			this.libraryCache.switchModeButton.addEventListener(
+				'click',
+				() => {
+					window.console.log( 'Template event fired...' );
+					const TemplateLibraryOpenEvent = new CustomEvent(
+						'TemplateLibraryOpen',
+						{
+							detail: {
+								message: __(
+									'Open the Pattern Library Modal!',
+									'onedesign'
+								),
+							},
+						}
+					);
 
-				document.dispatchEvent( TemplateLibraryOpenEvent );
-			} );
+					document.dispatchEvent( TemplateLibraryOpenEvent );
+				}
+			);
 		},
 	};
 

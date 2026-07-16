@@ -1,12 +1,7 @@
 /**
  * WordPress dependencies
  */
-import {
-	useState,
-	useEffect,
-	useCallback,
-	useMemo,
-} from '@wordpress/element';
+import { useState, useEffect, useCallback, useMemo } from '@wordpress/element';
 import {
 	Modal,
 	SearchControl,
@@ -80,7 +75,9 @@ const PatternModal = () => {
 	const [ currentPage, setCurrentPage ] = useState( 1 );
 	const [ currentAppliedPage, setCurrentAppliedPage ] = useState( 1 );
 	const [ selectedPatterns, setSelectedPatterns ] = useState( [] );
-	const [ selectedAppliedPatterns, setSelectedAppliedPatterns ] = useState( [] );
+	const [ selectedAppliedPatterns, setSelectedAppliedPatterns ] = useState(
+		[]
+	);
 
 	const BrandSites = useSelect( ( select ) => {
 		const meta = select( 'core/editor' ).getEditedPostAttribute( 'meta' );
@@ -127,7 +124,7 @@ const PatternModal = () => {
 			}
 		};
 		fetchPatterns();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ patternStore ] ); // Include patternStore in dependencies
 
 	const { editPost } = useDispatch( 'core/editor' );
@@ -138,8 +135,8 @@ const PatternModal = () => {
 			activeCategory === 'All'
 				? basePatterns
 				: basePatterns.filter( ( pattern ) =>
-					pattern.categories?.includes( activeCategory ),
-				);
+						pattern.categories?.includes( activeCategory )
+				  );
 
 		if ( ! searchTerm.trim() ) {
 			return categoryFiltered;
@@ -156,7 +153,9 @@ const PatternModal = () => {
 	const handlePatternSelection = ( patternId ) => {
 		setSelectedPatterns( ( prevSelectedPatterns ) => {
 			if ( prevSelectedPatterns.includes( patternId ) ) {
-				return prevSelectedPatterns.filter( ( pattern ) => pattern !== patternId );
+				return prevSelectedPatterns.filter(
+					( pattern ) => pattern !== patternId
+				);
 			}
 			return [ ...prevSelectedPatterns, patternId ];
 		} );
@@ -180,7 +179,9 @@ const PatternModal = () => {
 	}, [] );
 
 	const handleTabSelect = ( tab ) => {
-		setActiveTab( tabs.find( ( t ) => t.name === tab )?.value || 'basePatterns' );
+		setActiveTab(
+			tabs.find( ( t ) => t.name === tab )?.value || 'basePatterns'
+		);
 		setActiveCategory( 'All' );
 		setCurrentPage( 1 );
 		setCurrentAppliedPage( 1 );
@@ -248,13 +249,14 @@ const PatternModal = () => {
 	}, [ siteOptions ] );
 
 	const filteredAppliedPatterns = useMemo( () => {
-		const currentTabAppliedPatterns = allBrandSitePatterns[ activeTab ] || [];
+		const currentTabAppliedPatterns =
+			allBrandSitePatterns[ activeTab ] || [];
 		const categoryFiltered =
 			activeCategory === 'All'
 				? currentTabAppliedPatterns
 				: currentTabAppliedPatterns.filter( ( pattern ) =>
-					pattern.categories?.includes( activeCategory ),
-				);
+						pattern.categories?.includes( activeCategory )
+				  );
 
 		if ( ! searchTerm.trim() ) {
 			return categoryFiltered;
@@ -276,7 +278,8 @@ const PatternModal = () => {
 		return (
 			<div className="onedesign-search-results">
 				<p>
-					{ __( 'Here are patterns with', 'onedesign' ) } &quot;{ searchTerm }
+					{ __( 'Here are patterns with', 'onedesign' ) } &quot;
+					{ searchTerm }
 					&quot;
 				</p>
 			</div>
@@ -302,7 +305,7 @@ const PatternModal = () => {
 
 				// Check if all site operations were successful
 				const hasFailures = Object.values( request ).some(
-					( site ) => ! site.success,
+					( site ) => ! site.success
 				);
 
 				if ( ! hasFailures ) {
@@ -327,9 +330,14 @@ const PatternModal = () => {
 					} );
 
 				const errorMessage =
-					__( 'Failed to apply patterns to some sites:', 'onedesign' ) +
+					__(
+						'Failed to apply patterns to some sites:',
+						'onedesign'
+					) +
 					failedSites
-						.map( ( site ) => `\n• ${ site.name }: ${ site.message }` )
+						.map(
+							( site ) => `\n• ${ site.name }: ${ site.message }`
+						)
 						.join( '' );
 
 				throw new Error( errorMessage );
@@ -371,14 +379,15 @@ const PatternModal = () => {
 				}
 
 				throw new Error(
-					response.message || __( 'Failed to remove patterns', 'onedesign' ),
+					response.message ||
+						__( 'Failed to remove patterns', 'onedesign' )
 				);
 			} catch ( error ) {
 				console.error( 'Error removing patterns:', error ); // eslint-disable-line no-console
 				throw error;
 			}
 		},
-		[],
+		[]
 	);
 
 	return (
@@ -407,7 +416,6 @@ const PatternModal = () => {
 								alignItems: 'center',
 							} }
 						>
-
 							{ SettingLink && (
 								<Button
 									icon={ cog }
@@ -415,7 +423,10 @@ const PatternModal = () => {
 									onClick={ () => {
 										window.location.href = SettingLink;
 									} }
-									label={ __( 'Go to OneDesign Settings', 'onedesign' ) }
+									label={ __(
+										'Go to OneDesign Settings',
+										'onedesign'
+									) }
 								/>
 							) }
 						</div>
@@ -439,7 +450,10 @@ const PatternModal = () => {
 									className="onedesign-search"
 									value={ searchTerm }
 									onChange={ handleSearchChange }
-									placeholder={ __( 'Search patterns…', 'onedesign' ) }
+									placeholder={ __(
+										'Search patterns…',
+										'onedesign'
+									) }
 									__nextHasNoMarginBottom
 								/>
 								{ renderSearchResults() }
@@ -457,16 +471,37 @@ const PatternModal = () => {
 											return (
 												<BasePatternsTab
 													isLoading={ isLoading }
-													basePatterns={ filteredBasePatterns }
-													visibleCount={ currentPage * PER_PAGE }
-													handlePatternSelection={ handlePatternSelection }
-													hasMorePatterns={ filteredBasePatterns.length > currentPage * PER_PAGE }
-													loadMorePatterns={ () => setCurrentPage( ( prev ) => prev + 1 ) }
+													basePatterns={
+														filteredBasePatterns
+													}
+													visibleCount={
+														currentPage * PER_PAGE
+													}
+													handlePatternSelection={
+														handlePatternSelection
+													}
+													hasMorePatterns={
+														filteredBasePatterns.length >
+														currentPage * PER_PAGE
+													}
+													loadMorePatterns={ () =>
+														setCurrentPage(
+															( prev ) => prev + 1
+														)
+													}
 													searchTerm={ searchTerm }
-													setSelectedPatterns={ setSelectedPatterns }
-													selectedPatterns={ selectedPatterns }
-													applySelectedPatterns={ applySelectedPatterns }
-													sitePatterns={ allBrandSitePatterns }
+													setSelectedPatterns={
+														setSelectedPatterns
+													}
+													selectedPatterns={
+														selectedPatterns
+													}
+													applySelectedPatterns={
+														applySelectedPatterns
+													}
+													sitePatterns={
+														allBrandSitePatterns
+													}
 													siteOptions={ siteOptions }
 													BrandSites={ BrandSites }
 												/>
@@ -475,15 +510,29 @@ const PatternModal = () => {
 										// based on tab name show applied patterns
 										return (
 											<AppliedPatternsTab
-												appliedPatterns={ filteredAppliedPatterns }
-												currentPage={ currentAppliedPage }
+												appliedPatterns={
+													filteredAppliedPatterns
+												}
+												currentPage={
+													currentAppliedPage
+												}
 												PER_PAGE={ PER_PAGE }
-												selectedPatterns={ selectedAppliedPatterns }
-												handlePatternSelection={ handleAppliedPatternSelection }
-												setCurrentPage={ setCurrentAppliedPage }
+												selectedPatterns={
+													selectedAppliedPatterns
+												}
+												handlePatternSelection={
+													handleAppliedPatternSelection
+												}
+												setCurrentPage={
+													setCurrentAppliedPage
+												}
 												siteInfo={ tab }
-												applySelectedPatterns={ removeSelectedPatterns }
-												setSelectedPatterns={ setSelectedAppliedPatterns }
+												applySelectedPatterns={
+													removeSelectedPatterns
+												}
+												setSelectedPatterns={
+													setSelectedAppliedPatterns
+												}
 												notice={ notice }
 												setNotice={ setNotice }
 											/>

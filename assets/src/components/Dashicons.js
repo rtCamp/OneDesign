@@ -7,15 +7,12 @@
  * @return {JSX.Element} The rendered dashicon element.
  */
 const renderIcon = ( { sitesHealthCheckResult, id } ) => {
-	return (
-		sitesHealthCheckResult?.[ id ] && ! sitesHealthCheckResult?.[ id ]?.success ? (
-			<span className="dashicons dashicons-warning"></span>
-		) : (
-			<span className="dashicons dashicons-yes-alt"></span>
-		)
+	return sitesHealthCheckResult?.[ id ] &&
+		! sitesHealthCheckResult?.[ id ]?.success ? (
+		<span className="dashicons dashicons-warning"></span>
+	) : (
+		<span className="dashicons dashicons-yes-alt"></span>
 	);
 };
 
-export {
-	renderIcon,
-};
+export { renderIcon };

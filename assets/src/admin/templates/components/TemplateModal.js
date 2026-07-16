@@ -19,7 +19,12 @@ import BaseSiteTemplates from './BaseSiteTemplates';
 import SiteSelection from './SiteSelection';
 import BrandSiteTemplates from './BrandSiteTemplates';
 import useSitesManagement from '../../../hooks/useSitesManagement';
-import { API_NAMESPACE as REST_NAMESPACE, NONCE, SETTINGS_LINK as SettingLink, PER_PAGE } from '../../../js/constants';
+import {
+	API_NAMESPACE as REST_NAMESPACE,
+	NONCE,
+	SETTINGS_LINK as SettingLink,
+	PER_PAGE,
+} from '../../../js/constants';
 
 /**
  * TemplateModal component.
@@ -35,7 +40,9 @@ const TemplateModal = () => {
 	const [ currentPage, setCurrentPage ] = useState( 1 );
 	const [ activeTab, setActiveTab ] = useState( 'baseTemplate' );
 	const [ selectedSites, setSelectedSites ] = useState( [] );
-	const [ connectedSitesTemplates, setConnectedSitesTemplates ] = useState( {} );
+	const [ connectedSitesTemplates, setConnectedSitesTemplates ] = useState(
+		{}
+	);
 	const [ notice, setNotice ] = useState( null );
 	const [ isReSyncing, setIsReSyncing ] = useState( false );
 
@@ -67,14 +74,13 @@ const TemplateModal = () => {
 						'Content-Type': 'application/json',
 						'X-WP-Nonce': NONCE,
 					},
-				},
+				}
 			);
 			const data = await response.json();
 			if ( data.success ) {
 				setConnectedSitesTemplates( data.templates || {} );
 			}
-		} catch ( error ) {
-		}
+		} catch ( error ) {}
 	}, [] );
 
 	const fetchTemplates = useCallback( async () => {
@@ -88,7 +94,7 @@ const TemplateModal = () => {
 						'Content-Type': 'application/json',
 						'X-WP-Nonce': NONCE,
 					},
-				},
+				}
 			);
 			const data = await response.json();
 			if ( data.success ) {
@@ -103,8 +109,12 @@ const TemplateModal = () => {
 	const handleTemplateReSync = useCallback( async () => {
 		setIsReSyncing( true );
 		try {
-			const idArray = Object.values( connectedSitesTemplates ).flat().map( ( template ) => template.id );
-			const originalIdArray = Object.values( connectedSitesTemplates ).flat().map( ( template ) => template.original_id );
+			const idArray = Object.values( connectedSitesTemplates )
+				.flat()
+				.map( ( template ) => template.id );
+			const originalIdArray = Object.values( connectedSitesTemplates )
+				.flat()
+				.map( ( template ) => template.original_id );
 			const response = await fetch(
 				`${ REST_NAMESPACE }/templates/resync`,
 				{
@@ -113,20 +123,21 @@ const TemplateModal = () => {
 						'Content-Type': 'application/json',
 						'X-WP-Nonce': NONCE,
 					},
-					body: JSON.stringify(
-						{
-							sites: Array.of( activeTab ),
-							templates: [ ...idArray, ...originalIdArray ],
-						},
-					),
-				},
+					body: JSON.stringify( {
+						sites: Array.of( activeTab ),
+						templates: [ ...idArray, ...originalIdArray ],
+					} ),
+				}
 			);
 			const data = await response.json();
 			if ( data.success ) {
 				fetchConnectedSitesTemplates();
 				setNotice( {
 					type: 'success',
-					message: __( 'Templates re-synced successfully.', 'onedesign' ),
+					message: __(
+						'Templates re-synced successfully.',
+						'onedesign'
+					),
 				} );
 			} else {
 				setNotice( {
@@ -155,7 +166,7 @@ const TemplateModal = () => {
 						templates: selectedTemplates,
 						sites: selectedSites,
 					} ),
-				},
+				}
 			);
 			const data = await response.json();
 			if ( data.success ) {
@@ -167,8 +178,16 @@ const TemplateModal = () => {
 					type: 'success',
 					message: sprintf(
 						/* translators: %s site names. */
-						__( 'Templates applied successfully to %s site.', 'onedesign' ),
-						Object.values( siteInfo ).filter( ( site ) => selectedSites.includes( site.id ) ).map( ( site ) => site.name ).join( ', ' ),
+						__(
+							'Templates applied successfully to %s site.',
+							'onedesign'
+						),
+						Object.values( siteInfo )
+							.filter( ( site ) =>
+								selectedSites.includes( site.id )
+							)
+							.map( ( site ) => site.name )
+							.join( ', ' )
 					),
 				} );
 				setTimeout( () => {
@@ -184,7 +203,10 @@ const TemplateModal = () => {
 		} catch ( error ) {
 			setNotice( {
 				type: 'error',
-				message: __( 'An error occurred while applying templates.', 'onedesign' ),
+				message: __(
+					'An error occurred while applying templates.',
+					'onedesign'
+				),
 			} );
 		} finally {
 			setIsApplying( false );
@@ -192,13 +214,18 @@ const TemplateModal = () => {
 				setNotice( null );
 			}, 3000 );
 		}
-	}, [ selectedTemplates, selectedSites, fetchConnectedSitesTemplates, siteInfo ] );
+	}, [
+		selectedTemplates,
+		selectedSites,
+		fetchConnectedSitesTemplates,
+		siteInfo,
+	] );
 
 	// Fetch templates when the modal is opened
 	useEffect( () => {
 		fetchTemplates();
 		fetchConnectedSitesTemplates();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
 	// clear notice on tab change
@@ -208,12 +235,14 @@ const TemplateModal = () => {
 
 	// create tabs based on siteInfo
 	useEffect( () => {
-		const newTabs = [ {
-			name: 'baseTemplate',
-			title: __( 'Current Site Templates', 'onedesign' ),
-			className: 'onedesign-base-templates-tab',
-			value: 'baseTemplate',
-		} ];
+		const newTabs = [
+			{
+				name: 'baseTemplate',
+				title: __( 'Current Site Templates', 'onedesign' ),
+				className: 'onedesign-base-templates-tab',
+				value: 'baseTemplate',
+			},
+		];
 		Object.values( siteInfo ).forEach( ( site ) => {
 			if ( site?.id && site?.name ) {
 				newTabs.push( {
@@ -227,23 +256,29 @@ const TemplateModal = () => {
 		setTabs( newTabs );
 	}, [ siteInfo ] );
 
-	const handleTemplateSelection = ( ( tId ) => {
+	const handleTemplateSelection = ( tId ) => {
 		setSelectedTemplates( ( prevSelected ) => {
 			const newSelected = prevSelected.includes( tId )
 				? prevSelected.filter( ( id ) => id !== tId )
 				: [ ...prevSelected, tId ];
 			return newSelected;
 		} );
-	} );
+	};
 
 	// filter templates based on search query
 	const filteredTemplates = useMemo( () => {
 		if ( searchQuery.trim() === '' ) {
 			return templates;
 		}
-		return templates.filter( ( template ) =>
-			template.title.toLowerCase().includes( searchQuery.toLowerCase() ) ||
-            ( template.description && template.description.toLowerCase().includes( searchQuery.toLowerCase() ) ),
+		return templates.filter(
+			( template ) =>
+				template.title
+					.toLowerCase()
+					.includes( searchQuery.toLowerCase() ) ||
+				( template.description &&
+					template.description
+						.toLowerCase()
+						.includes( searchQuery.toLowerCase() ) )
 		);
 	}, [ templates, searchQuery ] );
 
@@ -254,18 +289,39 @@ const TemplateModal = () => {
 				<div className="onedesign-selected-templates-info">
 					{ selectedTemplates.length > 0 && (
 						<div className="onedesign-selected-templates-count-info">
-							<span className="onedesign-selected-templates-count">{ selectedTemplates.length }</span>
-							<span className="onedesign-selected-templates-text">{ selectedTemplates.length === 1 ? __( 'Template selected', 'onedesign' ) : __( 'Templates selected', 'onedesign' ) }</span>
+							<span className="onedesign-selected-templates-count">
+								{ selectedTemplates.length }
+							</span>
+							<span className="onedesign-selected-templates-text">
+								{ selectedTemplates.length === 1
+									? __( 'Template selected', 'onedesign' )
+									: __( 'Templates selected', 'onedesign' ) }
+							</span>
 						</div>
 					) }
 				</div>
-				<div style={ { display: 'flex', gap: '12px', flexDirection: 'row' } }>
+				<div
+					style={ {
+						display: 'flex',
+						gap: '12px',
+						flexDirection: 'row',
+					} }
+				>
 					<Button
 						variant="secondary"
-						disabled={ ( currentPage * PER_PAGE ) >= filteredTemplates.length }
-						onClick={ () => setCurrentPage( ( prevPage ) => prevPage + 1 ) }
+						disabled={
+							currentPage * PER_PAGE >= filteredTemplates.length
+						}
+						onClick={ () =>
+							setCurrentPage( ( prevPage ) => prevPage + 1 )
+						}
 					>
-						{ __( 'Show More', 'onedesign' ) } { ( Math.min( currentPage * PER_PAGE, filteredTemplates.length ) ) }/{ filteredTemplates.length }
+						{ __( 'Show More', 'onedesign' ) }{ ' ' }
+						{ Math.min(
+							currentPage * PER_PAGE,
+							filteredTemplates.length
+						) }
+						/{ filteredTemplates.length }
 					</Button>
 					<Button
 						variant="primary"
@@ -274,19 +330,23 @@ const TemplateModal = () => {
 							setIsApplyModalOpen( true );
 						} }
 					>
-						{ selectedTemplates.length === 0 ? __( 'Select Template First', 'onedesign' ) : __( 'Apply To Sites', 'onedesign' ) }
+						{ selectedTemplates.length === 0
+							? __( 'Select Template First', 'onedesign' )
+							: __( 'Apply To Sites', 'onedesign' ) }
 					</Button>
 				</div>
 			</div>
 		);
 	};
 
-	const handleTabSelection = ( ( tab ) => {
-		setActiveTab( tabs.find( ( t ) => t.name === tab )?.value || 'baseTemplate' );
+	const handleTabSelection = ( tab ) => {
+		setActiveTab(
+			tabs.find( ( t ) => t.name === tab )?.value || 'baseTemplate'
+		);
 		setSearchQuery( '' );
 		setCurrentPage( 1 );
 		setSelectedTemplates( [] );
-	} );
+	};
 
 	return (
 		<>
@@ -319,10 +379,25 @@ const TemplateModal = () => {
 										handleTemplateReSync();
 									} }
 									isBusy={ isReSyncing }
-									disabled={ isReSyncing || Object.keys( connectedSitesTemplates )?.length === 0 || ( connectedSitesTemplates?.[ activeTab ] || [] )?.length === 0 }
-									label={ __( 'Sync Shared Templates', 'onedesign' ) }
+									disabled={
+										isReSyncing ||
+										Object.keys( connectedSitesTemplates )
+											?.length === 0 ||
+										(
+											connectedSitesTemplates?.[
+												activeTab
+											] || []
+										)?.length === 0
+									}
+									label={ __(
+										'Sync Shared Templates',
+										'onedesign'
+									) }
 								>
-									{ __( 'Sync Shared Templates', 'onedesign' ) }
+									{ __(
+										'Sync Shared Templates',
+										'onedesign'
+									) }
 								</Button>
 							) }
 
@@ -333,7 +408,10 @@ const TemplateModal = () => {
 									onClick={ () => {
 										window.location.href = SettingLink;
 									} }
-									label={ __( 'Go to OneDesign Settings', 'onedesign' ) }
+									label={ __(
+										'Go to OneDesign Settings',
+										'onedesign'
+									) }
 								/>
 							) }
 						</div>
@@ -349,8 +427,13 @@ const TemplateModal = () => {
 						<>
 							<SearchControl
 								value={ searchQuery }
-								onChange={ ( value ) => setSearchQuery( value ) }
-								placeholder={ __( 'Search Templates', 'onedesign' ) }
+								onChange={ ( value ) =>
+									setSearchQuery( value )
+								}
+								placeholder={ __(
+									'Search Templates',
+									'onedesign'
+								) }
 								className="onedesign-template-search"
 								__nextHasNoMarginBottom
 							/>
@@ -365,11 +448,17 @@ const TemplateModal = () => {
 										return (
 											<>
 												<BaseSiteTemplates
-													filteredTemplates={ filteredTemplates }
+													filteredTemplates={
+														filteredTemplates
+													}
 													currentPage={ currentPage }
 													PER_PAGE={ PER_PAGE }
-													selectedTemplates={ selectedTemplates }
-													handleTemplateSelection={ handleTemplateSelection }
+													selectedTemplates={
+														selectedTemplates
+													}
+													handleTemplateSelection={
+														handleTemplateSelection
+													}
 												/>
 												{ renderPagination() }
 											</>
@@ -377,29 +466,54 @@ const TemplateModal = () => {
 									}
 									return (
 										<BrandSiteTemplates
-											filteredTemplates={ ( connectedSitesTemplates[ tab.value ] || [] ).filter( ( template ) =>
-												template.title.toLowerCase().includes( searchQuery.toLowerCase() ) ||
-											( template.description && template.description.toLowerCase().includes( searchQuery.toLowerCase() ) ),
+											filteredTemplates={ (
+												connectedSitesTemplates[
+													tab.value
+												] || []
+											).filter(
+												( template ) =>
+													template.title
+														.toLowerCase()
+														.includes(
+															searchQuery.toLowerCase()
+														) ||
+													( template.description &&
+														template.description
+															.toLowerCase()
+															.includes(
+																searchQuery.toLowerCase()
+															) )
 											) }
 											currentPage={ currentPage }
 											PER_PAGE={ PER_PAGE }
-											selectedTemplates={ selectedTemplates }
-											handleTemplateSelection={ handleTemplateSelection }
+											selectedTemplates={
+												selectedTemplates
+											}
+											handleTemplateSelection={
+												handleTemplateSelection
+											}
 											setCurrentPage={ setCurrentPage }
 											currentSiteId={ tab.value }
-											fetchConnectedSitesTemplates={ fetchConnectedSitesTemplates }
-											setSelectedTemplates={ setSelectedTemplates }
+											fetchConnectedSitesTemplates={
+												fetchConnectedSitesTemplates
+											}
+											setSelectedTemplates={
+												setSelectedTemplates
+											}
 											allTemplates={ templates }
 											notice={ notice }
 											setNotice={ setNotice }
-										/> );
+										/>
+									);
 								} }
 							</TabPanel>
 							{ isApplyModalOpen && (
 								<Modal
-									onRequestClose={ () => setIsApplyModalOpen( false ) }
+									onRequestClose={ () =>
+										setIsApplyModalOpen( false )
+									}
 									className="onedesign-apply-templates-modal"
-									isFullScreen={ true }
+									isFullScreen
 								>
 									<SiteSelection
 										siteInfo={ siteInfo }
@@ -408,17 +522,22 @@ const TemplateModal = () => {
 										onApply={ () => {
 											handleApplyTemplates();
 										} }
-										setIsApplyModalOpen={ setIsApplyModalOpen }
+										setIsApplyModalOpen={
+											setIsApplyModalOpen
+										}
 										setSelectedSites={ setSelectedSites }
 										selectedSites={ selectedSites }
 										notice={ notice }
-										brandSiteTemplates={ connectedSitesTemplates }
+										brandSiteTemplates={
+											connectedSitesTemplates
+										}
 										selectedTemplates={ selectedTemplates }
-										sitesHealthCheckResult={ sitesHealthCheckResult }
+										sitesHealthCheckResult={
+											sitesHealthCheckResult
+										}
 									/>
 								</Modal>
 							) }
-
 						</>
 					) }
 				</Modal>

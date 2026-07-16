@@ -1,12 +1,28 @@
 /**
  * WordPress dependencies
  */
-import { useState, useEffect, createRoot, useCallback, useRef } from '@wordpress/element';
+import {
+	useState,
+	useEffect,
+	createRoot,
+	useCallback,
+	useRef,
+} from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { Card, CardHeader, CardBody, Notice, Button, SelectControl } from '@wordpress/components';
+import {
+	Card,
+	CardHeader,
+	CardBody,
+	Notice,
+	Button,
+	SelectControl,
+} from '@wordpress/components';
 
 /**
  * Global variable from PHP
+ */
+/**
+ * Internal dependencies
  */
 import { MULTISITES, API_NAMESPACE, NONCE } from '../../js/constants';
 
@@ -23,13 +39,19 @@ const SiteTypeSelector = ( { value, setGoverningSite } ) => (
 	<SelectControl
 		label={ __( 'Select Governing Site', 'onedesign' ) }
 		value={ value }
-		help={ __( 'Choose governing site from current multisite network. Other sites will be set as brand sites. This setting cannot be changed later and affects available features and configurations.', 'onedesign' ) }
+		help={ __(
+			'Choose governing site from current multisite network. Other sites will be set as brand sites. This setting cannot be changed later and affects available features and configurations.',
+			'onedesign'
+		) }
 		onChange={ ( v ) => {
 			setGoverningSite( v );
 		} }
 		options={ [
 			{ label: __( 'Select…', 'onedesign' ), value: '' },
-			...MULTISITES.map( ( site ) => ( { label: site.name, value: site.id } ) ),
+			...MULTISITES.map( ( site ) => ( {
+				label: site.name,
+				value: site.id,
+			} ) ),
 		] }
 	/>
 );
@@ -54,13 +76,16 @@ const OneDesignMultisiteGoverningSiteSelection = () => {
 						'Content-Type': 'application/json',
 						'X-WP-NONCE': NONCE,
 					},
-				},
+				}
 			);
 
 			if ( ! response.ok ) {
 				setNotice( {
 					type: 'error',
-					message: __( 'Error fetching current governing site.', 'onedesign' ),
+					message: __(
+						'Error fetching current governing site.',
+						'onedesign'
+					),
 				} );
 				return;
 			}
@@ -73,7 +98,10 @@ const OneDesignMultisiteGoverningSiteSelection = () => {
 		} catch {
 			setNotice( {
 				type: 'error',
-				message: __( 'Error fetching current governing site.', 'onedesign' ),
+				message: __(
+					'Error fetching current governing site.',
+					'onedesign'
+				),
 			} );
 		}
 	}, [] );
@@ -88,14 +116,17 @@ const OneDesignMultisiteGoverningSiteSelection = () => {
 		setIsSaving( true );
 
 		try {
-			const response = await fetch( `${ API_NAMESPACE }/multisite/governing-site`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-WP-NONCE': NONCE,
-				},
-				body: JSON.stringify( { governing_site_id: value } ),
-			} );
+			const response = await fetch(
+				`${ API_NAMESPACE }/multisite/governing-site`,
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-WP-NONCE': NONCE,
+					},
+					body: JSON.stringify( { governing_site_id: value } ),
+				}
+			);
 
 			if ( ! response.ok ) {
 				setNotice( {
@@ -108,7 +139,10 @@ const OneDesignMultisiteGoverningSiteSelection = () => {
 
 			setNotice( {
 				type: 'success',
-				message: __( 'Governing site updated successfully.', 'onedesign' ),
+				message: __(
+					'Governing site updated successfully.',
+					'onedesign'
+				),
 			} );
 
 			setTimeout( () => {
@@ -129,25 +163,34 @@ const OneDesignMultisiteGoverningSiteSelection = () => {
 		<>
 			<Card>
 				<>
-					{ notice?.message?.length > 0 &&
-					<Notice
-						status={ notice?.type ?? 'success' }
-						isDismissible={ true }
-						onRemove={ () => setNotice( null ) }
-					>
-						{ notice?.message }
-					</Notice>
-					}
+					{ notice?.message?.length > 0 && (
+						<Notice
+							status={ notice?.type ?? 'success' }
+							isDismissible
+							onRemove={ () => setNotice( null ) }
+						>
+							{ notice?.message }
+						</Notice>
+					) }
 				</>
 				<CardHeader>
 					<h2>{ __( 'OneDesign', 'onedesign' ) }</h2>
 				</CardHeader>
 				<CardBody>
-					<SiteTypeSelector value={ governingSite } setGoverningSite={ setGoverningSite } />
+					<SiteTypeSelector
+						value={ governingSite }
+						setGoverningSite={ setGoverningSite }
+					/>
 					<Button
 						variant="primary"
-						onClick={ () => handleGoverningSiteChange( governingSite ) }
-						disabled={ isSaving || governingSite.trim().length === 0 || governingSite === currentGoverningSiteID.current }
+						onClick={ () =>
+							handleGoverningSiteChange( governingSite )
+						}
+						disabled={
+							isSaving ||
+							governingSite.trim().length === 0 ||
+							governingSite === currentGoverningSiteID.current
+						}
 						style={ { marginTop: '1.5rem' } }
 						isBusy={ isSaving }
 					>

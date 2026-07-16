@@ -16,7 +16,7 @@ import {
 import { __ } from '@wordpress/i18n';
 
 /**
- * internal dependencies
+ * Internal dependencies
  */
 import { API_NAMESPACE, NONCE, API_KEY } from '../js/constants';
 
@@ -30,7 +30,8 @@ const SiteSettings = () => {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ notice, setNotice ] = useState( null );
 	const [ governingSite, setGoverningSite ] = useState( '' );
-	const [ showDisconectionModal, setShowDisconectionModal ] = useState( false );
+	const [ showDisconectionModal, setShowDisconectionModal ] =
+		useState( false );
 
 	const fetchApiKey = useCallback( async () => {
 		try {
@@ -51,7 +52,10 @@ const SiteSettings = () => {
 		} catch ( error ) {
 			setNotice( {
 				type: 'error',
-				message: __( 'Failed to fetch api key. Please try again later.', 'onedesign' ),
+				message: __(
+					'Failed to fetch api key. Please try again later.',
+					'onedesign'
+				),
 			} );
 		} finally {
 			setIsLoading( false );
@@ -76,18 +80,27 @@ const SiteSettings = () => {
 				setApiKey( data.secret_key );
 				setNotice( {
 					type: 'warning',
-					message: __( 'API key regenerated successfully. Please update your old key with this newly generated key to make sure plugin works properly.', 'onedesign' ),
+					message: __(
+						'API key regenerated successfully. Please update your old key with this newly generated key to make sure plugin works properly.',
+						'onedesign'
+					),
 				} );
 			} else {
 				setNotice( {
 					type: 'error',
-					message: __( 'Failed to regenerate api key. Please try again later.', 'onedesign' ),
+					message: __(
+						'Failed to regenerate api key. Please try again later.',
+						'onedesign'
+					),
 				} );
 			}
 		} catch ( error ) {
 			setNotice( {
 				type: 'error',
-				message: __( 'Error regenerating api key. Please try again later.', 'onedesign' ),
+				message: __(
+					'Error regenerating api key. Please try again later.',
+					'onedesign'
+				),
 			} );
 		}
 	}, [] );
@@ -104,7 +117,7 @@ const SiteSettings = () => {
 						'X-WP-Nonce': NONCE,
 						'X-OneDesign-Token': apiKey,
 					},
-				},
+				}
 			);
 			if ( ! response.ok ) {
 				throw new Error( 'Network response was not ok' );
@@ -114,9 +127,11 @@ const SiteSettings = () => {
 		} catch ( error ) {
 			setNotice( {
 				type: 'error',
-				message: __( 'Failed to fetch governing site. Please try again later.', 'onedesign' ),
-			},
-			);
+				message: __(
+					'Failed to fetch governing site. Please try again later.',
+					'onedesign'
+				),
+			} );
 		} finally {
 			setIsLoading( false );
 		}
@@ -124,29 +139,32 @@ const SiteSettings = () => {
 
 	const deleteGoverningSiteConnection = useCallback( async () => {
 		try {
-			const response = await fetch(
-				`${ API_NAMESPACE }/governing-site`,
-				{
-					method: 'DELETE',
-					headers: {
-						'Content-Type': 'application/json',
-						'X-WP-Nonce': NONCE,
-						'X-OneDesign-Token': apiKey,
-					},
+			const response = await fetch( `${ API_NAMESPACE }/governing-site`, {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-WP-Nonce': NONCE,
+					'X-OneDesign-Token': apiKey,
 				},
-			);
+			} );
 			if ( ! response.ok ) {
 				throw new Error( 'Network response was not ok' );
 			}
 			setGoverningSite( '' );
 			setNotice( {
 				type: 'success',
-				message: __( 'Governing site disconnected successfully.', 'onedesign' ),
+				message: __(
+					'Governing site disconnected successfully.',
+					'onedesign'
+				),
 			} );
 		} catch ( error ) {
 			setNotice( {
 				type: 'error',
-				message: __( 'Failed to disconnect governing site. Please try again later.', 'onedesign' ),
+				message: __(
+					'Failed to disconnect governing site. Please try again later.',
+					'onedesign'
+				),
 			} );
 		} finally {
 			setShowDisconectionModal( false );
@@ -168,18 +186,18 @@ const SiteSettings = () => {
 
 	return (
 		<>
-
 			{ notice && (
 				<Notice
 					status={ notice.type }
-					isDismissible={ true }
+					isDismissible
 					onRemove={ () => setNotice( null ) }
 				>
 					{ notice.message }
 				</Notice>
 			) }
 
-			<Card className="brand-site-settings"
+			<Card
+				className="brand-site-settings"
 				style={ { marginTop: '30px' } }
 			>
 				<CardHeader>
@@ -189,17 +207,27 @@ const SiteSettings = () => {
 						<Button
 							variant="primary"
 							onClick={ () => {
-								navigator?.clipboard?.writeText( apiKey )
+								navigator?.clipboard
+									?.writeText( apiKey )
 									.then( () => {
 										setNotice( {
 											type: 'success',
-											message: __( 'API key copied to clipboard.', 'onedesign' ),
+											message: __(
+												'API key copied to clipboard.',
+												'onedesign'
+											),
 										} );
 									} )
 									.catch( ( error ) => {
 										setNotice( {
 											type: 'error',
-											message: __( 'Failed to copy api key. Please try again.', 'onedesign' ) + ' ' + error,
+											message:
+												__(
+													'Failed to copy api key. Please try again.',
+													'onedesign'
+												) +
+												' ' +
+												error,
 										} );
 									} );
 							} }
@@ -220,15 +248,18 @@ const SiteSettings = () => {
 					<div>
 						<TextareaControl
 							value={ apiKey }
-							disabled={ true }
-							help={ __( 'This key is used for secure communication with the Governing site.', 'onedesign' ) }
+							disabled
+							help={ __(
+								'This key is used for secure communication with the Governing site.',
+								'onedesign'
+							) }
 							__nextHasNoMarginBottom
 						/>
 					</div>
 				</CardBody>
-
 			</Card>
-			<Card className="governing-site-connection"
+			<Card
+				className="governing-site-connection"
 				style={ { marginTop: '30px' } }
 			>
 				<CardHeader>
@@ -237,7 +268,9 @@ const SiteSettings = () => {
 						variant="secondary"
 						isDestructive
 						onClick={ handleDisconnectGoverningSite }
-						disabled={ governingSite?.trim().length === 0 || isLoading }
+						disabled={
+							governingSite?.trim().length === 0 || isLoading
+						}
 					>
 						{ __( 'Disconnect Governing Site', 'onedesign' ) }
 					</Button>
@@ -246,8 +279,11 @@ const SiteSettings = () => {
 					<TextControl
 						label={ __( 'Governing Site URL', 'onedesign' ) }
 						value={ governingSite }
-						disabled={ true }
-						help={ __( 'This is the URL of the Governing site this Brand site is connected to.', 'onedesign' ) }
+						disabled
+						help={ __(
+							'This is the URL of the Governing site this Brand site is connected to.',
+							'onedesign'
+						) }
 						__next40pxDefaultSize
 						__nextHasNoMarginBottom
 					/>
@@ -258,10 +294,22 @@ const SiteSettings = () => {
 				<Modal
 					title={ __( 'Disconnect Governing Site', 'onedesign' ) }
 					onRequestClose={ () => setShowDisconectionModal( false ) }
-					shouldCloseOnClickOutside={ true }
+					shouldCloseOnClickOutside
 				>
-					<p>{ __( 'Are you sure you want to disconnect from the governing site? This action cannot be undone.', 'onedesign' ) }</p>
-					<div style={ { display: 'flex', justifyContent: 'flex-end', marginTop: '20px', gap: '16px' } }>
+					<p>
+						{ __(
+							'Are you sure you want to disconnect from the governing site? This action cannot be undone.',
+							'onedesign'
+						) }
+					</p>
+					<div
+						style={ {
+							display: 'flex',
+							justifyContent: 'flex-end',
+							marginTop: '20px',
+							gap: '16px',
+						} }
+					>
 						<Button
 							variant="secondary"
 							onClick={ () => setShowDisconectionModal( false ) }

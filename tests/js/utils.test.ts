@@ -1,5 +1,5 @@
 /**
- * Internal dependencies
+ * External dependencies
  */
 import { getInitials, isURL, isValidUrl, PurifyElement } from '@/js/utils';
 

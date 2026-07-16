@@ -2,10 +2,7 @@
  * WordPress dependencies
  */
 import { __, sprintf } from '@wordpress/i18n';
-import {
-	Button,
-	Notice,
-} from '@wordpress/components';
+import { Button, Notice } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -45,20 +42,28 @@ const SiteSelection = ( {
 } ) => {
 	// Helper function to check if all templates are already present
 	const areAllTemplatesPresent = ( siteId ) => {
-		if ( selectedTemplates.length === 0 || brandSiteTemplates[ siteId ] === undefined ) {
+		if (
+			selectedTemplates.length === 0 ||
+			brandSiteTemplates[ siteId ] === undefined
+		) {
 			return false;
 		}
 
-		const availableTemplateIds = Object.values( brandSiteTemplates[ siteId ] ).map(
-			( template ) => template.original_id,
-		);
+		const availableTemplateIds = Object.values(
+			brandSiteTemplates[ siteId ]
+		).map( ( template ) => template.original_id );
 
-		return selectedTemplates.every( ( templateId ) => availableTemplateIds.includes( templateId ) );
+		return selectedTemplates.every( ( templateId ) =>
+			availableTemplateIds.includes( templateId )
+		);
 	};
 
 	// Helper function to check if a site is unreachable
 	const isSiteUnreachable = ( siteId ) => {
-		return sitesHealthCheckResult?.[ siteId ] && ! sitesHealthCheckResult[ siteId ]?.success;
+		return (
+			sitesHealthCheckResult?.[ siteId ] &&
+			! sitesHealthCheckResult[ siteId ]?.success
+		);
 	};
 
 	// Helper function to check if a site should be disabled
@@ -96,12 +101,14 @@ const SiteSelection = ( {
 	const totalCount = siteInfo.length;
 
 	// Calculate the number of selectable sites
-	const selectableSites = siteInfo.filter( ( site ) => ! isSiteDisabled( site.id ) );
+	const selectableSites = siteInfo.filter(
+		( site ) => ! isSiteDisabled( site.id )
+	);
 	const selectableSiteCount = selectableSites.length;
 
 	// Count only selected sites that are still selectable
 	const selectedSelectableSiteCount = selectedSites.filter( ( siteId ) =>
-		selectableSites.some( ( site ) => site.id === siteId ),
+		selectableSites.some( ( site ) => site.id === siteId )
 	).length;
 
 	const selectedCount = selectedSites.length;
@@ -114,7 +121,7 @@ const SiteSelection = ( {
 					<p>
 						{ __(
 							'Please configure brand sites first to apply templates.',
-							'onedesign',
+							'onedesign'
 						) }
 					</p>
 				</Notice>
@@ -137,24 +144,31 @@ const SiteSelection = ( {
 			<div className="onedesign-brand-site-modal-content">
 				<div className="onedesign-site-selection-wrapper">
 					<div className="onedesign-brand-site-selection">
-
 						<div className="onedesign-selection-header">
 							<div className="onedesign-selection-summary">
-								<h4>{ __( 'Select Brand Sites', 'onedesign' ) }</h4>
+								<h4>
+									{ __( 'Select Brand Sites', 'onedesign' ) }
+								</h4>
 								<span className="onedesign-selection-count">
 									{ selectedCount > 0
 										? sprintf(
-											/* translators: %1$d: Number of selected sites, %2$d: Total number of sites. */
-											__( '%1$d of %2$d selected', 'onedesign' ),
-											selectedCount,
-											selectableSiteCount,
-										)
+												/* translators: %1$d: Number of selected sites, %2$d: Total number of sites. */
+												__(
+													'%1$d of %2$d selected',
+													'onedesign'
+												),
+												selectedCount,
+												selectableSiteCount
+										  )
 										: sprintf(
-											/* translators: %1$d: Number of available sites, %2$d: Total number of sites. */
-											__( '%1$d of %2$d sites available', 'onedesign' ),
-											selectableSiteCount,
-											totalCount,
-										) }
+												/* translators: %1$d: Number of available sites, %2$d: Total number of sites. */
+												__(
+													'%1$d of %2$d sites available',
+													'onedesign'
+												),
+												selectableSiteCount,
+												totalCount
+										  ) }
 								</span>
 							</div>
 
@@ -164,14 +178,17 @@ const SiteSelection = ( {
 										variant="link"
 										onClick={ selectAllSites }
 										disabled={
-											selectedSelectableSiteCount === selectableSiteCount ||
+											selectedSelectableSiteCount ===
+												selectableSiteCount ||
 											selectableSiteCount === 0
 										}
 										className="onedesign-bulk-action"
 									>
 										{ __( 'Select All', 'onedesign' ) }
 									</Button>
-									<span className="onedesign-bulk-separator">|</span>
+									<span className="onedesign-bulk-separator">
+										|
+									</span>
 									<Button
 										variant="link"
 										onClick={ deselectAllSites }
@@ -185,22 +202,23 @@ const SiteSelection = ( {
 						</div>
 
 						{ /* Message explaining disabled sites if there are any */ }
-						{ selectedTemplates.length > 0 && totalCount !== selectableSiteCount && (
-							<div className="onedesign-selection-hint">
-								<p>
-									<span className="dashicons dashicons-info"></span>
-									{ sprintf(
-										/* translators: %1$d: Number of sites that already have all selected templates or are unreachable. %2$d: Total number of sites. */
-										__(
-											'%1$d of %2$d sites are disabled (already have all templates or unreachable).',
-											'onedesign',
-										),
-										totalCount - selectableSiteCount,
-										totalCount,
-									) }
-								</p>
-							</div>
-						) }
+						{ selectedTemplates.length > 0 &&
+							totalCount !== selectableSiteCount && (
+								<div className="onedesign-selection-hint">
+									<p>
+										<span className="dashicons dashicons-info"></span>
+										{ sprintf(
+											/* translators: %1$d: Number of sites that already have all selected templates or are unreachable. %2$d: Total number of sites. */
+											__(
+												'%1$d of %2$d sites are disabled (already have all templates or unreachable).',
+												'onedesign'
+											),
+											totalCount - selectableSiteCount,
+											totalCount
+										) }
+									</p>
+								</div>
+							) }
 
 						<div className="onedesign-sites-list onedesign-sites-grid">
 							{ siteInfo.map( ( { id, name, url, logo } ) => {
@@ -210,10 +228,25 @@ const SiteSelection = ( {
 								return (
 									<div
 										key={ id }
-										className={ `onedesign-site-item ${ isSelected ? 'onedesign-site-selected' : '' } ${ isDisabled ? 'onedesign-site-disabled' : '' }` }
-										onClick={ () => ! isDisabled && handleSiteSelection( id ) }
+										className={ `onedesign-site-item ${
+											isSelected
+												? 'onedesign-site-selected'
+												: ''
+										} ${
+											isDisabled
+												? 'onedesign-site-disabled'
+												: ''
+										}` }
+										onClick={ () =>
+											! isDisabled &&
+											handleSiteSelection( id )
+										}
 										onKeyDown={ ( e ) => {
-											if ( ! isDisabled && ( e.key === 'Enter' || e.key === ' ' ) ) {
+											if (
+												! isDisabled &&
+												( e.key === 'Enter' ||
+													e.key === ' ' )
+											) {
 												handleSiteSelection( id );
 											}
 										} }
@@ -225,9 +258,10 @@ const SiteSelection = ( {
 										<div className="onedesign-site-inner">
 											{ isSelected && (
 												<div className="onedesign-site-selected-indicator">
-													{
-														renderIcon( { sitesHealthCheckResult, id } )
-													}
+													{ renderIcon( {
+														sitesHealthCheckResult,
+														id,
+													} ) }
 												</div>
 											) }
 											{ isDisabled && ! isSelected && (
@@ -235,73 +269,119 @@ const SiteSelection = ( {
 													className="onedesign-site-disabled-indicator"
 													title={
 														isSiteUnreachable( id )
-															? __( 'This site is unreachable', 'onedesign' )
-															: __( 'This site already has all selected templates', 'onedesign' )
+															? __(
+																	'This site is unreachable',
+																	'onedesign'
+															  )
+															: __(
+																	'This site already has all selected templates',
+																	'onedesign'
+															  )
 													}
 												>
-													{ renderIcon( { sitesHealthCheckResult, id } ) }
+													{ renderIcon( {
+														sitesHealthCheckResult,
+														id,
+													} ) }
 												</div>
 											) }
 											<div className="onedesign-site-logo">
 												{ logo ? (
-													<img src={ logo } alt={ name } loading="lazy" />
+													<img
+														src={ logo }
+														alt={ name }
+														loading="lazy"
+													/>
 												) : (
 													<div className="onedesign-site-initials">
 														{ getInitials( name ) }
 													</div>
 												) }
 											</div>
-											<span className="onedesign-site-name">{ name }</span>
-											{ url && <span className="onedesign-site-url">{ url }</span> }
+											<span className="onedesign-site-name">
+												{ name }
+											</span>
+											{ url && (
+												<span className="onedesign-site-url">
+													{ url }
+												</span>
+											) }
 
 											{ /* Template sync status */ }
-											{ selectedTemplates.length > 0 && brandSiteTemplates[ id ] !== undefined && (
-												<div className="onedesign-template-status">
-													{ ( () => {
-														const availableTemplateIds = Object.values( brandSiteTemplates[ id ] ).map(
-															( template ) => template.original_id,
-														);
+											{ selectedTemplates.length > 0 &&
+												brandSiteTemplates[ id ] !==
+													undefined && (
+													<div className="onedesign-template-status">
+														{ ( () => {
+															const availableTemplateIds =
+																Object.values(
+																	brandSiteTemplates[
+																		id
+																	]
+																).map(
+																	(
+																		template
+																	) =>
+																		template.original_id
+																);
 
-														const alreadyPresentCount = selectedTemplates.filter(
-															( templateId ) => availableTemplateIds.includes( templateId ),
-														).length;
+															const alreadyPresentCount =
+																selectedTemplates.filter(
+																	(
+																		templateId
+																	) =>
+																		availableTemplateIds.includes(
+																			templateId
+																		)
+																).length;
 
-														const totalSelected = selectedTemplates.length;
+															const totalSelected =
+																selectedTemplates.length;
 
-														if ( alreadyPresentCount === 0 ) {
+															if (
+																alreadyPresentCount ===
+																0
+															) {
+																return (
+																	<span className="onedesign-onedesign-info">
+																		{ __(
+																			'All templates will be synced',
+																			'onedesign'
+																		) }
+																	</span>
+																);
+															}
+
+															if (
+																alreadyPresentCount ===
+																totalSelected
+															) {
+																return (
+																	<span className="onedesign-onedesign-info onedesign-all-templates-present">
+																		{ __(
+																			'All selected templates are already present',
+																			'onedesign'
+																		) }
+																	</span>
+																);
+															}
+
 															return (
 																<span className="onedesign-onedesign-info">
-																	{ __( 'All templates will be synced', 'onedesign' ) }
-																</span>
-															);
-														}
-
-														if ( alreadyPresentCount === totalSelected ) {
-															return (
-																<span className="onedesign-onedesign-info onedesign-all-templates-present">
-																	{ __(
-																		'All selected templates are already present',
-																		'onedesign',
+																	{ sprintf(
+																		/* translators: %1$d: Number of selected templates already present. %2$d: Total number of selected templates. */
+																		__(
+																			'%1$d of %2$d selected templates are already present',
+																			'onedesign'
+																		),
+																		alreadyPresentCount,
+																		totalSelected
 																	) }
 																</span>
 															);
-														}
-
-														return (
-															<span className="onedesign-onedesign-info">
-																{
-																	sprintf(
-																		/* translators: %1$d: Number of selected templates already present. %2$d: Total number of selected templates. */
-																		__( '%1$d of %2$d selected templates are already present', 'onedesign' ),
-																		alreadyPresentCount,
-																		totalSelected,
-																	)
-																}
-															</span>
-														);
-													} )() }
-												</div>
-											) }
+														} )() }
+													</div>
+												) }
 										</div>
 									</div>
 								);

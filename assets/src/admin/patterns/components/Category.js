@@ -40,14 +40,17 @@ const Category = ( {
 
 			const patternCategoriesSet = new Set(
 				basePatterns.flatMap( ( pattern ) =>
-					Array.isArray( pattern.categories ) ? pattern.categories : [],
-				),
+					Array.isArray( pattern.categories )
+						? pattern.categories
+						: []
+				)
 			);
 
 			// Filter categories that are actually used in `basePatterns`.
-			const categoriesWithPatterns = baseSitePatternCategories.categories.filter( ( category ) =>
-				patternCategoriesSet.has( category.name ),
-			);
+			const categoriesWithPatterns =
+				baseSitePatternCategories.categories.filter( ( category ) =>
+					patternCategoriesSet.has( category.name )
+				);
 
 			setCategories( categoriesWithPatterns );
 			if ( categoriesWithPatterns.length === 0 ) {
@@ -56,7 +59,9 @@ const Category = ( {
 				setCategoryError( '' );
 			}
 		} catch ( error ) {
-			setCategoryError( __( 'Error fetching pattern categories', 'onedesign' ) );
+			setCategoryError(
+				__( 'Error fetching pattern categories', 'onedesign' )
+			);
 		}
 	}, [ basePatterns ] );
 
@@ -79,26 +84,30 @@ const Category = ( {
 	return (
 		<div className="library-sidebar">
 			<div className="category-list">
-				<div className={ `category-item column-heading` }>
+				<div className="category-item column-heading">
 					{ __( 'Pattern Categories', 'onedesign' ) }
 				</div>
 				<Button
-					className={ `category-item ${ activeCategory === 'All' ? 'active' : '' }` }
+					className={ `category-item ${
+						activeCategory === 'All' ? 'active' : ''
+					}` }
 					onClick={ () => setActiveCategory( 'All' ) }
 				>
 					{ __( 'All', 'onedesign' ) }
 				</Button>
-				{ categories && categories.length > 0 && (
+				{ categories &&
+					categories.length > 0 &&
 					categories.map( ( category ) => (
 						<Button
 							key={ category.name }
-							className={ `category-item ${ activeCategory === category.name ? 'active' : '' }` }
+							className={ `category-item ${
+								activeCategory === category.name ? 'active' : ''
+							}` }
 							onClick={ () => setActiveCategory( category.name ) }
 						>
 							{ category.label }
 						</Button>
-					) )
-				) }
+					) ) }
 			</div>
 		</div>
 	);

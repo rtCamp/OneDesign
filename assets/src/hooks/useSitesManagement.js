@@ -15,7 +15,8 @@ import { __ } from '@wordpress/i18n';
  */
 const useSitesManagement = ( { NONCE, API_NAMESPACE } ) => {
 	const [ siteInfo, setSiteInfo ] = useState( {} );
-	const [ sitesHealthCheckResult, setSitesHealthCheckResult ] = useState( undefined );
+	const [ sitesHealthCheckResult, setSitesHealthCheckResult ] =
+		useState( undefined );
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ error, setError ] = useState( null );
 	const [ isInitialized, setIsInitialized ] = useState( false );
@@ -38,9 +39,10 @@ const useSitesManagement = ( { NONCE, API_NAMESPACE } ) => {
 								headers: {
 									'Content-Type': 'application/json',
 									'X-OneDesign-Token': siteApiKey,
-									'X-OneDesign-Source': 'Patterns-Templates-Sharing',
+									'X-OneDesign-Source':
+										'Patterns-Templates-Sharing',
 								},
-							},
+							}
 						);
 						const data = await response.json();
 
@@ -49,7 +51,12 @@ const useSitesManagement = ( { NONCE, API_NAMESPACE } ) => {
 								...prevResults,
 								[ siteInfo[ siteId ]?.id ]: {
 									success: false,
-									message: data.message || __( 'Health check failed.', 'onedesign' ),
+									message:
+										data.message ||
+										__(
+											'Health check failed.',
+											'onedesign'
+										),
 								},
 							} ) );
 							continue;
@@ -57,17 +64,27 @@ const useSitesManagement = ( { NONCE, API_NAMESPACE } ) => {
 
 						setSitesHealthCheckResult( ( prevResults ) => ( {
 							...( prevResults || {} ),
-							[ siteInfo[ siteId ]?.id ]: data.success ? data : {
-								success: false,
-								message: data.message || __( 'Health check failed.', 'onedesign' ),
-							},
+							[ siteInfo[ siteId ]?.id ]: data.success
+								? data
+								: {
+										success: false,
+										message:
+											data.message ||
+											__(
+												'Health check failed.',
+												'onedesign'
+											),
+								  },
 						} ) );
 					} catch ( err ) {
 						setSitesHealthCheckResult( ( prevResults ) => ( {
 							...( prevResults || {} ),
 							[ siteInfo[ siteId ]?.id ]: {
 								success: false,
-								message: __( 'Failed to reach the site.', 'onedesign' ),
+								message: __(
+									'Failed to reach the site.',
+									'onedesign'
+								),
 							},
 						} ) );
 					}
@@ -93,7 +110,7 @@ const useSitesManagement = ( { NONCE, API_NAMESPACE } ) => {
 						'Content-Type': 'application/json',
 						'X-WP-Nonce': NONCE,
 					},
-				},
+				}
 			);
 			const data = await response.json();
 			setSiteInfo( data || {} );
@@ -125,7 +142,6 @@ const useSitesManagement = ( { NONCE, API_NAMESPACE } ) => {
 	}, [] );
 
 	return {
-
 		// State values
 		siteInfo,
 		sitesHealthCheckResult,

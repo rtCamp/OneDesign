@@ -3,12 +3,24 @@
  */
 import { useState, useEffect, createRoot } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { Card, CardHeader, CardBody, Notice, Button, SelectControl } from '@wordpress/components';
+import {
+	Card,
+	CardHeader,
+	CardBody,
+	Notice,
+	Button,
+	SelectControl,
+} from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import { API_NAMESPACE, NONCE, API_KEY, SETTINGS_LINK } from '../../js/constants';
+import {
+	API_NAMESPACE,
+	NONCE,
+	API_KEY,
+	SETTINGS_LINK,
+} from '../../js/constants';
 
 /**
  * SiteTypeSelector component for selecting site type.
@@ -22,14 +34,20 @@ const SiteTypeSelector = ( { value, setSiteType } ) => (
 	<SelectControl
 		label={ __( 'Site Type', 'onedesign' ) }
 		value={ value }
-		help={ __( 'Choose your site\'s primary purpose. This setting cannot be changed later and affects available features and configurations.', 'onedesign' ) }
+		help={ __(
+			"Choose your site's primary purpose. This setting cannot be changed later and affects available features and configurations.",
+			'onedesign'
+		) }
 		onChange={ ( v ) => {
 			setSiteType( v );
 		} }
 		options={ [
 			{ label: __( 'Select…', 'onedesign' ), value: '' },
 			{ label: __( 'Brand Site', 'onedesign' ), value: 'brand-site' },
-			{ label: __( 'Governing Site', 'onedesign' ), value: 'governing-site' },
+			{
+				label: __( 'Governing Site', 'onedesign' ),
+				value: 'governing-site',
+			},
 		] }
 	/>
 );
@@ -45,7 +63,7 @@ const OneDesignSiteTypeSelection = () => {
 	const [ isSaving, setIsSaving ] = useState( false );
 
 	useEffect( () => {
-		const token = ( NONCE );
+		const token = NONCE;
 
 		const fetchData = async () => {
 			try {
@@ -67,7 +85,10 @@ const OneDesignSiteTypeSelection = () => {
 			} catch {
 				setNotice( {
 					type: 'error',
-					message: __( 'Error fetching site type or Brand sites.', 'onedesign' ),
+					message: __(
+						'Error fetching site type or Brand sites.',
+						'onedesign'
+					),
 				} );
 			}
 		};
@@ -77,7 +98,7 @@ const OneDesignSiteTypeSelection = () => {
 
 	const handleSiteTypeChange = async ( value ) => {
 		setSiteType( value );
-		const token = ( NONCE );
+		const token = NONCE;
 		setIsSaving( true );
 
 		try {
@@ -120,21 +141,24 @@ const OneDesignSiteTypeSelection = () => {
 		<>
 			<Card>
 				<>
-					{ notice?.message?.length > 0 &&
-					<Notice
-						status={ notice?.type ?? 'success' }
-						isDismissible={ true }
-						onRemove={ () => setNotice( null ) }
-					>
-						{ notice?.message }
-					</Notice>
-					}
+					{ notice?.message?.length > 0 && (
+						<Notice
+							status={ notice?.type ?? 'success' }
+							isDismissible
+							onRemove={ () => setNotice( null ) }
+						>
+							{ notice?.message }
+						</Notice>
+					) }
 				</>
 				<CardHeader>
 					<h2>{ __( 'OneDesign', 'onedesign' ) }</h2>
 				</CardHeader>
 				<CardBody>
-					<SiteTypeSelector value={ siteType } setSiteType={ setSiteType } />
+					<SiteTypeSelector
+						value={ siteType }
+						setSiteType={ setSiteType }
+					/>
 					<Button
 						variant="primary"
 						onClick={ () => handleSiteTypeChange( siteType ) }

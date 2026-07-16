@@ -1,3 +1,6 @@
+/**
+ * External dependencies
+ */
 import DOMPurify from 'dompurify';
 
 /**
@@ -49,12 +52,13 @@ const getInitials = ( name ) => {
 const isURL = ( str ) => {
 	const pattern = new RegExp(
 		'^https?:\\/\\/' +
-		'(?:[a-z\\d](?:[a-z\\d-]*[a-z\\d])?\\.)?' +
-		'[a-z\\d](?:[a-z\\d-]*[a-z\\d])?\\.' +
-		'[a-z]{2,}' +
-		'(?::\\d+)?' +
-		'(?:\\/[^\\s]*)?' +
-		'$', 'i',
+			'(?:[a-z\\d](?:[a-z\\d-]*[a-z\\d])?\\.)?' +
+			'[a-z\\d](?:[a-z\\d-]*[a-z\\d])?\\.' +
+			'[a-z]{2,}' +
+			'(?::\\d+)?' +
+			'(?:\\/[^\\s]*)?' +
+			'$',
+		'i'
 	);
 	return pattern.test( str );
 };
@@ -86,9 +90,4 @@ const PurifyElement = ( item ) => {
 	return DOMPurify.sanitize( item, { ALLOWED_TAGS: [] } );
 };
 
-export {
-	getInitials,
-	isURL,
-	isValidUrl,
-	PurifyElement,
-};
+export { getInitials, isURL, isValidUrl, PurifyElement };

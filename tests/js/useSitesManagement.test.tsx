@@ -10,7 +10,10 @@ import useSitesManagement from '@/hooks/useSitesManagement';
 
 const fetchMock = global.fetch as unknown as jest.Mock;
 
-const PROPS = { NONCE: 'nonce', API_NAMESPACE: 'https://api.test/onedesign/v1' };
+const PROPS = {
+	NONCE: 'nonce',
+	API_NAMESPACE: 'https://api.test/onedesign/v1',
+};
 const CONFIGURED_SITES = {
 	1: { id: 's1', url: 'https://siteone.test', api_key: 'k1' },
 };
@@ -88,9 +91,7 @@ describe( 'useSitesManagement', () => {
 
 		const { result } = renderHook( () => useSitesManagement( PROPS ) );
 
-		await waitFor( () =>
-			expect( result.current.error ).toBe( 'offline' )
-		);
+		await waitFor( () => expect( result.current.error ).toBe( 'offline' ) );
 	} );
 
 	it( 'reset clears all managed state', async () => {

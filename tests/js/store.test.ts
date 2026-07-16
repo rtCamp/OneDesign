@@ -1,5 +1,5 @@
 /**
- * Internal dependencies
+ * External dependencies
  */
 import { DEFAULT_STATE, actions, reducer, selectors } from '@/store';
 
