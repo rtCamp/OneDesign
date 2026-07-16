@@ -67,15 +67,15 @@ const styles = {
 const scripts = {
 	...sharedConfig,
 	entry: {
-		main: path.resolve( process.cwd(), 'assets', 'src', 'js', 'main.js' ),
+		main: path.resolve( process.cwd(), 'assets', 'src', 'js', 'main.ts' ),
 		editor: path.resolve(
 			process.cwd(),
 			'assets',
 			'src',
 			'js',
-			'editor.js'
+			'editor.ts'
 		),
-		admin: path.resolve( process.cwd(), 'assets', 'src', 'js', 'admin.js' ),
+		admin: path.resolve( process.cwd(), 'assets', 'src', 'js', 'admin.ts' ),
 		'templates-library': path.resolve(
 			process.cwd(),
 			'assets',

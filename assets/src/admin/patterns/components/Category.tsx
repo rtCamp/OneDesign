@@ -6,23 +6,39 @@ import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 
+interface Pattern {
+	categories?: string[];
+}
+
+interface PatternCategory {
+	name: string;
+	label: string;
+}
+
+interface CategoryProps {
+	activeCategory: string;
+	setActiveCategory: ( category: string ) => void;
+	isOpen: boolean;
+	basePatterns: Pattern[];
+}
+
 /**
- * Category component displays a list of pattern categories
+ * Category component displays a list of pattern categories.
  *
- * @param {Object}   props                   - Component properties.
- * @param {string}   props.activeCategory    - Currently active category.
- * @param {Function} props.setActiveCategory - Function to set the active category.
- * @param {boolean}  props.isOpen            - Indicates if the category list is open.
- * @param {Array}    props.basePatterns      - List of base patterns to filter categories.
- * @return {JSX.Element} Rendered component.
+ * @param props                   - Component properties.
+ * @param props.activeCategory    - Currently active category.
+ * @param props.setActiveCategory - Function to set the active category.
+ * @param props.isOpen            - Indicates if the category list is open.
+ * @param props.basePatterns      - List of base patterns to filter categories.
+ * @return Rendered component.
  */
 const Category = ( {
 	activeCategory,
 	setActiveCategory,
 	isOpen,
 	basePatterns,
-} ) => {
-	const [ categories, setCategories ] = useState( [] );
+}: CategoryProps ): JSX.Element => {
+	const [ categories, setCategories ] = useState< PatternCategory[] >( [] );
 	const [ categoryError, setCategoryError ] = useState( '' );
 
 	const fetchPatternCategories = useCallback( async () => {
@@ -33,10 +49,11 @@ const Category = ( {
 				return;
 			}
 
-			const baseSiteFetch = await apiFetch( {
+			const baseSitePatternCategories = await apiFetch< {
+				categories: PatternCategory[];
+			} >( {
 				path: `/onedesign/v1/pattern-categories`,
 			} );
-			const baseSitePatternCategories = baseSiteFetch;
 
 			const patternCategoriesSet = new Set(
 				basePatterns.flatMap( ( pattern ) =>
@@ -58,7 +75,7 @@ const Category = ( {
 			} else {
 				setCategoryError( '' );
 			}
-		} catch ( error ) {
+		} catch {
 			setCategoryError(
 				__( 'Error fetching pattern categories', 'onedesign' )
 			);

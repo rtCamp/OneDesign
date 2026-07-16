@@ -1,3 +1,5 @@
 /**
  * Admin JS
  */
+
+export {};
