@@ -56,7 +56,7 @@ const AppliedPatternsTab = ( {
 		try {
 			const result = await applySelectedPatterns(
 				selectedPatterns,
-				siteInfo?.value,
+				siteInfo?.value
 			);
 
 			if ( result ) {
@@ -70,9 +70,9 @@ const AppliedPatternsTab = ( {
 							'%d pattern removed successfully.',
 							'%d patterns removed successfully.',
 							count,
-							'onedesign',
+							'onedesign'
 						),
-						count,
+						count
 					),
 				} );
 				setSelectedPatterns( [] );
@@ -85,12 +85,23 @@ const AppliedPatternsTab = ( {
 		} catch ( error ) {
 			setNotice( {
 				type: 'error',
-				message: error.message || __( 'An error occurred while removing patterns.', 'onedesign' ),
+				message:
+					error.message ||
+					__(
+						'An error occurred while removing patterns.',
+						'onedesign'
+					),
 			} );
 		} finally {
 			setIsProcessing( false );
 		}
-	}, [ selectedPatterns, siteInfo, applySelectedPatterns, setSelectedPatterns, setNotice ] );
+	}, [
+		selectedPatterns,
+		siteInfo,
+		applySelectedPatterns,
+		setSelectedPatterns,
+		setNotice,
+	] );
 
 	const renderPagination = () => {
 		return (
@@ -109,13 +120,28 @@ const AppliedPatternsTab = ( {
 						</div>
 					) }
 				</div>
-				<div style={ { display: 'flex', gap: '12px', flexDirection: 'row' } }>
+				<div
+					style={ {
+						display: 'flex',
+						gap: '12px',
+						flexDirection: 'row',
+					} }
+				>
 					<Button
 						variant="secondary"
-						disabled={ ( currentPage * PER_PAGE ) >= filteredPatterns.length }
-						onClick={ () => setCurrentPage( ( prevPage ) => prevPage + 1 ) }
+						disabled={
+							currentPage * PER_PAGE >= filteredPatterns.length
+						}
+						onClick={ () =>
+							setCurrentPage( ( prevPage ) => prevPage + 1 )
+						}
 					>
-						{ __( 'Show More', 'onedesign' ) } { ( Math.min( currentPage * PER_PAGE, filteredPatterns.length ) ) }/{ filteredPatterns.length }
+						{ __( 'Show More', 'onedesign' ) }{ ' ' }
+						{ Math.min(
+							currentPage * PER_PAGE,
+							filteredPatterns.length
+						) }
+						/{ filteredPatterns.length }
 					</Button>
 					<Button
 						variant="primary"
@@ -143,18 +169,24 @@ const AppliedPatternsTab = ( {
 
 		return (
 			<div className="onedesign-patterns-grid">
-				{ filteredPatterns.slice( 0, ( currentPage * PER_PAGE ) ).map( ( pattern ) => {
-					return (
-						<MemoizedPatternPreview
-							key={ pattern?.name }
-							pattern={ pattern }
-							isCheckBoxRequired={ true }
-							providerSite={ pattern?.providerSite }
-							onSelect={ () => handlePatternSelection( pattern?.name ) }
-							isSelected={ selectedPatterns.includes( pattern?.name ) }
-						/>
-					);
-				} ) }
+				{ filteredPatterns
+					.slice( 0, currentPage * PER_PAGE )
+					.map( ( pattern ) => {
+						return (
+							<MemoizedPatternPreview
+								key={ pattern?.name }
+								pattern={ pattern }
+								isCheckBoxRequired
+								providerSite={ pattern?.providerSite }
+								onSelect={ () =>
+									handlePatternSelection( pattern?.name )
+								}
+								isSelected={ selectedPatterns.includes(
+									pattern?.name
+								) }
+							/>
+						);
+					} ) }
 			</div>
 		);
 	};
@@ -181,9 +213,15 @@ const AppliedPatternsTab = ( {
 					size="medium"
 				>
 					<p>
-						{ __( 'Are you sure you want to remove selected patterns?', 'onedesign' ) }
+						{ __(
+							'Are you sure you want to remove selected patterns?',
+							'onedesign'
+						) }
 						<br />
-						{ __( 'Once you remove a pattern you won\'t be able to use it on brand sites, so please check and confirm you don\'t require it.', 'onedesign' ) }
+						{ __(
+							"Once you remove a pattern you won't be able to use it on brand sites, so please check and confirm you don't require it.",
+							'onedesign'
+						) }
 					</p>
 
 					<div
@@ -218,7 +256,6 @@ const AppliedPatternsTab = ( {
 							{ __( 'Remove Patterns', 'onedesign' ) }
 						</Button>
 					</div>
-
 				</Modal>
 			) }
 		</>

@@ -49,7 +49,8 @@ const BasePatternsTab = memo(
 		const [ isApplying, setIsApplying ] = useState( false );
 		const [ applicationStatus, setApplicationStatus ] = useState( null );
 		const [ isSiteSelected, setIsSiteSelected ] = useState( false );
-		const [ showCloseConfirmation, setShowCloseConfirmation ] = useState( false );
+		const [ showCloseConfirmation, setShowCloseConfirmation ] =
+			useState( false );
 		const [ showDetailedErrors, setShowDetailedErrors ] = useState( false );
 		const [ detailedErrors, setDetailedErrors ] = useState( [] );
 
@@ -77,7 +78,7 @@ const BasePatternsTab = memo(
 					type: 'warning',
 					message: __(
 						'Please select at least one pattern before proceeding.',
-						'onedesign',
+						'onedesign'
 					),
 				} );
 				return;
@@ -95,7 +96,7 @@ const BasePatternsTab = memo(
 					type: 'warning',
 					message: __(
 						'Pattern application is in progress. Are you sure you want to cancel?',
-						'onedesign',
+						'onedesign'
 					),
 				} );
 				return;
@@ -119,8 +120,16 @@ const BasePatternsTab = memo(
 						type: 'success',
 						message: sprintf(
 							/* translators: %s site names. */
-							__( 'Patterns applied successfully to %s site.', 'onedesign' ),
-							Object.values( siteInfo ).filter( ( site ) => selectedSites.includes( site.id ) ).map( ( site ) => site.name ).join( ', ' ),
+							__(
+								'Patterns applied successfully to %s site.',
+								'onedesign'
+							),
+							Object.values( siteInfo )
+								.filter( ( site ) =>
+									selectedSites.includes( site.id )
+								)
+								.map( ( site ) => site.name )
+								.join( ', ' )
 						),
 					} );
 
@@ -134,7 +143,10 @@ const BasePatternsTab = memo(
 						type: 'error',
 						message:
 							result?.message ||
-							__( 'Failed to apply patterns. Please try again.', 'onedesign' ),
+							__(
+								'Failed to apply patterns. Please try again.',
+								'onedesign'
+							),
 					} );
 				}
 			} catch ( error ) {
@@ -144,7 +156,10 @@ const BasePatternsTab = memo(
 				// Parse the error message to extract site-specific errors if possible
 				let errorMessage =
 					error.message ||
-					__( 'Failed to apply patterns. Please try again.', 'onedesign' );
+					__(
+						'Failed to apply patterns. Please try again.',
+						'onedesign'
+					);
 				let parsedErrors = [];
 
 				// Check if this is a multi-site error (contains bullet points)
@@ -169,7 +184,9 @@ const BasePatternsTab = memo(
 						} );
 
 					// Set a summary message for the notice
-					errorMessage = `${ summaryLine } (${ parsedErrors.length } ${ parsedErrors.length === 1 ? 'site' : 'sites' })`;
+					errorMessage = `${ summaryLine } (${
+						parsedErrors.length
+					} ${ parsedErrors.length === 1 ? 'site' : 'sites' })`;
 					setDetailedErrors( parsedErrors );
 					setShowDetailedErrors( false );
 				}
@@ -187,11 +204,10 @@ const BasePatternsTab = memo(
 		const BrandSiteSelection = () => {
 			return (
 				<div className="onedesign-brand-site-modal-content">
-
 					{ applicationStatus && (
 						<Notice
 							status={ applicationStatus?.type ?? 'info' }
-							isDismissible={ true }
+							isDismissible
 							className="onedesign-application-notice onedesign-error-notice"
 						>
 							<div className="onedesign-error-notice-summary">
@@ -200,18 +216,26 @@ const BasePatternsTab = memo(
 								</div>
 							</div>
 
-							{ showDetailedErrors && applicationStatus?.hasDetails && (
-								<div className="onedesign-error-details">
-									{ detailedErrors.map( ( error, index ) => (
-										<div key={ index } className="onedesign-error-site">
-											<div className="onedesign-error-site-name">{ error?.site }</div>
-											<div className="onedesign-error-site-message">
-												{ error?.message }
-											</div>
-										</div>
-									) ) }
-								</div>
-							) }
+							{ showDetailedErrors &&
+								applicationStatus?.hasDetails && (
+									<div className="onedesign-error-details">
+										{ detailedErrors.map(
+											( error, index ) => (
+												<div
+													key={ index }
+													className="onedesign-error-site"
+												>
+													<div className="onedesign-error-site-name">
+														{ error?.site }
+													</div>
+													<div className="onedesign-error-site-message">
+														{ error?.message }
+													</div>
+												</div>
+											)
+										) }
+									</div>
+								) }
 						</Notice>
 					) }
 
@@ -237,7 +261,9 @@ const BasePatternsTab = memo(
 						{ showCloseConfirmation ? (
 							<Button
 								variant="secondary"
-								onClick={ () => setShowCloseConfirmation( false ) }
+								onClick={ () =>
+									setShowCloseConfirmation( false )
+								}
 							>
 								{ __( 'Continue Applying', 'onedesign' ) }
 							</Button>
@@ -266,7 +292,7 @@ const BasePatternsTab = memo(
 							<p className="onedesign-no-patterns-subtitle">
 								{ __(
 									'Try adjusting your search criteria or check back later.',
-									'onedesign',
+									'onedesign'
 								) }
 							</p>
 						</div>
@@ -277,8 +303,12 @@ const BasePatternsTab = memo(
 								<MemoizedPatternPreview
 									key={ pattern?.name }
 									pattern={ pattern }
-									isSelected={ selectedPatterns.includes( pattern?.name ) }
-									onSelect={ () => handlePatternSelection( pattern?.name ) }
+									isSelected={ selectedPatterns.includes(
+										pattern?.name
+									) }
+									onSelect={ () =>
+										handlePatternSelection( pattern?.name )
+									}
 								/>
 							) )
 					) }
@@ -294,7 +324,10 @@ const BasePatternsTab = memo(
 								<span className="onedesign-count-text">
 									{ selectedPatterns.length === 1
 										? __( 'pattern selected', 'onedesign' )
-										: __( 'patterns selected', 'onedesign' ) }
+										: __(
+												'patterns selected',
+												'onedesign'
+										  ) }
 								</span>
 							</div>
 						) }
@@ -334,14 +367,14 @@ const BasePatternsTab = memo(
 						className="onedesign-brand-site-modal"
 						shouldCloseOnClickOutside={ ! isApplying }
 						shouldCloseOnEsc={ ! isApplying }
-						isFullScreen={ true }
+						isFullScreen
 					>
 						{ BrandSiteSelection() }
 					</Modal>
 				) }
 			</div>
 		);
-	},
+	}
 );
 
 export default BasePatternsTab;

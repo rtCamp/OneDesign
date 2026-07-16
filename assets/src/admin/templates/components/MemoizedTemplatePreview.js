@@ -30,7 +30,11 @@ const TemplatePreviewContent = memo( ( { parsedBlocks } ) => {
  * @return {JSX.Element|null} The rendered categories or null if none.
  */
 const TemplateCategories = memo( ( { categories } ) => {
-	if ( ! categories || typeof categories !== 'object' || Array.isArray( categories ) ) {
+	if (
+		! categories ||
+		typeof categories !== 'object' ||
+		Array.isArray( categories )
+	) {
 		return null;
 	}
 
@@ -44,7 +48,10 @@ const TemplateCategories = memo( ( { categories } ) => {
 		<div className="onedesign-template-categories">
 			<p>{ __( 'Categories:', 'onedesign' ) }</p>
 			{ categoryValues.map( ( category, i ) => (
-				<span key={ `${ category }-${ i }` } className="onedesign-template-category">
+				<span
+					key={ `${ category }-${ i }` }
+					className="onedesign-template-category"
+				>
 					{ category }
 				</span>
 			) ) }
@@ -68,7 +75,9 @@ const ProviderSiteInfo = memo( ( { providerSite } ) => {
 		<div className="onedesign-template-provider-site-name">
 			<p>
 				{ __( 'Provider Site:', 'onedesign' ) }
-				<span className="onedesign-provider-site-name">{ providerSite }</span>
+				<span className="onedesign-provider-site-name">
+					{ providerSite }
+				</span>
 			</p>
 		</div>
 	);
@@ -85,9 +94,18 @@ const ProviderSiteInfo = memo( ( { providerSite } ) => {
  * @return {JSX.Element} Rendered component.
  */
 const MemoizedTemplatePreview = memo(
-	( { template, isSelected, onSelect, isCheckBoxRequired = true, providerSite = false } ) => {
+	( {
+		template,
+		isSelected,
+		onSelect,
+		isCheckBoxRequired = true,
+		providerSite = false,
+	} ) => {
 		// Parse blocks only once when the component mounts
-		const parsedBlocks = useMemo( () => parse( template?.content ), [ template?.content ] );
+		const parsedBlocks = useMemo(
+			() => parse( template?.content ),
+			[ template?.content ]
+		);
 
 		// Get template title
 		const templateTitle = template?.title ?? template?.name;
@@ -109,16 +127,19 @@ const MemoizedTemplatePreview = memo(
 				} }
 			>
 				<div className="onedesign-template-title-wrapper">
-					{ isCheckBoxRequired &&
-					<CheckboxControl
-						checked={ isSelected }
-						onChange={ () => onSelect( template ) }
-						onClick={ ( e ) => {
-							e.stopPropagation();
-						} }
-						__nextHasNoMarginBottom
-					/> }
-					<span className="onedesign-template-title">{ templateTitle }</span>
+					{ isCheckBoxRequired && (
+						<CheckboxControl
+							checked={ isSelected }
+							onChange={ () => onSelect( template ) }
+							onClick={ ( e ) => {
+								e.stopPropagation();
+							} }
+							__nextHasNoMarginBottom
+						/>
+					) }
+					<span className="onedesign-template-title">
+						{ templateTitle }
+					</span>
 				</div>
 
 				{ /* The preview that shouldn't re-render */ }
@@ -139,7 +160,7 @@ const MemoizedTemplatePreview = memo(
 			prevProps.isCheckBoxRequired === nextProps.isCheckBoxRequired &&
 			prevProps.providerSite === nextProps.providerSite
 		);
-	},
+	}
 );
 
 export default MemoizedTemplatePreview;

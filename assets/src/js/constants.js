@@ -19,7 +19,9 @@ if ( typeof window.OneDesignSettings !== 'undefined' ) {
 const ONEDESIGN_REST_NAME = 'onedesign';
 const ONEDESIGN_REST_VERSION = 'v1';
 
-const API_NAMESPACE = settings?.restUrl ? settings.restUrl + `/${ ONEDESIGN_REST_NAME }/${ ONEDESIGN_REST_VERSION }` : '';
+const API_NAMESPACE = settings?.restUrl
+	? settings.restUrl + `/${ ONEDESIGN_REST_NAME }/${ ONEDESIGN_REST_VERSION }`
+	: '';
 const NONCE = settings?.restNonce ? settings.restNonce : '';
 const API_KEY = settings?.apiKey ? settings.apiKey : '';
 const SETTINGS_LINK = settings?.settingsLink ? settings.settingsLink : '';

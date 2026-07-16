@@ -2,7 +2,13 @@
  * WordPress dependencies
  */
 import { useState } from '@wordpress/element';
-import { Button, Card, CardHeader, CardBody, Modal } from '@wordpress/components';
+import {
+	Button,
+	Card,
+	CardHeader,
+	CardBody,
+	Modal,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -30,7 +36,15 @@ import { IS_MULTISITE, IS_GOVERNING_SITE_SELECTED } from '../js/constants';
  *
  * @return {JSX.Element} Rendered component.
  */
-const SiteTable = ( { sites, onEdit, onDelete, setFormData, setShowModal, setSites, setNotice } ) => {
+const SiteTable = ( {
+	sites,
+	onEdit,
+	onDelete,
+	setFormData,
+	setShowModal,
+	setSites,
+	setNotice,
+} ) => {
 	const [ showDeleteModal, setShowDeleteModal ] = useState( false );
 	const [ deleteIndex, setDeleteIndex ] = useState( null );
 
@@ -55,15 +69,13 @@ const SiteTable = ( { sites, onEdit, onDelete, setFormData, setShowModal, setSit
 			<CardHeader>
 				<h3>{ __( 'Brand Sites', 'onedesign' ) }</h3>
 				<div style={ { display: 'flex', gap: '16px' } }>
-					{
-						IS_MULTISITE && IS_GOVERNING_SITE_SELECTED && (
-							<MultiSites
-								setBrandSites={ setSites }
-								brandSites={ sites }
-								setNotice={ setNotice }
-							/>
-						)
-					}
+					{ IS_MULTISITE && IS_GOVERNING_SITE_SELECTED && (
+						<MultiSites
+							setBrandSites={ setSites }
+							brandSites={ sites }
+							setNotice={ setNotice }
+						/>
+					) }
 					<Button
 						style={ { width: 'fit-content' } }
 						variant="primary"
@@ -87,8 +99,14 @@ const SiteTable = ( { sites, onEdit, onDelete, setFormData, setShowModal, setSit
 					<tbody>
 						{ sites.length === 0 && (
 							<tr>
-								<td colSpan="5" style={ { textAlign: 'center' } }>
-									{ __( 'No Brand Sites found.', 'onedesign' ) }
+								<td
+									colSpan="5"
+									style={ { textAlign: 'center' } }
+								>
+									{ __(
+										'No Brand Sites found.',
+										'onedesign'
+									) }
 								</td>
 							</tr>
 						) }
@@ -100,16 +118,28 @@ const SiteTable = ( { sites, onEdit, onDelete, setFormData, setShowModal, setSit
 									{ site?.logo ? (
 										<img
 											src={ site.logo }
-											alt={ __( 'Site Logo', 'onedesign' ) }
-											style={ { maxWidth: '100px', maxHeight: '50px' } }
+											alt={ __(
+												'Site Logo',
+												'onedesign'
+											) }
+											style={ {
+												maxWidth: '100px',
+												maxHeight: '50px',
+											} }
 											loading="lazy"
 											decoding="async"
 										/>
 									) : (
-										<span className="onedesign-site-initials">{ getInitials( site?.name ) }</span>
+										<span className="onedesign-site-initials">
+											{ getInitials( site?.name ) }
+										</span>
 									) }
 								</td>
-								<td><code>{ site?.api_key.substring( 0, 10 ) }...</code></td>
+								<td>
+									<code>
+										{ site?.api_key.substring( 0, 10 ) }...
+									</code>
+								</td>
 								<td>
 									<Button
 										variant="secondary"
@@ -126,7 +156,9 @@ const SiteTable = ( { sites, onEdit, onDelete, setFormData, setShowModal, setSit
 									<Button
 										variant="secondary"
 										isDestructive
-										onClick={ () => handleDeleteClick( index ) }
+										onClick={ () =>
+											handleDeleteClick( index )
+										}
 									>
 										{ __( 'Delete', 'onedesign' ) }
 									</Button>
@@ -158,21 +190,26 @@ const DeleteConfirmationModal = ( { onConfirm, onCancel } ) => (
 	<Modal
 		title={ __( 'Delete Brand Site', 'onedesign' ) }
 		onRequestClose={ onCancel }
-		isDismissible={ true }
+		isDismissible
 	>
-		<p>{ __( 'Are you sure you want to delete this Brand Site? This action cannot be undone.', 'onedesign' ) }</p>
-		<div style={ { display: 'flex', justifyContent: 'flex-end', marginTop: '20px', gap: '16px' } }>
-			<Button
-				variant="secondary"
-				onClick={ onCancel }
-			>
+		<p>
+			{ __(
+				'Are you sure you want to delete this Brand Site? This action cannot be undone.',
+				'onedesign'
+			) }
+		</p>
+		<div
+			style={ {
+				display: 'flex',
+				justifyContent: 'flex-end',
+				marginTop: '20px',
+				gap: '16px',
+			} }
+		>
+			<Button variant="secondary" onClick={ onCancel }>
 				{ __( 'Cancel', 'onedesign' ) }
 			</Button>
-			<Button
-				variant="primary"
-				isDestructive
-				onClick={ onConfirm }
-			>
+			<Button variant="primary" isDestructive onClick={ onConfirm }>
 				{ __( 'Delete', 'onedesign' ) }
 			</Button>
 		</div>

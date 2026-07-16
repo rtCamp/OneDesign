@@ -30,7 +30,11 @@ const PatternPreviewContent = memo( ( { parsedBlocks } ) => {
  * @return {JSX.Element} Rendered component.
  */
 const PatternCategories = memo( ( { categories } ) => {
-	if ( ! categories || typeof categories !== 'object' || Array.isArray( categories ) ) {
+	if (
+		! categories ||
+		typeof categories !== 'object' ||
+		Array.isArray( categories )
+	) {
 		return null;
 	}
 
@@ -44,7 +48,10 @@ const PatternCategories = memo( ( { categories } ) => {
 		<div className="onedesign-pattern-categories">
 			<p>{ __( 'Categories:', 'onedesign' ) }</p>
 			{ categoryValues.map( ( category, i ) => (
-				<span key={ `${ category }-${ i }` } className="onedesign-pattern-category">
+				<span
+					key={ `${ category }-${ i }` }
+					className="onedesign-pattern-category"
+				>
 					{ category }
 				</span>
 			) ) }
@@ -68,7 +75,9 @@ const ProviderSiteInfo = memo( ( { providerSite } ) => {
 		<div className="onedesign-pattern-provider-site-name">
 			<p>
 				{ __( 'Provider Site:', 'onedesign' ) }
-				<span className="onedesign-provider-site-name">{ providerSite }</span>
+				<span className="onedesign-provider-site-name">
+					{ providerSite }
+				</span>
 			</p>
 		</div>
 	);
@@ -85,9 +94,18 @@ const ProviderSiteInfo = memo( ( { providerSite } ) => {
  * @return {JSX.Element} Rendered component.
  */
 const MemoizedPatternPreview = memo(
-	( { pattern, isSelected, onSelect, isCheckBoxRequired = true, providerSite = false } ) => {
+	( {
+		pattern,
+		isSelected,
+		onSelect,
+		isCheckBoxRequired = true,
+		providerSite = false,
+	} ) => {
 		// Parse blocks only once when the component mounts
-		const parsedBlocks = useMemo( () => parse( pattern?.content ), [ pattern?.content ] );
+		const parsedBlocks = useMemo(
+			() => parse( pattern?.content ),
+			[ pattern?.content ]
+		);
 
 		// Get pattern title
 		const patternTitle = pattern?.title ?? pattern?.name;
@@ -105,7 +123,7 @@ const MemoizedPatternPreview = memo(
 				} }
 			>
 				<div className="onedesign-pattern-title-wrapper">
-					{ isCheckBoxRequired &&
+					{ isCheckBoxRequired && (
 						<CheckboxControl
 							checked={ isSelected }
 							onChange={ () => onSelect( pattern ) }
@@ -114,8 +132,10 @@ const MemoizedPatternPreview = memo(
 							} }
 							__nextHasNoMarginBottom
 						/>
-					}
-					<span className="onedesign-pattern-title">{ patternTitle }</span>
+					) }
+					<span className="onedesign-pattern-title">
+						{ patternTitle }
+					</span>
 				</div>
 
 				{ /* The preview that shouldn't re-render */ }
@@ -136,7 +156,7 @@ const MemoizedPatternPreview = memo(
 			prevProps.isCheckBoxRequired === nextProps.isCheckBoxRequired &&
 			prevProps.providerSite === nextProps.providerSite
 		);
-	},
+	}
 );
 
 export default MemoizedPatternPreview;

@@ -19,7 +19,13 @@ import MemoizedTemplatePreview from './MemoizedTemplatePreview';
  * @param {Function} props.handleTemplateSelection - Function to handle template selection.
  * @return {JSX.Element} The rendered component.
  */
-const BaseSiteTemplates = ( { filteredTemplates, currentPage, PER_PAGE, selectedTemplates, handleTemplateSelection } ) => {
+const BaseSiteTemplates = ( {
+	filteredTemplates,
+	currentPage,
+	PER_PAGE,
+	selectedTemplates,
+	handleTemplateSelection,
+} ) => {
 	const renderTemplates = () => {
 		if ( filteredTemplates.length === 0 ) {
 			return (
@@ -31,18 +37,23 @@ const BaseSiteTemplates = ( { filteredTemplates, currentPage, PER_PAGE, selected
 
 		return (
 			<div className="onedesign-templates-grid">
-				{ filteredTemplates.slice( 0, ( currentPage * PER_PAGE ) ).map( ( template ) => {
-					return (
-						<MemoizedTemplatePreview
-							key={ template?.name }
-							template={ template }
-							isCheckBoxRequired={ true }
-							onSelect={ () => handleTemplateSelection( template?.id ) }
-							isSelected={ selectedTemplates.includes( template?.id ) }
-						/>
-					);
-				},
-				) }
+				{ filteredTemplates
+					.slice( 0, currentPage * PER_PAGE )
+					.map( ( template ) => {
+						return (
+							<MemoizedTemplatePreview
+								key={ template?.name }
+								template={ template }
+								isCheckBoxRequired
+								onSelect={ () =>
+									handleTemplateSelection( template?.id )
+								}
+								isSelected={ selectedTemplates.includes(
+									template?.id
+								) }
+							/>
+						);
+					} ) }
 			</div>
 		);
 	};

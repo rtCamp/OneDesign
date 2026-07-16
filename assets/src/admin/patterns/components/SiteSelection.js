@@ -33,10 +33,8 @@ const SiteSelection = ( {
 	sitePatterns = {},
 } ) => {
 	// common state for site info and health check results
-	const {
-		sitesHealthCheckResult,
-		isLoading: isSitesLoading,
-	} = useSitesManagement( { NONCE, API_NAMESPACE } );
+	const { sitesHealthCheckResult, isLoading: isSitesLoading } =
+		useSitesManagement( { NONCE, API_NAMESPACE } );
 
 	/**
 	 * Get the current value of the brand_site meta field.
@@ -77,10 +75,13 @@ const SiteSelection = ( {
 				// Skip if site has all patterns already
 				if ( selectedPatterns.length > 0 && sitePatterns[ site.id ] ) {
 					const sitePatternsArray = sitePatterns[ site.id ] || [];
-					const presentPatterns = selectedPatterns.filter( ( patternName ) =>
-						sitePatternsArray.some(
-							( pattern ) => pattern.name === patternName.replace( /\//g, '' ),
-						),
+					const presentPatterns = selectedPatterns.filter(
+						( patternName ) =>
+							sitePatternsArray.some(
+								( pattern ) =>
+									pattern.name ===
+									patternName.replace( /\//g, '' )
+							)
 					);
 
 					// If all patterns are present, exclude this site
@@ -121,7 +122,7 @@ const SiteSelection = ( {
 			setError( {
 				message: __(
 					'Failed to load brand sites. Please check your connection and try again.',
-					'onedesign',
+					'onedesign'
 				),
 				details: fetchError.message,
 			} );
@@ -144,7 +145,10 @@ const SiteSelection = ( {
 
 	// helper function to check if site is reachable.
 	const isSiteReachable = ( siteId ) => {
-		return sitesHealthCheckResult?.[ siteId ] && sitesHealthCheckResult[ siteId ]?.success;
+		return (
+			sitesHealthCheckResult?.[ siteId ] &&
+			sitesHealthCheckResult[ siteId ]?.success
+		);
 	};
 
 	// Calculate the number of sites that don't have all patterns already
@@ -158,8 +162,9 @@ const SiteSelection = ( {
 			const sitePatternsArray = sitePatterns[ site.id ] || [];
 			const presentPatterns = selectedPatterns.filter( ( patternName ) =>
 				sitePatternsArray.some(
-					( pattern ) => pattern.name === patternName.replace( /\//g, '' ),
-				),
+					( pattern ) =>
+						pattern.name === patternName.replace( /\//g, '' )
+				)
 			);
 
 			// If all patterns are present, site is not selectable
@@ -173,7 +178,7 @@ const SiteSelection = ( {
 
 	const selectableSiteCount = selectableSites.length;
 	const selectedSelectableSiteCount = BrandSite.filter( ( siteId ) =>
-		selectableSites.some( ( site ) => site.id === siteId ),
+		selectableSites.some( ( site ) => site.id === siteId )
 	).length;
 
 	const selectedCount = BrandSite.length;
@@ -196,7 +201,9 @@ const SiteSelection = ( {
 					<p>{ error.message }</p>
 					{ error.details && (
 						<details className="onedesign-error-details">
-							<summary>{ __( 'Technical details', 'onedesign' ) }</summary>
+							<summary>
+								{ __( 'Technical details', 'onedesign' ) }
+							</summary>
 							<p>{ error.details }</p>
 						</details>
 					) }
@@ -220,7 +227,7 @@ const SiteSelection = ( {
 					<p>
 						{ __(
 							'Please configure brand sites first to apply patterns.',
-							'onedesign',
+							'onedesign'
 						) }
 					</p>
 				</Notice>
@@ -236,17 +243,20 @@ const SiteSelection = ( {
 					<span className="onedesign-selection-count">
 						{ selectedCount > 0
 							? sprintf(
-								/* translators: %1$d: Number of selected sites, %2$d: Total number of sites. */
-								__( '%1$d of %2$d selected', 'onedesign' ),
-								selectedCount,
-								selectableSiteCount,
-							)
+									/* translators: %1$d: Number of selected sites, %2$d: Total number of sites. */
+									__( '%1$d of %2$d selected', 'onedesign' ),
+									selectedCount,
+									selectableSiteCount
+							  )
 							: sprintf(
-								/* translators: %1$d: Number of available sites, %2$d: Total number of sites. */
-								__( '%1$d of %2$d sites available', 'onedesign' ),
-								selectableSiteCount,
-								totalCount,
-							) }
+									/* translators: %1$d: Number of available sites, %2$d: Total number of sites. */
+									__(
+										'%1$d of %2$d sites available',
+										'onedesign'
+									),
+									selectableSiteCount,
+									totalCount
+							  ) }
 					</span>
 				</div>
 
@@ -256,7 +266,8 @@ const SiteSelection = ( {
 							variant="link"
 							onClick={ selectAllSites }
 							disabled={
-								selectedSelectableSiteCount === selectableSiteCount ||
+								selectedSelectableSiteCount ===
+									selectableSiteCount ||
 								selectableSiteCount === 0
 							}
 							className="onedesign-bulk-action"
@@ -283,18 +294,18 @@ const SiteSelection = ( {
 						<span className="dashicons dashicons-info"></span>
 						{ totalCount !== selectableSiteCount
 							? sprintf(
-								/* translators: %1$d: number of non-selectable sites, %2$d: total sites */
-								__(
-									'%1$d of %2$d sites already have all selected patterns and are disabled.',
-									'onedesign',
-								),
-								totalCount - selectableSiteCount,
-								totalCount,
-							)
+									/* translators: %1$d: number of non-selectable sites, %2$d: total sites */
+									__(
+										'%1$d of %2$d sites already have all selected patterns and are disabled.',
+										'onedesign'
+									),
+									totalCount - selectableSiteCount,
+									totalCount
+							  )
 							: __(
-								'Sites that already have all selected patterns are disabled.',
-								'onedesign',
-							) }
+									'Sites that already have all selected patterns are disabled.',
+									'onedesign'
+							  ) }
 					</p>
 				</div>
 			) }
@@ -309,26 +320,41 @@ const SiteSelection = ( {
 
 					if ( selectedPatterns.length > 0 && sitePatterns[ id ] ) {
 						const sitePatternsArray = sitePatterns[ id ] || [];
-						const presentPatterns = selectedPatterns.filter( ( patternName ) =>
-							sitePatternsArray.some(
-								( pattern ) => pattern.name === patternName.replace( /\//g, '' ),
-							),
+						const presentPatterns = selectedPatterns.filter(
+							( patternName ) =>
+								sitePatternsArray.some(
+									( pattern ) =>
+										pattern.name ===
+										patternName.replace( /\//g, '' )
+								)
 						);
 
 						// If all selected patterns are already present, disable the site
 						hasAllPatterns =
-							presentPatterns.length === selectedPatterns.length &&
+							presentPatterns.length ===
+								selectedPatterns.length &&
 							selectedPatterns.length > 0;
-						isDisabled = ( hasAllPatterns && ! isSelected ) || ! isSiteReachable( id );
+						isDisabled =
+							( hasAllPatterns && ! isSelected ) ||
+							! isSiteReachable( id );
 					}
 
 					return (
 						<div
 							key={ id }
-							className={ `onedesign-site-item ${ isSelected ? 'onedesign-site-selected' : '' } ${ isDisabled ? 'onedesign-site-disabled' : '' }` }
-							onClick={ () => ! isDisabled && onBrandSiteChange( id ) }
+							className={ `onedesign-site-item ${
+								isSelected ? 'onedesign-site-selected' : ''
+							} ${
+								isDisabled ? 'onedesign-site-disabled' : ''
+							}` }
+							onClick={ () =>
+								! isDisabled && onBrandSiteChange( id )
+							}
 							onKeyDown={ ( e ) => {
-								if ( ! isDisabled && ( e.code === 'Enter' || e.code === 'Space' ) ) {
+								if (
+									! isDisabled &&
+									( e.code === 'Enter' || e.code === 'Space' )
+								) {
 									onBrandSiteChange( id );
 								}
 							} }
@@ -340,7 +366,10 @@ const SiteSelection = ( {
 							<div className="onedesign-site-inner">
 								{ isSelected && (
 									<div className="onedesign-site-selected-indicator">
-										{ renderIcon( { sitesHealthCheckResult, id } ) }
+										{ renderIcon( {
+											sitesHealthCheckResult,
+											id,
+										} ) }
 									</div>
 								) }
 								{ isDisabled && ! isSelected && (
@@ -348,10 +377,13 @@ const SiteSelection = ( {
 										className="onedesign-site-disabled-indicator"
 										title={ __(
 											'This site already has all selected patterns',
-											'onedesign',
+											'onedesign'
 										) }
 									>
-										{ renderIcon( { sitesHealthCheckResult, id } ) }
+										{ renderIcon( {
+											sitesHealthCheckResult,
+											id,
+										} ) }
 									</div>
 								) }
 								<div className="onedesign-site-logo">
@@ -363,84 +395,119 @@ const SiteSelection = ( {
 										</div>
 									) }
 								</div>
-								<span className="onedesign-site-name">{ name }</span>
-								{ url && <span className="onedesign-site-url">{ url }</span> }
+								<span className="onedesign-site-name">
+									{ name }
+								</span>
+								{ url && (
+									<span className="onedesign-site-url">
+										{ url }
+									</span>
+								) }
 
 								{ /* Pattern sync status */ }
-								{ selectedPatterns.length > 0 && sitePatterns[ id ] && (
-									<div className="onedesign-pattern-status">
-										{ ( () => {
-											const sitePatternsArray = sitePatterns[ id ] || [];
-											// Remove forward slash from selected patterns names before comparison
-											const presentPatterns = selectedPatterns.filter(
-												( patternName ) =>
-													sitePatternsArray.some(
-														( pattern ) =>
-															pattern.name === patternName.replace( /\//g, '' ),
-													),
-											);
-											const presentCount = presentPatterns.length;
-											const allPatternsPresent =
-												presentCount === selectedPatterns.length &&
-												selectedPatterns.length > 0;
+								{ selectedPatterns.length > 0 &&
+									sitePatterns[ id ] && (
+										<div className="onedesign-pattern-status">
+											{ ( () => {
+												const sitePatternsArray =
+													sitePatterns[ id ] || [];
+												// Remove forward slash from selected patterns names before comparison
+												const presentPatterns =
+													selectedPatterns.filter(
+														( patternName ) =>
+															sitePatternsArray.some(
+																( pattern ) =>
+																	pattern.name ===
+																	patternName.replace(
+																		/\//g,
+																		''
+																	)
+															)
+													);
+												const presentCount =
+													presentPatterns.length;
+												const allPatternsPresent =
+													presentCount ===
+														selectedPatterns.length &&
+													selectedPatterns.length > 0;
 
-											if ( presentCount === 0 ) {
+												if ( presentCount === 0 ) {
+													return (
+														<span className="onedesign-onedesign-info">
+															{ __(
+																'All patterns will be synced',
+																'onedesign'
+															) }
+														</span>
+													);
+												}
+
+												if ( allPatternsPresent ) {
+													return (
+														<span className="onedesign-onedesign-info onedesign-all-patterns-present">
+															{ __(
+																'All selected patterns are already present',
+																'onedesign'
+															) }
+														</span>
+													);
+												}
+
+												const toSyncPatterns =
+													selectedPatterns.filter(
+														( patternName ) =>
+															! sitePatternsArray.some(
+																( pattern ) =>
+																	pattern.name ===
+																	patternName.replace(
+																		/\//g,
+																		''
+																	)
+															)
+													);
+
+												const toSyncPatternsTitles =
+													toSyncPatterns.map(
+														( patternName ) =>
+															basePatterns.find(
+																( pattern ) =>
+																	pattern.name ===
+																	patternName
+															)?.title
+													);
+
+												// Limit toSyncPatternsTitles to 5 items for display
+												if (
+													toSyncPatternsTitles.length >
+													5
+												) {
+													toSyncPatternsTitles.length = 5;
+													toSyncPatternsTitles.push(
+														'…'
+													);
+												}
+
 												return (
-													<span className="onedesign-onedesign-info">
-														{ __( 'All patterns will be synced', 'onedesign' ) }
-													</span>
+													<>
+														<span className="onedesign-onedesign-info">
+															{ presentCount }{ ' ' }
+															{ __(
+																'of',
+																'onedesign'
+															) }{ ' ' }
+															{
+																selectedPatterns.length
+															}{ ' ' }
+															{ __(
+																'selected patterns are already present',
+																'onedesign'
+															) }
+														</span>
+													</>
 												);
-											}
-
-											if ( allPatternsPresent ) {
-												return (
-													<span className="onedesign-onedesign-info onedesign-all-patterns-present">
-														{ __(
-															'All selected patterns are already present',
-															'onedesign',
-														) }
-													</span>
-												);
-											}
-
-											const toSyncPatterns = selectedPatterns.filter(
-												( patternName ) =>
-													! sitePatternsArray.some(
-														( pattern ) =>
-															pattern.name === patternName.replace( /\//g, '' ),
-													),
-											);
-
-											const toSyncPatternsTitles = toSyncPatterns.map(
-												( patternName ) =>
-													basePatterns.find(
-														( pattern ) => pattern.name === patternName,
-													)?.title,
-											);
-
-											// Limit toSyncPatternsTitles to 5 items for display
-											if ( toSyncPatternsTitles.length > 5 ) {
-												toSyncPatternsTitles.length = 5;
-												toSyncPatternsTitles.push( '…' );
-											}
-
-											return (
-												<>
-													<span
-														className="onedesign-onedesign-info"
-													>
-														{ presentCount } { __( 'of', 'onedesign' ) }{ ' ' }
-														{ selectedPatterns.length }{ ' ' }
-														{ __(
-															'selected patterns are already present',
-															'onedesign',
-														) }
-													</span>
-												</>
-											);
-										} )() }
-									</div>
-								) }
+											} )() }
+										</div>
+									) }
 							</div>
 						</div>
 					);

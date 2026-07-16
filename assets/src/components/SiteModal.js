@@ -32,19 +32,24 @@ const DeleteConfirmationModal = ( { onConfirm, onCancel } ) => (
 		isDismissible={ false }
 		className="onedesign-delete-confirmation-modal"
 	>
-		<p>{ __( 'Are you sure you want to remove this logo? This action cannot be undone.', 'onedesign' ) }</p>
-		<div style={ { display: 'flex', justifyContent: 'flex-end', marginTop: '20px', gap: '16px' } }>
-			<Button
-				variant="secondary"
-				onClick={ onCancel }
-			>
+		<p>
+			{ __(
+				'Are you sure you want to remove this logo? This action cannot be undone.',
+				'onedesign'
+			) }
+		</p>
+		<div
+			style={ {
+				display: 'flex',
+				justifyContent: 'flex-end',
+				marginTop: '20px',
+				gap: '16px',
+			} }
+		>
+			<Button variant="secondary" onClick={ onCancel }>
 				{ __( 'Cancel', 'onedesign' ) }
 			</Button>
-			<Button
-				variant="primary"
-				isDestructive
-				onClick={ onConfirm }
-			>
+			<Button variant="primary" isDestructive onClick={ onConfirm }>
 				{ __( 'Remove', 'onedesign' ) }
 			</Button>
 		</div>
@@ -63,7 +68,14 @@ const DeleteConfirmationModal = ( { onConfirm, onCancel } ) => (
  * @param {Object}   props.originalData - Original data for comparison when editing.
  * @return {JSX.Element} Rendered component.
  */
-const SiteModal = ( { formData, setFormData, onSubmit, onClose, editing, originalData = {} } ) => {
+const SiteModal = ( {
+	formData,
+	setFormData,
+	onSubmit,
+	onClose,
+	editing,
+	originalData = {},
+} ) => {
 	const [ errors, setErrors ] = useState( {
 		name: '',
 		url: '',
@@ -80,19 +92,29 @@ const SiteModal = ( { formData, setFormData, onSubmit, onClose, editing, origina
 		if ( ! formData.url.trim() ) {
 			siteUrlError = __( 'Site URL is required.', 'onedesign' );
 		} else if ( ! isValidUrl( formData.url ) ) {
-			siteUrlError = __( 'Enter a valid URL (must start with http or https).', 'onedesign' );
+			siteUrlError = __(
+				'Enter a valid URL (must start with http or https).',
+				'onedesign'
+			);
 		}
 
 		const newErrors = {
-			name: ! formData.name.trim() ? __( 'Site Name is required.', 'onedesign' ) : '',
+			name: ! formData.name.trim()
+				? __( 'Site Name is required.', 'onedesign' )
+				: '',
 			url: siteUrlError,
-			api_key: ! formData.api_key.trim() ? __( 'API Key is required.', 'onedesign' ) : '',
+			api_key: ! formData.api_key.trim()
+				? __( 'API Key is required.', 'onedesign' )
+				: '',
 			message: '',
 		};
 
 		// Make sure site name is under 20 characters
 		if ( formData.name.length > 20 ) {
-			newErrors.name = __( 'Site Name must be under 20 characters.', 'onedesign' );
+			newErrors.name = __(
+				'Site Name must be under 20 characters.',
+				'onedesign'
+			);
 		}
 
 		setErrors( newErrors );
@@ -110,7 +132,9 @@ const SiteModal = ( { formData, setFormData, onSubmit, onClose, editing, origina
 		try {
 			// Perform health-check
 			const healthCheck = await fetch(
-				`${ formData.url }/wp-json/onedesign/v1/health-check?timestamp=${ Date.now() }`,
+				`${
+					formData.url
+				}/wp-json/onedesign/v1/health-check?timestamp=${ Date.now() }`,
 				{
 					method: 'GET',
 					headers: {
@@ -118,14 +142,17 @@ const SiteModal = ( { formData, setFormData, onSubmit, onClose, editing, origina
 						'X-OneDesign-Token': formData.api_key,
 						'X-OneDesign-Source': 'Settings',
 					},
-				},
+				}
 			);
 
 			const healthCheckData = await healthCheck.json();
 			if ( ! healthCheckData.success ) {
 				setErrors( {
 					...newErrors,
-					message: __( 'Health check failed. Please ensure the site is accessible and the api key is correct.', 'onedesign' ),
+					message: __(
+						'Health check failed. Please ensure the site is accessible and the api key is correct.',
+						'onedesign'
+					),
 				} );
 				setShowNotice( true );
 				setIsProcessing( false );
@@ -139,21 +166,34 @@ const SiteModal = ( { formData, setFormData, onSubmit, onClose, editing, origina
 				const errorData = await submitResponse.json();
 				setErrors( {
 					...newErrors,
-					message: errorData.message || __( 'An error occurred while saving the site. Please try again.', 'onedesign' ),
+					message:
+						errorData.message ||
+						__(
+							'An error occurred while saving the site. Please try again.',
+							'onedesign'
+						),
 				} );
 				setShowNotice( true );
 			}
 			if ( submitResponse?.data?.status === 400 ) {
 				setErrors( {
 					...newErrors,
-					message: submitResponse?.message || __( 'An error occurred while saving the site. Please try again.', 'onedesign' ),
+					message:
+						submitResponse?.message ||
+						__(
+							'An error occurred while saving the site. Please try again.',
+							'onedesign'
+						),
 				} );
 				setShowNotice( true );
 			}
 		} catch ( error ) {
 			setErrors( {
 				...newErrors,
-				message: __( 'An unexpected error occurred. Please try again.', 'onedesign' ),
+				message: __(
+					'An unexpected error occurred. Please try again.',
+					'onedesign'
+				),
 			} );
 			setShowNotice( true );
 			setIsProcessing( false );
@@ -178,7 +218,11 @@ const SiteModal = ( { formData, setFormData, onSubmit, onClose, editing, origina
 
 		// When an image is selected, update the formData with the image data
 		mediaFrame.on( 'select', () => {
-			const attachment = mediaFrame.state().get( 'selection' ).first().toJSON();
+			const attachment = mediaFrame
+				.state()
+				.get( 'selection' )
+				.first()
+				.toJSON();
 			setFormData( {
 				...formData,
 				logo: attachment.url,
@@ -188,7 +232,7 @@ const SiteModal = ( { formData, setFormData, onSubmit, onClose, editing, origina
 
 		// If logo_id is already set, pre-select that image in the media library
 		if ( formData.logo_id ) {
-			mediaFrame.on( 'open', function() {
+			mediaFrame.on( 'open', function () {
 				const selection = mediaFrame.state().get( 'selection' );
 				const attachment = wp.media.attachment( formData.logo_id );
 
@@ -252,7 +296,8 @@ const SiteModal = ( { formData, setFormData, onSubmit, onClose, editing, origina
 	// 1. Currently processing, OR
 	// 2. Required fields are empty, OR
 	// 3. In editing mode and no changes have been made
-	const isButtonDisabled = isProcessing ||
+	const isButtonDisabled =
+		isProcessing ||
 		! formData.name ||
 		! formData.url ||
 		! formData.api_key ||
@@ -262,35 +307,52 @@ const SiteModal = ( { formData, setFormData, onSubmit, onClose, editing, origina
 		<>
 			{ ! showDeleteConfirm && (
 				<Modal
-					title={ editing ? __( 'Edit Brand Site', 'onedesign' ) : __( 'Add Brand Site', 'onedesign' ) }
+					title={
+						editing
+							? __( 'Edit Brand Site', 'onedesign' )
+							: __( 'Add Brand Site', 'onedesign' )
+					}
 					onRequestClose={ handleMainModalClose }
 					size="medium"
 				>
 					{ showNotice && (
 						<Notice
 							status="error"
-							isDismissible={ true }
+							isDismissible
 							onRemove={ () => setShowNotice( false ) }
 						>
-							{ errors.message || errors.name || errors.url || errors.api_key }
+							{ errors.message ||
+								errors.name ||
+								errors.url ||
+								errors.api_key }
 						</Notice>
 					) }
 
 					<TextControl
 						label={ __( 'Site Name*', 'onedesign' ) }
 						value={ formData.name }
-						onChange={ ( value ) => setFormData( { ...formData, name: value } ) }
+						onChange={ ( value ) =>
+							setFormData( { ...formData, name: value } )
+						}
 						error={ errors.name }
-						help={ __( 'This is the name of the site that will be registered.', 'onedesign' ) }
+						help={ __(
+							'This is the name of the site that will be registered.',
+							'onedesign'
+						) }
 						__next40pxDefaultSize
 						__nextHasNoMarginBottom
 					/>
 					<TextControl
 						label={ __( 'Site URL*', 'onedesign' ) }
 						value={ formData.url }
-						onChange={ ( value ) => setFormData( { ...formData, url: value } ) }
+						onChange={ ( value ) =>
+							setFormData( { ...formData, url: value } )
+						}
 						error={ errors.url }
-						help={ __( 'It must start with http or https and end with /, like: https://rtcamp.com/', 'onedesign' ) }
+						help={ __(
+							'It must start with http or https and end with /, like: https://rtcamp.com/',
+							'onedesign'
+						) }
 						__next40pxDefaultSize
 						__nextHasNoMarginBottom
 					/>
@@ -299,18 +361,23 @@ const SiteModal = ( { formData, setFormData, onSubmit, onClose, editing, origina
 					<BaseControl
 						id="site-logo"
 						label={ __( 'Site Logo', 'onedesign' ) }
-						help={ __( 'Select a logo for this brand site.', 'onedesign' ) }
+						help={ __(
+							'Select a logo for this brand site.',
+							'onedesign'
+						) }
 						__nextHasNoMarginBottom
 					>
 						<div style={ { marginTop: '8px' } }>
 							{ formData.logo && (
-								<div style={ {
-									marginBottom: '12px',
-									padding: '12px',
-									border: '1px solid #ddd',
-									borderRadius: '4px',
-									backgroundColor: '#f9f9f9',
-								} }>
+								<div
+									style={ {
+										marginBottom: '12px',
+										padding: '12px',
+										border: '1px solid #ddd',
+										borderRadius: '4px',
+										backgroundColor: '#f9f9f9',
+									} }
+								>
 									<img
 										src={ formData.logo }
 										alt={ __( 'Site Logo', 'onedesign' ) }
@@ -321,19 +388,27 @@ const SiteModal = ( { formData, setFormData, onSubmit, onClose, editing, origina
 											marginBottom: '8px',
 										} }
 									/>
-									<div style={ { display: 'flex', gap: '8px' } }>
+									<div
+										style={ {
+											display: 'flex',
+											gap: '8px',
+										} }
+									>
 										<Button
 											variant="secondary"
 											onClick={ handleLogoSelect }
 											size="small"
 										>
-											{ __( 'Replace Logo', 'onedesign' ) }
+											{ __(
+												'Replace Logo',
+												'onedesign'
+											) }
 										</Button>
 										<Button
 											variant="secondary"
 											onClick={ handleLogoRemove }
 											size="small"
-											isDestructive={ true }
+											isDestructive
 										>
 											{ __( 'Remove Logo', 'onedesign' ) }
 										</Button>
@@ -355,9 +430,14 @@ const SiteModal = ( { formData, setFormData, onSubmit, onClose, editing, origina
 					<TextareaControl
 						label={ __( 'API Key*', 'onedesign' ) }
 						value={ formData.api_key }
-						onChange={ ( value ) => setFormData( { ...formData, api_key: value } ) }
+						onChange={ ( value ) =>
+							setFormData( { ...formData, api_key: value } )
+						}
 						error={ errors.api_key }
-						help={ __( 'This is the api key that will be used to authenticate the site for onedesign.', 'onedesign' ) }
+						help={ __(
+							'This is the api key that will be used to authenticate the site for onedesign.',
+							'onedesign'
+						) }
 						__nextHasNoMarginBottom
 					/>
 
@@ -368,9 +448,9 @@ const SiteModal = ( { formData, setFormData, onSubmit, onClose, editing, origina
 						disabled={ isButtonDisabled }
 						style={ { marginTop: '12px' } }
 					>
-						{ (
-							editing ? __( 'Update Site', 'onedesign' ) : __( 'Add Site', 'onedesign' )
-						) }
+						{ editing
+							? __( 'Update Site', 'onedesign' )
+							: __( 'Add Site', 'onedesign' ) }
 					</Button>
 				</Modal>
 			) }

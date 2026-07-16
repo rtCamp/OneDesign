@@ -2,11 +2,7 @@
  * WordPress dependencies
  */
 import { __, _n, sprintf } from '@wordpress/i18n';
-import {
-	Button,
-	Modal,
-	Notice,
-} from '@wordpress/components';
+import { Button, Modal, Notice } from '@wordpress/components';
 import { useCallback, useState } from '@wordpress/element';
 
 /**
@@ -46,7 +42,8 @@ const BrandSiteTemplates = ( {
 	setSelectedTemplates,
 	allTemplates,
 	notice,
-	setNotice } ) => {
+	setNotice,
+} ) => {
 	const [ isProcessing, setIsProcessing ] = useState( false );
 	const [ isRemoveModalOpen, setIsRemoveModalOpen ] = useState( false );
 
@@ -66,7 +63,7 @@ const BrandSiteTemplates = ( {
 						site: currentSiteId.toString(),
 						is_remove_all: false,
 					} ),
-				},
+				}
 			);
 			const data = await response.json();
 			if ( data.success ) {
@@ -82,9 +79,9 @@ const BrandSiteTemplates = ( {
 							'%d template removed successfully.',
 							'%d templates removed successfully.',
 							count,
-							'onedesign',
+							'onedesign'
 						),
-						count,
+						count
 					),
 				} );
 				setSelectedTemplates( [] );
@@ -97,12 +94,22 @@ const BrandSiteTemplates = ( {
 		} catch ( error ) {
 			setNotice( {
 				type: 'error',
-				message: error.message || __( 'An error occurred while removing templates.', 'onedesign' ),
+				message:
+					error.message ||
+					__(
+						'An error occurred while removing templates.',
+						'onedesign'
+					),
 			} );
 		} finally {
 			setIsProcessing( false );
 		}
-	}, [ selectedTemplates, currentSiteId, fetchConnectedSitesTemplates, setSelectedTemplates ] ); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [
+		selectedTemplates,
+		currentSiteId,
+		fetchConnectedSitesTemplates,
+		setSelectedTemplates,
+	] );
 
 	const renderPagination = () => {
 		// default will show 9 templates then will show load more button.
@@ -111,18 +118,39 @@ const BrandSiteTemplates = ( {
 				<div className="onedesign-selected-templates-info">
 					{ selectedTemplates.length > 0 && (
 						<div className="onedesign-selected-templates-count-info">
-							<span className="onedesign-selected-templates-count">{ selectedTemplates.length }</span>
-							<span className="onedesign-selected-templates-text">{ selectedTemplates.length === 1 ? __( 'Template selected', 'onedesign' ) : __( 'Templates selected', 'onedesign' ) }</span>
+							<span className="onedesign-selected-templates-count">
+								{ selectedTemplates.length }
+							</span>
+							<span className="onedesign-selected-templates-text">
+								{ selectedTemplates.length === 1
+									? __( 'Template selected', 'onedesign' )
+									: __( 'Templates selected', 'onedesign' ) }
+							</span>
 						</div>
 					) }
 				</div>
-				<div style={ { display: 'flex', gap: '12px', flexDirection: 'row' } }>
+				<div
+					style={ {
+						display: 'flex',
+						gap: '12px',
+						flexDirection: 'row',
+					} }
+				>
 					<Button
 						variant="secondary"
-						disabled={ ( currentPage * PER_PAGE ) >= filteredTemplates.length }
-						onClick={ () => setCurrentPage( ( prevPage ) => prevPage + 1 ) }
+						disabled={
+							currentPage * PER_PAGE >= filteredTemplates.length
+						}
+						onClick={ () =>
+							setCurrentPage( ( prevPage ) => prevPage + 1 )
+						}
 					>
-						{ __( 'Show More', 'onedesign' ) } { ( Math.min( currentPage * PER_PAGE, filteredTemplates.length ) ) }/{ filteredTemplates.length }
+						{ __( 'Show More', 'onedesign' ) }{ ' ' }
+						{ Math.min(
+							currentPage * PER_PAGE,
+							filteredTemplates.length
+						) }
+						/{ filteredTemplates.length }
 					</Button>
 					<Button
 						variant="primary"
@@ -150,18 +178,27 @@ const BrandSiteTemplates = ( {
 
 		return (
 			<div className="onedesign-templates-grid">
-				{ filteredTemplates.slice( 0, ( currentPage * PER_PAGE ) ).map( ( template ) => {
-					return (
-						<MemoizedTemplatePreview
-							key={ template?.name }
-							template={ allTemplates.find( ( t ) => t.id === template.original_id ) || template }
-							isCheckBoxRequired={ true }
-							onSelect={ () => handleTemplateSelection( template?.id ) }
-							isSelected={ selectedTemplates.includes( template?.id ) }
-						/>
-					);
-				},
-				) }
+				{ filteredTemplates
+					.slice( 0, currentPage * PER_PAGE )
+					.map( ( template ) => {
+						return (
+							<MemoizedTemplatePreview
+								key={ template?.name }
+								template={
+									allTemplates.find(
+										( t ) => t.id === template.original_id
+									) || template
+								}
+								isCheckBoxRequired
+								onSelect={ () =>
+									handleTemplateSelection( template?.id )
+								}
+								isSelected={ selectedTemplates.includes(
+									template?.id
+								) }
+							/>
+						);
+					} ) }
 			</div>
 		);
 	};
@@ -188,9 +225,15 @@ const BrandSiteTemplates = ( {
 					size="medium"
 				>
 					<p>
-						{ __( 'Are you sure your want to remove selected templates?', 'onedesign' ) }
+						{ __(
+							'Are you sure your want to remove selected templates?',
+							'onedesign'
+						) }
 						<br />
-						{ __( 'Once you removed template it might break things on brand site so please check and confirm template is not in active use.', 'onedesign' ) }
+						{ __(
+							'Once you removed template it might break things on brand site so please check and confirm template is not in active use.',
+							'onedesign'
+						) }
 					</p>
 
 					<div
@@ -225,7 +268,6 @@ const BrandSiteTemplates = ( {
 							{ __( 'Remove Templates', 'onedesign' ) }
 						</Button>
 					</div>
-
 				</Modal>
 			) }
 		</>

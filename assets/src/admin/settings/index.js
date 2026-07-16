@@ -23,23 +23,33 @@ const OneDesignSettingsPage = () => {
 	const [ showModal, setShowModal ] = useState( false );
 	const [ editingIndex, setEditingIndex ] = useState( null );
 	const [ sites, setSites ] = useState( [] );
-	const [ formData, setFormData ] = useState( { name: '', url: '', api_key: '' } );
+	const [ formData, setFormData ] = useState( {
+		name: '',
+		url: '',
+		api_key: '',
+	} );
 	const [ notice, setNotice ] = useState( {
 		type: 'success',
 		message: '',
 	} );
 
 	useEffect( () => {
-		const token = ( NONCE );
+		const token = NONCE;
 
 		const fetchData = async () => {
 			try {
 				const [ siteTypeRes, sitesRes ] = await Promise.all( [
 					fetch( `${ API_NAMESPACE }/site-type`, {
-						headers: { 'Content-Type': 'application/json', 'X-WP-NONCE': token },
+						headers: {
+							'Content-Type': 'application/json',
+							'X-WP-NONCE': token,
+						},
 					} ),
 					fetch( `${ API_NAMESPACE }/shared-sites`, {
-						headers: { 'Content-Type': 'application/json', 'X-WP-NONCE': token },
+						headers: {
+							'Content-Type': 'application/json',
+							'X-WP-NONCE': token,
+						},
 					} ),
 				] );
 
@@ -55,7 +65,10 @@ const OneDesignSettingsPage = () => {
 			} catch {
 				setNotice( {
 					type: 'error',
-					message: __( 'Error fetching site type or Brand sites.', 'onedesign' ),
+					message: __(
+						'Error fetching site type or Brand sites.',
+						'onedesign'
+					),
 				} );
 			}
 		};
@@ -64,11 +77,14 @@ const OneDesignSettingsPage = () => {
 	}, [] );
 
 	const handleFormSubmit = async () => {
-		const updated = editingIndex !== null
-			? sites.map( ( item, i ) => ( i === editingIndex ? formData : item ) )
-			: [ ...sites, formData ];
+		const updated =
+			editingIndex !== null
+				? sites.map( ( item, i ) =>
+						i === editingIndex ? formData : item
+				  )
+				: [ ...sites, formData ];
 
-		const token = ( NONCE );
+		const token = NONCE;
 		try {
 			const response = await fetch( `${ API_NAMESPACE }/shared-sites`, {
 				method: 'POST',
@@ -79,7 +95,10 @@ const OneDesignSettingsPage = () => {
 				body: JSON.stringify( { sites_data: updated } ),
 			} );
 			if ( ! response.ok ) {
-				console.error( 'Error saving Brand site:', response.statusText ); // eslint-disable-line no-console
+				console.error(
+					'Error saving Brand site:',
+					response.statusText
+				);
 				return response;
 			}
 
@@ -95,7 +114,10 @@ const OneDesignSettingsPage = () => {
 		} catch {
 			setNotice( {
 				type: 'error',
-				message: __( 'Error saving Brand site. Please try again later.', 'onedesign' ),
+				message: __(
+					'Error saving Brand site. Please try again later.',
+					'onedesign'
+				),
 			} );
 		}
 
@@ -106,7 +128,7 @@ const OneDesignSettingsPage = () => {
 
 	const handleDelete = async ( index ) => {
 		const updated = sites.filter( ( _, i ) => i !== index );
-		const token = ( NONCE );
+		const token = NONCE;
 
 		try {
 			const response = await fetch( `${ API_NAMESPACE }/shared-sites`, {
@@ -120,7 +142,10 @@ const OneDesignSettingsPage = () => {
 			if ( ! response.ok ) {
 				setNotice( {
 					type: 'error',
-					message: __( 'Failed to delete Brand site. Please try again.', 'onedesign' ),
+					message: __(
+						'Failed to delete Brand site. Please try again.',
+						'onedesign'
+					),
 				} );
 				return;
 			}
@@ -132,12 +157,17 @@ const OneDesignSettingsPage = () => {
 			if ( updated.length === 0 ) {
 				window.location.reload();
 			} else {
-				document.body.classList.remove( 'onedesign-missing-brand-sites' );
+				document.body.classList.remove(
+					'onedesign-missing-brand-sites'
+				);
 			}
 		} catch {
 			setNotice( {
 				type: 'error',
-				message: __( 'Error deleting Brand site. Please try again later.', 'onedesign' ),
+				message: __(
+					'Error deleting Brand site. Please try again later.',
+					'onedesign'
+				),
 			} );
 		}
 	};
@@ -145,23 +175,23 @@ const OneDesignSettingsPage = () => {
 	return (
 		<>
 			<>
-				{ notice?.message?.length > 0 &&
+				{ notice?.message?.length > 0 && (
 					<Snackbar
 						status={ notice?.type ?? 'success' }
-						isDismissible={ true }
+						isDismissible
 						onRemove={ () => setNotice( null ) }
-						className={ notice?.type === 'error' ? 'onedesign-error-notice' : 'onedesign-success-notice' }
+						className={
+							notice?.type === 'error'
+								? 'onedesign-error-notice'
+								: 'onedesign-success-notice'
+						}
 					>
 						{ notice?.message }
 					</Snackbar>
-				}
+				) }
 			</>
 
-			{
-				siteType === 'brand-site' && (
-					<SiteSettings />
-				)
-			}
+			{ siteType === 'brand-site' && <SiteSettings /> }
 
 			{ siteType === 'governing-site' && (
 				<SiteTable
