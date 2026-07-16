@@ -4,21 +4,46 @@
 import { useState, useCallback, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
+interface SiteInfo {
+	id?: string | number;
+	url?: string;
+	api_key?: string;
+}
+
+interface HealthCheckResult {
+	success: boolean;
+	message?: string;
+	[ key: string ]: unknown;
+}
+
+type SitesHealthCheckResult = Record< string, HealthCheckResult >;
+
+interface UseSitesManagementProps {
+	NONCE: string;
+	API_NAMESPACE: string;
+}
+
 /**
- * Custom hook for managing sites info and health check state
+ * Custom hook for managing sites info and health check state.
  *
- * @param {Object} props               - Properties including NONCE for authentication
- * @param {string} props.NONCE         - Nonce for secure API requests
- * @param {string} props.API_NAMESPACE - API namespace for REST endpoints
+ * @param props               - Properties for authentication.
+ * @param props.NONCE         - Nonce for secure API requests.
+ * @param props.API_NAMESPACE - API namespace for REST endpoints.
  *
- * @return {Object} State and methods for site management
+ * @return State and methods for site management.
  */
-const useSitesManagement = ( { NONCE, API_NAMESPACE } ) => {
-	const [ siteInfo, setSiteInfo ] = useState( {} );
-	const [ sitesHealthCheckResult, setSitesHealthCheckResult ] =
-		useState( undefined );
+const useSitesManagement = ( {
+	NONCE,
+	API_NAMESPACE,
+}: UseSitesManagementProps ) => {
+	const [ siteInfo, setSiteInfo ] = useState< Record< string, SiteInfo > >(
+		{}
+	);
+	const [ sitesHealthCheckResult, setSitesHealthCheckResult ] = useState<
+		SitesHealthCheckResult | undefined
+	>( undefined );
 	const [ isLoading, setIsLoading ] = useState( true );
-	const [ error, setError ] = useState( null );
+	const [ error, setError ] = useState< string | null >( null );
 	const [ isInitialized, setIsInitialized ] = useState( false );
 
 	// Perform health check on all configured sites
@@ -27,8 +52,10 @@ const useSitesManagement = ( { NONCE, API_NAMESPACE } ) => {
 
 		try {
 			for ( const siteId of Object.keys( siteInfo ) ) {
-				const siteUrl = siteInfo[ siteId ]?.url;
-				const siteApiKey = siteInfo[ siteId ]?.api_key;
+				const site = siteInfo[ siteId ];
+				const siteUrl = site?.url;
+				const siteApiKey = site?.api_key;
+				const resultKey = String( site?.id );
 
 				if ( siteUrl ) {
 					try {
@@ -38,18 +65,19 @@ const useSitesManagement = ( { NONCE, API_NAMESPACE } ) => {
 								method: 'GET',
 								headers: {
 									'Content-Type': 'application/json',
-									'X-OneDesign-Token': siteApiKey,
+									'X-OneDesign-Token': siteApiKey || '',
 									'X-OneDesign-Source':
 										'Patterns-Templates-Sharing',
 								},
 							}
 						);
-						const data = await response.json();
+						const data =
+							( await response.json() ) as HealthCheckResult;
 
 						if ( ! data.success ) {
 							setSitesHealthCheckResult( ( prevResults ) => ( {
-								...prevResults,
-								[ siteInfo[ siteId ]?.id ]: {
+								...( prevResults || {} ),
+								[ resultKey ]: {
 									success: false,
 									message:
 										data.message ||
@@ -64,7 +92,7 @@ const useSitesManagement = ( { NONCE, API_NAMESPACE } ) => {
 
 						setSitesHealthCheckResult( ( prevResults ) => ( {
 							...( prevResults || {} ),
-							[ siteInfo[ siteId ]?.id ]: data.success
+							[ resultKey ]: data.success
 								? data
 								: {
 										success: false,
@@ -76,10 +104,10 @@ const useSitesManagement = ( { NONCE, API_NAMESPACE } ) => {
 											),
 								  },
 						} ) );
-					} catch ( err ) {
+					} catch {
 						setSitesHealthCheckResult( ( prevResults ) => ( {
 							...( prevResults || {} ),
-							[ siteInfo[ siteId ]?.id ]: {
+							[ resultKey ]: {
 								success: false,
 								message: __(
 									'Failed to reach the site.',
@@ -91,7 +119,7 @@ const useSitesManagement = ( { NONCE, API_NAMESPACE } ) => {
 				}
 			}
 		} catch ( err ) {
-			setError( err.message );
+			setError( err instanceof Error ? err.message : String( err ) );
 		} finally {
 			setIsLoading( false );
 		}
@@ -112,11 +140,13 @@ const useSitesManagement = ( { NONCE, API_NAMESPACE } ) => {
 					},
 				}
 			);
-			const data = await response.json();
+			const data = ( await response.json() ) as Record<
+				string,
+				SiteInfo
+			>;
 			setSiteInfo( data || {} );
 		} catch ( err ) {
-			setError( err.message );
-		} finally {
+			setError( err instanceof Error ? err.message : String( err ) );
 		}
 	}, [ API_NAMESPACE, NONCE ] );
 

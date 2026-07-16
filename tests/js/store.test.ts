@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { DEFAULT_STATE, actions, reducer, selectors } from '@/store';
+import type { PatternAction } from '@/store';
 
 // The store's async resolver calls apiFetch; mock it so the generator can be
 // driven manually without hitting the network.
@@ -12,9 +13,11 @@ jest.mock( '@wordpress/api-fetch', () => ( {
 
 describe( 'store reducer', () => {
 	it( 'returns the default state for an unknown action', () => {
-		expect( reducer( undefined, { type: '@@INIT' } ) ).toEqual(
-			DEFAULT_STATE
-		);
+		expect(
+			reducer( undefined, {
+				type: '@@INIT',
+			} as unknown as PatternAction )
+		).toEqual( DEFAULT_STATE );
 	} );
 
 	it( 'handles SET_SITE_PATTERNS', () => {
@@ -139,11 +142,13 @@ describe( 'fetchSitePatterns generator', () => {
 		gen.next();
 		gen.next();
 		const step = gen.next( { success: false } );
-		expect( step.value.type ).toBe( 'SET_ERROR' );
-		expect( step.value.error ).toBeInstanceOf( Error );
-		expect( step.value.error.message ).toBe(
-			'Failed to fetch site patterns'
-		);
+		const action = step.value as Extract<
+			PatternAction,
+			{ type: 'SET_ERROR' }
+		>;
+		expect( action.type ).toBe( 'SET_ERROR' );
+		expect( action.error ).toBeInstanceOf( Error );
+		expect( action.error?.message ).toBe( 'Failed to fetch site patterns' );
 		// finally block always resets loading.
 		expect( gen.next().value ).toEqual( {
 			type: 'SET_IS_LOADING_SITE_PATTERNS',

@@ -20,7 +20,7 @@ function clearWindowSettings(): void {
 	// `typeof window.X !== 'undefined'`, and setup.ts installs
 	// `OneDesignSettings` as a defined property.
 	WINDOW_KEYS.forEach( ( key ) => {
-		( window as Record< string, unknown > )[ key ] = undefined;
+		( window as unknown as Record< string, unknown > )[ key ] = undefined;
 	} );
 }
 
@@ -29,7 +29,7 @@ function loadConstants(
 ): typeof import('@/js/constants') {
 	clearWindowSettings();
 	Object.entries( windowState ).forEach( ( [ key, value ] ) => {
-		( window as Record< string, unknown > )[ key ] = value;
+		( window as unknown as Record< string, unknown > )[ key ] = value;
 	} );
 
 	let constants!: typeof import('@/js/constants');

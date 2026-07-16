@@ -4,40 +4,60 @@
 import { createReduxStore, register } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
 
+interface State {
+	sitePatterns: Record< string, unknown >;
+	isLoadingSitePatterns: boolean;
+	error: Error | null;
+}
+
+type PatternAction =
+	| { type: 'SET_SITE_PATTERNS'; sitePatterns: Record< string, unknown > }
+	| { type: 'SET_IS_LOADING_SITE_PATTERNS'; isLoading: boolean }
+	| { type: 'SET_ERROR'; error: Error | null };
+
+interface FetchPatternsResponse {
+	success: boolean;
+	patterns?: Record< string, unknown >;
+}
+
 /**
  * Pattern Sync Store
  */
-const DEFAULT_STATE = {
+const DEFAULT_STATE: State = {
 	sitePatterns: {},
 	isLoadingSitePatterns: false,
 	error: null,
 };
 
 const actions = {
-	setSitePatterns( sitePatterns ) {
+	setSitePatterns( sitePatterns: Record< string, unknown > ) {
 		return {
-			type: 'SET_SITE_PATTERNS',
+			type: 'SET_SITE_PATTERNS' as const,
 			sitePatterns,
 		};
 	},
-	setIsLoadingSitePatterns( isLoading ) {
+	setIsLoadingSitePatterns( isLoading: boolean ) {
 		return {
-			type: 'SET_IS_LOADING_SITE_PATTERNS',
+			type: 'SET_IS_LOADING_SITE_PATTERNS' as const,
 			isLoading,
 		};
 	},
-	setError( error ) {
+	setError( error: Error | null ) {
 		return {
-			type: 'SET_ERROR',
+			type: 'SET_ERROR' as const,
 			error,
 		};
 	},
-	*fetchSitePatterns() {
+	*fetchSitePatterns(): Generator<
+		PatternAction | Promise< FetchPatternsResponse >,
+		void,
+		FetchPatternsResponse
+	> {
 		try {
 			yield { type: 'SET_IS_LOADING_SITE_PATTERNS', isLoading: true };
 			yield { type: 'SET_ERROR', error: null };
 
-			const response = yield apiFetch( {
+			const response = yield apiFetch< FetchPatternsResponse >( {
 				path: `/onedesign/v1/get-all-brand-site-patterns?timestamp=${ Date.now() }`,
 			} );
 
@@ -57,7 +77,7 @@ const actions = {
 			console.error( 'Error fetching site patterns:', error );
 			yield {
 				type: 'SET_ERROR',
-				error,
+				error: error as Error,
 			};
 		} finally {
 			yield { type: 'SET_IS_LOADING_SITE_PATTERNS', isLoading: false };
@@ -65,7 +85,10 @@ const actions = {
 	},
 };
 
-const reducer = ( state = DEFAULT_STATE, action ) => {
+const reducer = (
+	state: State = DEFAULT_STATE,
+	action: PatternAction
+): State => {
 	switch ( action.type ) {
 		case 'SET_SITE_PATTERNS':
 			return {
@@ -88,13 +111,13 @@ const reducer = ( state = DEFAULT_STATE, action ) => {
 };
 
 const selectors = {
-	getSitePatterns( state ) {
+	getSitePatterns( state: State ) {
 		return state.sitePatterns;
 	},
-	isLoadingSitePatterns( state ) {
+	isLoadingSitePatterns( state: State ) {
 		return state.isLoadingSitePatterns;
 	},
-	getError( state ) {
+	getError( state: State ) {
 		return state.error;
 	},
 };
@@ -109,5 +132,6 @@ register( store );
 
 // Named exports of the store internals for unit testing.
 export { DEFAULT_STATE, actions, reducer, selectors };
+export type { State, PatternAction, FetchPatternsResponse };
 
 export default store;

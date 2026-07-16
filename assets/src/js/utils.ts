@@ -6,10 +6,10 @@ import DOMPurify from 'dompurify';
 /**
  * Helper function to extract initials from a name.
  *
- * @param {string} name - The name to extract initials from.
- * @return {string} The extracted initials (up to 2 characters).
+ * @param name - The name to extract initials from.
+ * @return The extracted initials (up to 2 characters).
  */
-const getInitials = ( name ) => {
+const getInitials = ( name: string ): string => {
 	// Handle empty or invalid names
 	if ( ! name || typeof name !== 'string' ) {
 		return '?';
@@ -26,30 +26,35 @@ const getInitials = ( name ) => {
 		.split( /[\s-_,.]+/ )
 		.filter( ( part ) => part.length > 0 );
 
+	const [ first, second ] = parts;
+	if ( ! first ) {
+		return '?';
+	}
+
 	// For single word names
 	if ( parts.length === 1 ) {
 		// If name is a single character, return that character
-		if ( parts[ 0 ].length === 1 ) {
-			return parts[ 0 ].toUpperCase();
+		if ( first.length === 1 ) {
+			return first.toUpperCase();
 		}
 		// Otherwise return first two characters
-		return parts[ 0 ].substring( 0, 2 ).toUpperCase();
+		return first.substring( 0, 2 ).toUpperCase();
 	}
 
 	// For multi-word names, take first letter of first two parts
 	return (
-		parts[ 0 ].charAt( 0 ) + ( parts[ 1 ] ? parts[ 1 ].charAt( 0 ) : '' )
+		first.charAt( 0 ) + ( second ? second.charAt( 0 ) : '' )
 	).toUpperCase();
 };
 
 /**
  * Helper function to validate if a string is a well-formed URL.
  *
- * @param {string} str - The string to validate as a URL.
+ * @param str - The string to validate as a URL.
  *
- * @return {boolean} True if the string is a valid URL, false otherwise.
+ * @return True if the string is a valid URL, false otherwise.
  */
-const isURL = ( str ) => {
+const isURL = ( str: string ): boolean => {
 	const pattern = new RegExp(
 		'^https?:\\/\\/' +
 			'(?:[a-z\\d](?:[a-z\\d-]*[a-z\\d])?\\.)?' +
@@ -66,15 +71,15 @@ const isURL = ( str ) => {
 /**
  * Validates if a given string is a valid URL.
  *
- * @param {string} url - The URL string to validate.
+ * @param url - The URL string to validate.
  *
- * @return {boolean} True if the URL is valid, false otherwise.
+ * @return True if the URL is valid, false otherwise.
  */
-const isValidUrl = ( url ) => {
+const isValidUrl = ( url: string ): boolean => {
 	try {
 		const parsedUrl = new URL( url );
 		return isURL( parsedUrl.href );
-	} catch ( e ) {
+	} catch {
 		return false;
 	}
 };
@@ -82,11 +87,11 @@ const isValidUrl = ( url ) => {
 /**
  * Sanitizes a given string by removing all HTML tags.
  *
- * @param {string} item - The string to sanitize.
+ * @param item - The string to sanitize.
  *
- * @return {string} The sanitized string with all HTML tags removed.
+ * @return The sanitized string with all HTML tags removed.
  */
-const PurifyElement = ( item ) => {
+const PurifyElement = ( item: string ): string => {
 	return DOMPurify.sanitize( item, { ALLOWED_TAGS: [] } );
 };
 
