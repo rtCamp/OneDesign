@@ -16,25 +16,47 @@ import { __ } from '@wordpress/i18n';
  */
 import { getInitials } from '../js/utils';
 import MultiSites from './MultiSites';
-
-/**
- * PHP consts for JS usage.
- */
 import { IS_MULTISITE, IS_GOVERNING_SITE_SELECTED } from '../js/constants';
+
+type SiteId = number | string;
+
+interface Site {
+	id: SiteId;
+	name?: string;
+	url?: string;
+	logo?: string;
+	api_key?: string;
+	is_editable?: boolean;
+}
+
+interface Notice {
+	type: 'error' | 'success';
+	message: string;
+}
+
+interface SiteTableProps {
+	sites: Site[];
+	onEdit: ( index: number ) => void;
+	onDelete: ( index: number ) => void;
+	setFormData: ( site: Site ) => void;
+	setShowModal: ( show: boolean ) => void;
+	setSites: ( sites: Site[] ) => void;
+	setNotice: ( notice: Notice ) => void;
+}
 
 /**
  * SiteTable component to display and manage brand sites.
  *
- * @param {Object}   props              - Component properties.
- * @param {Array}    props.sites        - List of brand sites.
- * @param {Function} props.onEdit       - Function to handle editing a site.
- * @param {Function} props.onDelete     - Function to handle deleting a site.
- * @param {Function} props.setFormData  - Function to set form data for editing.
- * @param {Function} props.setShowModal - Function to show/hide the modal for adding/editing a site.
- * @param {Function} props.setSites     - Function to update the list of sites.
- * @param {Function} props.setNotice    - Function to set notice messages.
+ * @param props              - Component properties.
+ * @param props.sites        - List of brand sites.
+ * @param props.onEdit       - Function to handle editing a site.
+ * @param props.onDelete     - Function to handle deleting a site.
+ * @param props.setFormData  - Function to set form data for editing.
+ * @param props.setShowModal - Function to show/hide the modal for adding/editing a site.
+ * @param props.setSites     - Function to update the list of sites.
+ * @param props.setNotice    - Function to set notice messages.
  *
- * @return {JSX.Element} Rendered component.
+ * @return Rendered component.
  */
 const SiteTable = ( {
 	sites,
@@ -44,17 +66,19 @@ const SiteTable = ( {
 	setShowModal,
 	setSites,
 	setNotice,
-} ) => {
+}: SiteTableProps ): JSX.Element => {
 	const [ showDeleteModal, setShowDeleteModal ] = useState( false );
-	const [ deleteIndex, setDeleteIndex ] = useState( null );
+	const [ deleteIndex, setDeleteIndex ] = useState< number | null >( null );
 
-	const handleDeleteClick = ( index ) => {
+	const handleDeleteClick = ( index: number ) => {
 		setDeleteIndex( index );
 		setShowDeleteModal( true );
 	};
 
 	const handleDeleteConfirm = () => {
-		onDelete( deleteIndex );
+		if ( deleteIndex !== null ) {
+			onDelete( deleteIndex );
+		}
 		setShowDeleteModal( false );
 		setDeleteIndex( null );
 	};
@@ -100,7 +124,7 @@ const SiteTable = ( {
 						{ sites.length === 0 && (
 							<tr>
 								<td
-									colSpan="5"
+									colSpan={ 5 }
 									style={ { textAlign: 'center' } }
 								>
 									{ __(
@@ -131,13 +155,13 @@ const SiteTable = ( {
 										/>
 									) : (
 										<span className="onedesign-site-initials">
-											{ getInitials( site?.name ) }
+											{ getInitials( site?.name ?? '' ) }
 										</span>
 									) }
 								</td>
 								<td>
 									<code>
-										{ site?.api_key.substring( 0, 10 ) }...
+										{ site?.api_key?.substring( 0, 10 ) }...
 									</code>
 								</td>
 								<td>
@@ -178,15 +202,23 @@ const SiteTable = ( {
 	);
 };
 
+interface DeleteConfirmationModalProps {
+	onConfirm: () => void;
+	onCancel: () => void;
+}
+
 /**
  * DeleteConfirmationModal component for confirming site deletion.
  *
- * @param {Object}   props           - Component properties.
- * @param {Function} props.onConfirm - Function to call on confirmation.
- * @param {Function} props.onCancel  - Function to call on cancellation.
- * @return {JSX.Element} Rendered component.
+ * @param props           - Component properties.
+ * @param props.onConfirm - Function to call on confirmation.
+ * @param props.onCancel  - Function to call on cancellation.
+ * @return Rendered component.
  */
-const DeleteConfirmationModal = ( { onConfirm, onCancel } ) => (
+const DeleteConfirmationModal = ( {
+	onConfirm,
+	onCancel,
+}: DeleteConfirmationModalProps ): JSX.Element => (
 	<Modal
 		title={ __( 'Delete Brand Site', 'onedesign' ) }
 		onRequestClose={ onCancel }

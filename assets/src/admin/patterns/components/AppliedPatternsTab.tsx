@@ -10,23 +10,56 @@ import { useCallback, useState } from '@wordpress/element';
  */
 import MemoizedPatternPreview from './MemoizedPatternPreview';
 
+interface Pattern {
+	name?: string;
+	providerSite?: string | false;
+	[ key: string ]: unknown;
+}
+
+interface NoticeState {
+	type: 'error' | 'success';
+	message: string;
+}
+
+interface SiteInfo {
+	value?: string | number;
+	[ key: string ]: unknown;
+}
+
+interface AppliedPatternsTabProps {
+	appliedPatterns: Pattern[];
+	currentPage: number;
+	PER_PAGE: number;
+	selectedPatterns: string[];
+	handlePatternSelection: ( name?: string ) => void;
+	setCurrentPage: ( value: number | ( ( prev: number ) => number ) ) => void;
+	siteInfo: SiteInfo;
+	applySelectedPatterns: (
+		patterns: string[],
+		siteValue?: string | number
+	) => Promise< unknown >;
+	setSelectedPatterns: ( patterns: string[] ) => void;
+	notice: NoticeState | null;
+	setNotice: ( notice: NoticeState | null ) => void;
+}
+
 /**
  * AppliedPatternsTab component.
  *
- * @param {Object}   props                        - Component props.
- * @param {Array}    props.appliedPatterns        - Array of applied patterns to display.
- * @param {number}   props.currentPage            - Current page number for pagination.
- * @param {number}   props.PER_PAGE               - Number of patterns to display per page.
- * @param {Array}    props.selectedPatterns       - Array of selected pattern names.
- * @param {Function} props.handlePatternSelection - Function to handle pattern selection.
- * @param {Function} props.setCurrentPage         - Function to set the current page number.
- * @param {Object}   props.siteInfo               - Current site information.
- * @param {Function} props.applySelectedPatterns  - Function to apply/remove selected patterns.
- * @param {Function} props.setSelectedPatterns    - Function to set selected patterns.
- * @param {Object}   props.notice                 - Notice object containing type and message.
- * @param {Function} props.setNotice              - Function to set the notice state.
+ * @param props                        - Component props.
+ * @param props.appliedPatterns        - Array of applied patterns to display.
+ * @param props.currentPage            - Current page number for pagination.
+ * @param props.PER_PAGE               - Number of patterns to display per page.
+ * @param props.selectedPatterns       - Array of selected pattern names.
+ * @param props.handlePatternSelection - Function to handle pattern selection.
+ * @param props.setCurrentPage         - Function to set the current page number.
+ * @param props.siteInfo               - Current site information.
+ * @param props.applySelectedPatterns  - Function to apply/remove selected patterns.
+ * @param props.setSelectedPatterns    - Function to set selected patterns.
+ * @param props.notice                 - Notice object containing type and message.
+ * @param props.setNotice              - Function to set the notice state.
  *
- * @return {JSX.Element} The rendered component.
+ * @return The rendered component.
  */
 const AppliedPatternsTab = ( {
 	appliedPatterns,
@@ -40,12 +73,12 @@ const AppliedPatternsTab = ( {
 	setSelectedPatterns,
 	notice,
 	setNotice,
-} ) => {
+}: AppliedPatternsTabProps ): JSX.Element => {
 	const [ isProcessing, setIsProcessing ] = useState( false );
 	const [ isRemoveModalOpen, setIsRemoveModalOpen ] = useState( false );
 
 	// Get unique patterns
-	const uniquePatterns = new Map();
+	const uniquePatterns = new Map< string | undefined, Pattern >();
 	appliedPatterns?.forEach( ( pattern ) => {
 		uniquePatterns.set( pattern.name, pattern );
 	} );
@@ -86,7 +119,7 @@ const AppliedPatternsTab = ( {
 			setNotice( {
 				type: 'error',
 				message:
-					error.message ||
+					( error instanceof Error ? error.message : '' ) ||
 					__(
 						'An error occurred while removing patterns.',
 						'onedesign'
@@ -177,12 +210,12 @@ const AppliedPatternsTab = ( {
 								key={ pattern?.name }
 								pattern={ pattern }
 								isCheckBoxRequired
-								providerSite={ pattern?.providerSite }
+								providerSite={ pattern?.providerSite ?? false }
 								onSelect={ () =>
 									handlePatternSelection( pattern?.name )
 								}
 								isSelected={ selectedPatterns.includes(
-									pattern?.name
+									pattern?.name ?? ''
 								) }
 							/>
 						);

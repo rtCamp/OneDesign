@@ -5,27 +5,71 @@ import { __, sprintf } from '@wordpress/i18n';
 import { Button, Notice } from '@wordpress/components';
 
 /**
+ * External dependencies
+ */
+import type { KeyboardEvent as ReactKeyboardEvent } from 'react';
+
+/**
  * Internal dependencies
  */
 import { getInitials } from '../../../js/utils';
 import { renderIcon } from '../../../components/Dashicons';
 
+type SiteId = number | string;
+type TemplateId = number | string;
+
+interface Site {
+	id: SiteId;
+	name?: string;
+	url?: string;
+	logo?: string;
+}
+
+interface BrandTemplate {
+	original_id?: TemplateId;
+	[ key: string ]: unknown;
+}
+
+interface NoticeState {
+	type: 'error' | 'success' | 'warning';
+	message: string;
+}
+
+interface SiteSelectionProps {
+	siteInfo: Site[];
+	isApplying: boolean;
+	setIsApplying: ( value: boolean ) => void;
+	onApply: ( siteIds: SiteId[] ) => void;
+	setIsApplyModalOpen: ( value: boolean ) => void;
+	setSelectedSites: (
+		value: SiteId[] | ( ( prev: SiteId[] ) => SiteId[] )
+	) => void;
+	selectedSites: SiteId[];
+	notice: NoticeState | null;
+	brandSiteTemplates: Record< string, BrandTemplate[] >;
+	selectedTemplates: TemplateId[];
+	sitesHealthCheckResult?: Record<
+		string,
+		{ success?: boolean } | undefined
+	>;
+}
+
 /**
  * SiteSelection component.
  *
- * @param {Object}   props                        - Component props.
- * @param {Array}    props.siteInfo               - Array of connected site information.
- * @param {boolean}  props.isApplying             - Boolean indicating if templates are being applied.
- * @param {Function} props.setIsApplying          - Function to set the isApplying state.
- * @param {Function} props.onApply                - Function to handle applying templates to selected sites.
- * @param {Function} props.setIsApplyModalOpen    - Function to control the visibility of the apply modal.
- * @param {Function} props.setSelectedSites       - Function to set the selected site IDs.
- * @param {Array}    props.selectedSites          - Array of selected site IDs.
- * @param {Object}   props.notice                 - Notice object containing type and message.
- * @param {Array}    props.brandSiteTemplates     - Array of templates available for brand sites.
- * @param {Array}    props.selectedTemplates      - Array of selected template IDs.
- * @param {Object}   props.sitesHealthCheckResult - Object containing health check results for sites.
- * @return {JSX.Element} The rendered component.
+ * @param props                        - Component props.
+ * @param props.siteInfo               - Array of connected site information.
+ * @param props.isApplying             - Boolean indicating if templates are being applied.
+ * @param props.setIsApplying          - Function to set the isApplying state.
+ * @param props.onApply                - Function to handle applying templates to selected sites.
+ * @param props.setIsApplyModalOpen    - Function to control the visibility of the apply modal.
+ * @param props.setSelectedSites       - Function to set the selected site IDs.
+ * @param props.selectedSites          - Array of selected site IDs.
+ * @param props.notice                 - Notice object containing type and message.
+ * @param props.brandSiteTemplates     - Array of templates available for brand sites.
+ * @param props.selectedTemplates      - Array of selected template IDs.
+ * @param props.sitesHealthCheckResult - Object containing health check results for sites.
+ * @return The rendered component.
  */
 const SiteSelection = ( {
 	siteInfo,
@@ -39,19 +83,17 @@ const SiteSelection = ( {
 	brandSiteTemplates,
 	selectedTemplates,
 	sitesHealthCheckResult,
-} ) => {
+}: SiteSelectionProps ): JSX.Element => {
 	// Helper function to check if all templates are already present
-	const areAllTemplatesPresent = ( siteId ) => {
-		if (
-			selectedTemplates.length === 0 ||
-			brandSiteTemplates[ siteId ] === undefined
-		) {
+	const areAllTemplatesPresent = ( siteId: SiteId ) => {
+		const siteTemplates = brandSiteTemplates[ siteId ];
+		if ( selectedTemplates.length === 0 || siteTemplates === undefined ) {
 			return false;
 		}
 
-		const availableTemplateIds = Object.values(
-			brandSiteTemplates[ siteId ]
-		).map( ( template ) => template.original_id );
+		const availableTemplateIds = Object.values( siteTemplates ).map(
+			( template ) => template.original_id
+		);
 
 		return selectedTemplates.every( ( templateId ) =>
 			availableTemplateIds.includes( templateId )
@@ -59,19 +101,19 @@ const SiteSelection = ( {
 	};
 
 	// Helper function to check if a site is unreachable
-	const isSiteUnreachable = ( siteId ) => {
-		return (
+	const isSiteUnreachable = ( siteId: SiteId ): boolean => {
+		return Boolean(
 			sitesHealthCheckResult?.[ siteId ] &&
-			! sitesHealthCheckResult[ siteId ]?.success
+				! sitesHealthCheckResult[ siteId ]?.success
 		);
 	};
 
 	// Helper function to check if a site should be disabled
-	const isSiteDisabled = ( siteId ) => {
+	const isSiteDisabled = ( siteId: SiteId ) => {
 		return areAllTemplatesPresent( siteId ) || isSiteUnreachable( siteId );
 	};
 
-	const handleSiteSelection = ( siteId ) => {
+	const handleSiteSelection = ( siteId: SiteId ) => {
 		// Prevent selection/deselection of disabled sites
 		if ( isSiteDisabled( siteId ) ) {
 			return;
@@ -241,7 +283,9 @@ const SiteSelection = ( {
 											! isDisabled &&
 											handleSiteSelection( id )
 										}
-										onKeyDown={ ( e ) => {
+										onKeyDown={ (
+											e: ReactKeyboardEvent< HTMLDivElement >
+										) => {
 											if (
 												! isDisabled &&
 												( e.key === 'Enter' ||
@@ -259,7 +303,9 @@ const SiteSelection = ( {
 											{ isSelected && (
 												<div className="onedesign-site-selected-indicator">
 													{ renderIcon( {
-														sitesHealthCheckResult,
+														sitesHealthCheckResult:
+															sitesHealthCheckResult ??
+															{},
 														id,
 													} ) }
 												</div>
@@ -280,7 +326,9 @@ const SiteSelection = ( {
 													}
 												>
 													{ renderIcon( {
-														sitesHealthCheckResult,
+														sitesHealthCheckResult:
+															sitesHealthCheckResult ??
+															{},
 														id,
 													} ) }
 												</div>
@@ -294,7 +342,9 @@ const SiteSelection = ( {
 													/>
 												) : (
 													<div className="onedesign-site-initials">
-														{ getInitials( name ) }
+														{ getInitials(
+															name ?? ''
+														) }
 													</div>
 												) }
 											</div>
@@ -317,7 +367,7 @@ const SiteSelection = ( {
 																Object.values(
 																	brandSiteTemplates[
 																		id
-																	]
+																	] ?? []
 																).map(
 																	(
 																		template

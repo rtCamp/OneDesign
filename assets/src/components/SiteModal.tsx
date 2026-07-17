@@ -13,19 +13,87 @@ import {
 import { __ } from '@wordpress/i18n';
 
 /**
+ * External dependencies
+ */
+import type { SyntheticEvent } from 'react';
+
+/**
  * Internal dependencies
  */
 import { isValidUrl } from '../js/utils';
 
+interface SiteFormData {
+	name: string;
+	url: string;
+	api_key: string;
+	logo?: string;
+	logo_id?: number | null;
+}
+
+interface FormErrors {
+	name: string;
+	url: string;
+	api_key: string;
+	message: string;
+}
+
+interface SubmitResponse {
+	ok: boolean;
+	json: () => Promise< { message?: string } >;
+	data?: { status?: number };
+	message?: string;
+}
+
+// Minimal typing for the `wp.media` global used for logo selection.
+interface WpAttachmentJSON {
+	url: string;
+	id: number;
+}
+interface WpMediaSelection {
+	first: () => { toJSON: () => WpAttachmentJSON };
+	add: ( items: unknown[] ) => void;
+}
+interface WpMediaState {
+	get: ( key: string ) => WpMediaSelection;
+}
+interface WpMediaFrame {
+	on: ( event: string, callback: () => void ) => void;
+	state: () => WpMediaState;
+	open: () => void;
+}
+interface WpAttachmentModel {
+	fetch: () => void;
+}
+interface WpMediaConfig {
+	title: string;
+	button: { text: string };
+	multiple: boolean;
+	library: { type: string[] };
+}
+interface WpMediaFactory {
+	( config: WpMediaConfig ): WpMediaFrame;
+	attachment: ( id: number | string ) => WpAttachmentModel;
+}
+
+interface DeleteConfirmationModalProps {
+	// Used as both Button onClick and Modal onRequestClose, so the event is a
+	// broad, optional SyntheticEvent.
+	onConfirm: ( event?: SyntheticEvent ) => void;
+	onCancel: ( event?: SyntheticEvent ) => void;
+}
+
 /**
  * Delete Confirmation Modal component.
  *
- * @param {Object}   props           - Component properties.
- * @param {Function} props.onConfirm - Function to call on confirm.
- * @param {Function} props.onCancel  - Function to call on cancel.
- * @return {JSX.Element} Rendered component.
+ * @param props           - Component properties.
+ * @param props.onConfirm - Function to call on confirm.
+ * @param props.onCancel  - Function to call on cancel.
+ * @return Rendered component.
  */
-const DeleteConfirmationModal = ( { onConfirm, onCancel } ) => (
+const DeleteConfirmationModal = ( {
+	onConfirm,
+	onCancel,
+}: DeleteConfirmationModalProps ): JSX.Element => (
 	<Modal
 		title={ __( 'Remove Site Logo', 'onedesign' ) }
 		onRequestClose={ onCancel }
@@ -56,17 +124,26 @@ const DeleteConfirmationModal = ( { onConfirm, onCancel } ) => (
 	</Modal>
 );
 
+interface SiteModalProps {
+	formData: SiteFormData;
+	setFormData: ( data: SiteFormData ) => void;
+	onSubmit: () => Promise< SubmitResponse >;
+	onClose: () => void;
+	editing: boolean;
+	originalData?: Partial< SiteFormData >;
+}
+
 /**
  * Site Modal component for adding/editing a site.
  *
- * @param {Object}   props              - Component properties.
- * @param {Object}   props.formData     - Current form data.
- * @param {Function} props.setFormData  - Function to update form data.
- * @param {Function} props.onSubmit     - Function to call on form submission.
- * @param {Function} props.onClose      - Function to call on modal close.
- * @param {boolean}  props.editing      - Whether the modal is in editing mode.
- * @param {Object}   props.originalData - Original data for comparison when editing.
- * @return {JSX.Element} Rendered component.
+ * @param props              - Component properties.
+ * @param props.formData     - Current form data.
+ * @param props.setFormData  - Function to update form data.
+ * @param props.onSubmit     - Function to call on form submission.
+ * @param props.onClose      - Function to call on modal close.
+ * @param props.editing      - Whether the modal is in editing mode.
+ * @param props.originalData - Original data for comparison when editing.
+ * @return Rendered component.
  */
 const SiteModal = ( {
 	formData,
@@ -75,8 +152,8 @@ const SiteModal = ( {
 	onClose,
 	editing,
 	originalData = {},
-} ) => {
-	const [ errors, setErrors ] = useState( {
+}: SiteModalProps ): JSX.Element => {
+	const [ errors, setErrors ] = useState< FormErrors >( {
 		name: '',
 		url: '',
 		api_key: '',
@@ -98,7 +175,7 @@ const SiteModal = ( {
 			);
 		}
 
-		const newErrors = {
+		const newErrors: FormErrors = {
 			name: ! formData.name.trim()
 				? __( 'Site Name is required.', 'onedesign' )
 				: '',
@@ -145,7 +222,9 @@ const SiteModal = ( {
 				}
 			);
 
-			const healthCheckData = await healthCheck.json();
+			const healthCheckData = ( await healthCheck.json() ) as {
+				success?: boolean;
+			};
 			if ( ! healthCheckData.success ) {
 				setErrors( {
 					...newErrors,
@@ -187,7 +266,7 @@ const SiteModal = ( {
 				} );
 				setShowNotice( true );
 			}
-		} catch ( error ) {
+		} catch {
 			setErrors( {
 				...newErrors,
 				message: __(
@@ -204,8 +283,12 @@ const SiteModal = ( {
 	};
 
 	const handleLogoSelect = () => {
+		const wpMedia = (
+			window as unknown as { wp: { media: WpMediaFactory } }
+		 ).wp.media;
+
 		// Create a media frame for single image selection
-		const mediaFrame = wp.media( {
+		const mediaFrame = wpMedia( {
 			title: __( 'Select Site Logo', 'onedesign' ),
 			button: {
 				text: __( 'Select Image', 'onedesign' ),
@@ -232,9 +315,11 @@ const SiteModal = ( {
 
 		// If logo_id is already set, pre-select that image in the media library
 		if ( formData.logo_id ) {
-			mediaFrame.on( 'open', function () {
+			mediaFrame.on( 'open', () => {
 				const selection = mediaFrame.state().get( 'selection' );
-				const attachment = wp.media.attachment( formData.logo_id );
+				const attachment = wpMedia.attachment(
+					formData.logo_id as number
+				);
 
 				// Fetch attachment details
 				attachment.fetch();
@@ -250,15 +335,15 @@ const SiteModal = ( {
 		mediaFrame.open();
 	};
 
-	const handleLogoRemove = ( e ) => {
-		e.preventDefault();
-		e.stopPropagation();
+	const handleLogoRemove = ( e?: SyntheticEvent ) => {
+		e?.preventDefault();
+		e?.stopPropagation();
 		setShowDeleteConfirm( true );
 	};
 
-	const confirmLogoRemove = ( e ) => {
-		e.preventDefault();
-		e.stopPropagation();
+	const confirmLogoRemove = ( e?: SyntheticEvent ) => {
+		e?.preventDefault();
+		e?.stopPropagation();
 		setFormData( {
 			...formData,
 			logo: '',
@@ -267,9 +352,9 @@ const SiteModal = ( {
 		setShowDeleteConfirm( false );
 	};
 
-	const cancelLogoRemove = ( e ) => {
-		e.preventDefault();
-		e.stopPropagation();
+	const cancelLogoRemove = ( e?: SyntheticEvent ) => {
+		e?.preventDefault();
+		e?.stopPropagation();
 		setShowDeleteConfirm( false );
 	};
 
@@ -334,7 +419,6 @@ const SiteModal = ( {
 						onChange={ ( value ) =>
 							setFormData( { ...formData, name: value } )
 						}
-						error={ errors.name }
 						help={ __(
 							'This is the name of the site that will be registered.',
 							'onedesign'
@@ -348,7 +432,6 @@ const SiteModal = ( {
 						onChange={ ( value ) =>
 							setFormData( { ...formData, url: value } )
 						}
-						error={ errors.url }
 						help={ __(
 							'It must start with http or https and end with /, like: https://rtcamp.com/',
 							'onedesign'
@@ -433,7 +516,6 @@ const SiteModal = ( {
 						onChange={ ( value ) =>
 							setFormData( { ...formData, api_key: value } )
 						}
-						error={ errors.api_key }
 						help={ __(
 							'This is the api key that will be used to authenticate the site for onedesign.',
 							'onedesign'

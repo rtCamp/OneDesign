@@ -6,33 +6,53 @@ import { __ } from '@wordpress/i18n';
 import { useCallback, useEffect, useState } from '@wordpress/element';
 
 /**
- * PHP consts for JS usage.
- */
-/**
  * Internal dependencies
  */
 import { API_NAMESPACE, NONCE, CURRENT_SITE_ID } from '../js/constants';
 
+type SiteId = number | string;
+
+interface Site {
+	id: SiteId;
+	name?: string;
+	url?: string;
+}
+
+interface Notice {
+	type: 'error' | 'success';
+	message: string;
+}
+
+interface MultiSitesProps {
+	setBrandSites: ( sites: Site[] ) => void;
+	brandSites: Site[];
+	setNotice: ( notice: Notice ) => void;
+}
+
 /**
  * MultiSites component to manage brand sites from multisite network.
  *
- * @param {Object}   props               - Component properties.
- * @param {Function} props.setBrandSites - Function to set brand sites in parent component.
- * @param {Array}    props.brandSites    - Current list of brand sites.
- * @param {Function} props.setNotice     - Function to set notice messages.
+ * @param props               - Component properties.
+ * @param props.setBrandSites - Function to set brand sites in parent component.
+ * @param props.brandSites    - Current list of brand sites.
+ * @param props.setNotice     - Function to set notice messages.
  *
- * @return {JSX.Element} Rendered component.
+ * @return Rendered component.
  */
-const MultiSites = ( { setBrandSites, brandSites, setNotice } ) => {
+const MultiSites = ( {
+	setBrandSites,
+	brandSites,
+	setNotice,
+}: MultiSitesProps ): JSX.Element => {
 	const [ isOpen, setIsOpen ] = useState( false );
-	const [ selectedSites, setSelectedSites ] = useState( [] );
+	const [ selectedSites, setSelectedSites ] = useState< SiteId[] >( [] );
 	const [ isApplying, setIsApplying ] = useState( false );
-	const [ sites, setSites ] = useState();
+	const [ sites, setSites ] = useState< Site[] | undefined >();
 
 	const openModal = () => setIsOpen( true );
 	const closeModal = () => setIsOpen( false );
 
-	const toggleSiteSelection = ( siteId ) => {
+	const toggleSiteSelection = ( siteId: SiteId ) => {
 		setSelectedSites( ( prevSelected ) => {
 			if ( prevSelected.includes( siteId ) ) {
 				return prevSelected.filter( ( id ) => id !== siteId );
@@ -51,12 +71,14 @@ const MultiSites = ( { setBrandSites, brandSites, setNotice } ) => {
 			} );
 
 			if ( response.ok ) {
-				const data = await response.json();
+				const data = ( await response.json() ) as {
+					shared_sites?: Site[];
+				};
 				setBrandSites( data.shared_sites || [] );
 
 				// if shared_sites length is 1 meaning
 				if (
-					data?.shared_sites?.length > 0 &&
+					( data?.shared_sites?.length ?? 0 ) > 0 &&
 					brandSites?.length === 0
 				) {
 					window.location.reload();
@@ -70,7 +92,7 @@ const MultiSites = ( { setBrandSites, brandSites, setNotice } ) => {
 					),
 				} );
 			}
-		} catch ( error ) {
+		} catch {
 			setNotice( {
 				type: 'error',
 				message: __(
@@ -94,7 +116,7 @@ const MultiSites = ( { setBrandSites, brandSites, setNotice } ) => {
 			);
 
 			if ( response.ok ) {
-				const data = await response.json();
+				const data = ( await response.json() ) as { sites?: Site[] };
 				setSites( data.sites || [] );
 			} else {
 				setNotice( {
@@ -104,9 +126,8 @@ const MultiSites = ( { setBrandSites, brandSites, setNotice } ) => {
 						'onedesign'
 					),
 				} );
-				return [];
 			}
-		} catch ( error ) {
+		} catch {
 			setNotice( {
 				type: 'error',
 				message: __(
@@ -114,12 +135,11 @@ const MultiSites = ( { setBrandSites, brandSites, setNotice } ) => {
 					'onedesign'
 				),
 			} );
-			return [];
 		}
 	}, [ setNotice ] );
 
 	const handleMultiSiteAdd = useCallback(
-		async ( selectedMUSites ) => {
+		async ( selectedMUSites: SiteId[] ) => {
 			setIsApplying( true );
 			try {
 				const response = await fetch(
@@ -146,7 +166,10 @@ const MultiSites = ( { setBrandSites, brandSites, setNotice } ) => {
 					return;
 				}
 
-				const data = await response.json();
+				const data = ( await response.json() ) as {
+					success?: boolean;
+					message?: string;
+				};
 
 				if ( data.success ) {
 					setNotice( {
@@ -169,7 +192,7 @@ const MultiSites = ( { setBrandSites, brandSites, setNotice } ) => {
 							),
 					} );
 				}
-			} catch ( error ) {
+			} catch {
 				setNotice( {
 					type: 'error',
 					message: __(
@@ -181,12 +204,22 @@ const MultiSites = ( { setBrandSites, brandSites, setNotice } ) => {
 				setIsApplying( false );
 			}
 		},
-		[ setNotice ]
+		[ setNotice ] // eslint-disable-line react-hooks/exhaustive-deps
 	);
 
 	useEffect( () => {
 		fetchBrandSites();
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
+
+	const availableSites =
+		sites?.filter(
+			( site ) =>
+				String( site.id ) !== CURRENT_SITE_ID &&
+				! brandSites?.some(
+					( brandSite ) =>
+						String( brandSite.id ) === String( site.id )
+				)
+		) ?? [];
 
 	return (
 		<>
@@ -201,7 +234,7 @@ const MultiSites = ( { setBrandSites, brandSites, setNotice } ) => {
 					size="medium"
 				>
 					{ /* create multi select checkbox list of sites excluding current site */ }
-					{ sites?.length > 0 ? (
+					{ ( sites?.length ?? 0 ) > 0 ? (
 						<div
 							style={ {
 								maxHeight: '400px',
@@ -209,29 +242,19 @@ const MultiSites = ( { setBrandSites, brandSites, setNotice } ) => {
 								padding: '4px 4px',
 							} }
 						>
-							{ sites
-								?.filter(
-									( site ) =>
-										String( site.id ) !== CURRENT_SITE_ID &&
-										! brandSites?.some(
-											( brandSite ) =>
-												String( brandSite.id ) ===
-												String( site.id )
-										)
-								)
-								.map( ( site ) => (
-									<CheckboxControl
-										key={ site.id }
-										label={ `${ site.name } ( ${ site?.url } )` }
-										checked={ selectedSites.includes(
-											site.id
-										) }
-										onChange={ () =>
-											toggleSiteSelection( site.id )
-										}
-										__nextHasNoMarginBottom
-									/>
-								) ) }
+							{ availableSites.map( ( site ) => (
+								<CheckboxControl
+									key={ site.id }
+									label={ `${ site.name } ( ${ site?.url } )` }
+									checked={ selectedSites.includes(
+										site.id
+									) }
+									onChange={ () =>
+										toggleSiteSelection( site.id )
+									}
+									__nextHasNoMarginBottom
+								/>
+							) ) }
 						</div>
 					) : (
 						<p>
@@ -242,16 +265,8 @@ const MultiSites = ( { setBrandSites, brandSites, setNotice } ) => {
 						</p>
 					) }
 
-					{ sites?.length > 0 &&
-						sites?.filter(
-							( site ) =>
-								String( site.id ) !== CURRENT_SITE_ID &&
-								! brandSites?.some(
-									( brandSite ) =>
-										String( brandSite.id ) ===
-										String( site.id )
-								)
-						).length === 0 && (
+					{ ( sites?.length ?? 0 ) > 0 &&
+						availableSites.length === 0 && (
 							<p>
 								{ __(
 									'All sites in this multisite network have already been added as brand sites.',

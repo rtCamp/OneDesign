@@ -11,24 +11,53 @@ import { useCallback, useState } from '@wordpress/element';
 import MemoizedTemplatePreview from './MemoizedTemplatePreview';
 import { API_NAMESPACE as REST_NAMESPACE, NONCE } from '../../../js/constants';
 
+type TemplateId = number | string;
+
+interface Template {
+	id?: TemplateId;
+	name?: string;
+	original_id?: TemplateId;
+	[ key: string ]: unknown;
+}
+
+interface NoticeState {
+	type: 'error' | 'success';
+	message: string;
+}
+
+interface BrandSiteTemplatesProps {
+	filteredTemplates: Template[];
+	currentPage: number;
+	PER_PAGE: number;
+	selectedTemplates: TemplateId[];
+	handleTemplateSelection: ( id?: TemplateId ) => void;
+	setCurrentPage: ( value: number | ( ( prev: number ) => number ) ) => void;
+	currentSiteId: TemplateId;
+	fetchConnectedSitesTemplates: () => void;
+	setSelectedTemplates: ( templates: TemplateId[] ) => void;
+	allTemplates: Template[];
+	notice: NoticeState | null;
+	setNotice: ( notice: NoticeState | null ) => void;
+}
+
 /**
  * BrandSiteTemplates component.
  *
- * @param {Object}   props                              - Component props.
- * @param {Array}    props.filteredTemplates            - Array of filtered templates to display.
- * @param {number}   props.currentPage                  - Current page number for pagination.
- * @param {number}   props.PER_PAGE                     - Number of templates to display per page.
- * @param {Array}    props.selectedTemplates            - Array of selected template IDs.
- * @param {Function} props.handleTemplateSelection      - Function to handle template selection.
- * @param {Function} props.setCurrentPage               - Function to set the current page number.
- * @param {number}   props.currentSiteId                - Current brand site ID.
- * @param {Function} props.fetchConnectedSitesTemplates - Function to fetch templates for connected brand sites.
- * @param {Function} props.setSelectedTemplates         - Function to set selected templates.
- * @param {Array}    props.allTemplates                 - Array of all available templates.
- * @param {Object}   props.notice                       - Notice object containing type and message.
- * @param {Function} props.setNotice                    - Function to set the notice state.
+ * @param props                              - Component props.
+ * @param props.filteredTemplates            - Array of filtered templates to display.
+ * @param props.currentPage                  - Current page number for pagination.
+ * @param props.PER_PAGE                     - Number of templates to display per page.
+ * @param props.selectedTemplates            - Array of selected template IDs.
+ * @param props.handleTemplateSelection      - Function to handle template selection.
+ * @param props.setCurrentPage               - Function to set the current page number.
+ * @param props.currentSiteId                - Current brand site ID.
+ * @param props.fetchConnectedSitesTemplates - Function to fetch templates for connected brand sites.
+ * @param props.setSelectedTemplates         - Function to set selected templates.
+ * @param props.allTemplates                 - Array of all available templates.
+ * @param props.notice                       - Notice object containing type and message.
+ * @param props.setNotice                    - Function to set the notice state.
  *
- * @return {JSX.Element} The rendered component.
+ * @return The rendered component.
  */
 const BrandSiteTemplates = ( {
 	filteredTemplates,
@@ -43,7 +72,7 @@ const BrandSiteTemplates = ( {
 	allTemplates,
 	notice,
 	setNotice,
-} ) => {
+}: BrandSiteTemplatesProps ): JSX.Element => {
 	const [ isProcessing, setIsProcessing ] = useState( false );
 	const [ isRemoveModalOpen, setIsRemoveModalOpen ] = useState( false );
 
@@ -65,7 +94,7 @@ const BrandSiteTemplates = ( {
 					} ),
 				}
 			);
-			const data = await response.json();
+			const data = ( await response.json() ) as { success?: boolean };
 			if ( data.success ) {
 				fetchConnectedSitesTemplates();
 
@@ -95,7 +124,7 @@ const BrandSiteTemplates = ( {
 			setNotice( {
 				type: 'error',
 				message:
-					error.message ||
+					( error instanceof Error ? error.message : '' ) ||
 					__(
 						'An error occurred while removing templates.',
 						'onedesign'
@@ -109,6 +138,7 @@ const BrandSiteTemplates = ( {
 		currentSiteId,
 		fetchConnectedSitesTemplates,
 		setSelectedTemplates,
+		setNotice,
 	] );
 
 	const renderPagination = () => {
@@ -194,7 +224,7 @@ const BrandSiteTemplates = ( {
 									handleTemplateSelection( template?.id )
 								}
 								isSelected={ selectedTemplates.includes(
-									template?.id
+									template?.id ?? ''
 								) }
 							/>
 						);

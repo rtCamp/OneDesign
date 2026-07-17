@@ -8,6 +8,11 @@ import { useState, useEffect } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 
 /**
+ * External dependencies
+ */
+import type { KeyboardEvent as ReactKeyboardEvent } from 'react';
+
+/**
  * Internal dependencies
  */
 import useSitesManagement from '../../../hooks/useSitesManagement';
@@ -15,23 +20,55 @@ import { getInitials } from '../../../js/utils';
 import { API_NAMESPACE, NONCE } from '../../../js/constants';
 import { renderIcon } from '../../../components/Dashicons';
 
+type SiteId = number | string;
+
+interface Site {
+	id: SiteId;
+	name?: string;
+	url?: string;
+	logo?: string;
+}
+
+interface SitePatternEntry {
+	name?: string;
+	[ key: string ]: unknown;
+}
+
+interface BasePattern {
+	name?: string;
+	title?: string;
+	[ key: string ]: unknown;
+}
+
+interface FetchError {
+	message: string;
+	details?: string;
+}
+
+interface SiteSelectionProps {
+	setIsSiteSelected: ( selected: boolean ) => void;
+	selectedPatterns?: string[];
+	basePatterns?: BasePattern[];
+	sitePatterns?: Record< string, SitePatternEntry[] >;
+}
+
 /**
  * Component to render the brand site selection with enhanced UX.
  *
- * @param {Object}   props                   - Component properties.
- * @param {Function} props.setIsSiteSelected - Function to set the site selection state.
- * @param {Array}    props.selectedPatterns  - Array of selected pattern names.
- * @param {Array}    props.basePatterns      - Array of base patterns for the current site.
- * @param {Object}   props.sitePatterns      - Object mapping site IDs to their patterns.
+ * @param props                   - Component properties.
+ * @param props.setIsSiteSelected - Function to set the site selection state.
+ * @param props.selectedPatterns  - Array of selected pattern names.
+ * @param props.basePatterns      - Array of base patterns for the current site.
+ * @param props.sitePatterns      - Object mapping site IDs to their patterns.
  *
- * @return {JSX.Element} JSX Element
+ * @return JSX Element
  */
 const SiteSelection = ( {
 	setIsSiteSelected,
 	selectedPatterns = [],
 	basePatterns = [],
 	sitePatterns = {},
-} ) => {
+}: SiteSelectionProps ): JSX.Element => {
 	// common state for site info and health check results
 	const { sitesHealthCheckResult, isLoading: isSitesLoading } =
 		useSitesManagement( { NONCE, API_NAMESPACE } );
@@ -40,27 +77,39 @@ const SiteSelection = ( {
 	 * Get the current value of the brand_site meta field.
 	 */
 	const { BrandSite } = useSelect( ( select ) => {
-		const meta = select( 'core/editor' ).getEditedPostAttribute( 'meta' );
+		const editor = select( 'core/editor' ) as {
+			getEditedPostAttribute: (
+				name: string
+			) => { brand_site?: SiteId[] } | undefined;
+		};
+		const meta = editor.getEditedPostAttribute( 'meta' );
 		return {
 			BrandSite: meta?.brand_site || [],
 		};
-	} );
+	}, [] );
 
 	/**
 	 * Dispatch the action to update the brand_site meta field.
 	 */
-	const { editPost } = useDispatch( 'core/editor' );
+	const { editPost } = useDispatch( 'core/editor' ) as {
+		editPost: ( data: { meta: { brand_site: SiteId[] } } ) => void;
+	};
 
-	const [ siteOptions, setSiteOptions ] = useState( [] );
+	const [ siteOptions, setSiteOptions ] = useState< Site[] >( [] );
 	const [ isLoading, setIsLoading ] = useState( true );
-	const [ error, setError ] = useState( null );
+	const [ error, setError ] = useState< FetchError | null >( null );
 
-	const onBrandSiteChange = ( siteId ) => {
+	const onBrandSiteChange = ( siteId: SiteId ) => {
 		const newBrandSite = BrandSite.includes( siteId )
 			? BrandSite.filter( ( site ) => site !== siteId )
 			: [ ...BrandSite, siteId ];
 		setIsSiteSelected( newBrandSite.length > 0 );
 		editPost( { meta: { brand_site: newBrandSite } } );
+	};
+
+	// helper function to check if site is reachable.
+	const isSiteReachable = ( siteId: SiteId ): boolean => {
+		return Boolean( sitesHealthCheckResult?.[ siteId ]?.success );
 	};
 
 	const selectAllSites = () => {
@@ -103,15 +152,9 @@ const SiteSelection = ( {
 		editPost( { meta: { brand_site: [] } } );
 	};
 
-	const retryFetch = () => {
-		setIsLoading( true );
-		setError( null );
-		fetchSites();
-	};
-
 	const fetchSites = async () => {
 		try {
-			const response = await apiFetch( {
+			const response = await apiFetch< Site[] >( {
 				path: `/onedesign/v1/configured-sites`,
 			} );
 
@@ -119,16 +162,24 @@ const SiteSelection = ( {
 			setSiteOptions( data );
 			setError( null );
 		} catch ( fetchError ) {
+			const details =
+				fetchError instanceof Error ? fetchError.message : undefined;
 			setError( {
 				message: __(
 					'Failed to load brand sites. Please check your connection and try again.',
 					'onedesign'
 				),
-				details: fetchError.message,
+				...( details ? { details } : {} ),
 			} );
 		} finally {
 			setIsLoading( false );
 		}
+	};
+
+	const retryFetch = () => {
+		setIsLoading( true );
+		setError( null );
+		fetchSites();
 	};
 
 	useEffect( () => {
@@ -142,14 +193,6 @@ const SiteSelection = ( {
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const totalCount = siteOptions.length;
-
-	// helper function to check if site is reachable.
-	const isSiteReachable = ( siteId ) => {
-		return (
-			sitesHealthCheckResult?.[ siteId ] &&
-			sitesHealthCheckResult[ siteId ]?.success
-		);
-	};
 
 	// Calculate the number of sites that don't have all patterns already
 	const selectableSites = siteOptions.filter( ( site ) => {
@@ -350,7 +393,9 @@ const SiteSelection = ( {
 							onClick={ () =>
 								! isDisabled && onBrandSiteChange( id )
 							}
-							onKeyDown={ ( e ) => {
+							onKeyDown={ (
+								e: ReactKeyboardEvent< HTMLDivElement >
+							) => {
 								if (
 									! isDisabled &&
 									( e.code === 'Enter' || e.code === 'Space' )
@@ -466,15 +511,16 @@ const SiteSelection = ( {
 															)
 													);
 
-												const toSyncPatternsTitles =
-													toSyncPatterns.map(
-														( patternName ) =>
-															basePatterns.find(
-																( pattern ) =>
-																	pattern.name ===
-																	patternName
-															)?.title
-													);
+												const toSyncPatternsTitles: Array<
+													string | undefined
+												> = toSyncPatterns.map(
+													( patternName ) =>
+														basePatterns.find(
+															( pattern ) =>
+																pattern.name ===
+																patternName
+														)?.title
+												);
 
 												// Limit toSyncPatternsTitles to 5 items for display
 												if (

@@ -8,16 +8,32 @@ import { __ } from '@wordpress/i18n';
  */
 import MemoizedTemplatePreview from './MemoizedTemplatePreview';
 
+type TemplateId = number | string;
+
+interface Template {
+	id?: TemplateId;
+	name?: string;
+	[ key: string ]: unknown;
+}
+
+interface BaseSiteTemplatesProps {
+	filteredTemplates: Template[];
+	currentPage: number;
+	PER_PAGE: number;
+	selectedTemplates: TemplateId[];
+	handleTemplateSelection: ( id?: TemplateId ) => void;
+}
+
 /**
  * BaseSiteTemplates component.
  *
- * @param {Object}   props                         - Component props.
- * @param {Array}    props.filteredTemplates       - Array of filtered templates to display.
- * @param {number}   props.currentPage             - Current page number for pagination.
- * @param {number}   props.PER_PAGE                - Number of templates to display per page.
- * @param {Array}    props.selectedTemplates       - Array of selected template IDs.
- * @param {Function} props.handleTemplateSelection - Function to handle template selection.
- * @return {JSX.Element} The rendered component.
+ * @param props                         - Component props.
+ * @param props.filteredTemplates       - Array of filtered templates to display.
+ * @param props.currentPage             - Current page number for pagination.
+ * @param props.PER_PAGE                - Number of templates to display per page.
+ * @param props.selectedTemplates       - Array of selected template IDs.
+ * @param props.handleTemplateSelection - Function to handle template selection.
+ * @return The rendered component.
  */
 const BaseSiteTemplates = ( {
 	filteredTemplates,
@@ -25,7 +41,7 @@ const BaseSiteTemplates = ( {
 	PER_PAGE,
 	selectedTemplates,
 	handleTemplateSelection,
-} ) => {
+}: BaseSiteTemplatesProps ): JSX.Element => {
 	const renderTemplates = () => {
 		if ( filteredTemplates.length === 0 ) {
 			return (
@@ -49,7 +65,7 @@ const BaseSiteTemplates = ( {
 									handleTemplateSelection( template?.id )
 								}
 								isSelected={ selectedTemplates.includes(
-									template?.id
+									template?.id ?? ''
 								) }
 							/>
 						);

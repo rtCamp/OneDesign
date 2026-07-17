@@ -26,24 +26,58 @@ import {
 	PER_PAGE,
 } from '../../../js/constants';
 
+type SiteId = number | string;
+type TemplateId = number | string;
+
+interface Template {
+	id?: TemplateId;
+	original_id?: TemplateId;
+	name?: string;
+	title?: string;
+	description?: string;
+	[ key: string ]: unknown;
+}
+
+type ConnectedTemplatesMap = Record< string, Template[] >;
+
+interface BrandSite {
+	id: SiteId;
+	name?: string;
+	url?: string;
+	logo?: string;
+}
+
+interface Tab {
+	name: string;
+	title: string;
+	className: string;
+	value?: SiteId;
+}
+
+interface NoticeState {
+	type: 'error' | 'success';
+	message: string;
+}
+
 /**
  * TemplateModal component.
  *
- * @return {JSX.Element} The rendered component.
+ * @return The rendered component.
  */
-const TemplateModal = () => {
-	const [ templates, setTemplates ] = useState( [] );
+const TemplateModal = (): JSX.Element => {
+	const [ templates, setTemplates ] = useState< Template[] >( [] );
 	const [ isOpen, setIsOpen ] = useState( true );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ searchQuery, setSearchQuery ] = useState( '' );
-	const [ selectedTemplates, setSelectedTemplates ] = useState( [] );
+	const [ selectedTemplates, setSelectedTemplates ] = useState<
+		TemplateId[]
+	>( [] );
 	const [ currentPage, setCurrentPage ] = useState( 1 );
-	const [ activeTab, setActiveTab ] = useState( 'baseTemplate' );
-	const [ selectedSites, setSelectedSites ] = useState( [] );
-	const [ connectedSitesTemplates, setConnectedSitesTemplates ] = useState(
-		{}
-	);
-	const [ notice, setNotice ] = useState( null );
+	const [ activeTab, setActiveTab ] = useState< SiteId >( 'baseTemplate' );
+	const [ selectedSites, setSelectedSites ] = useState< SiteId[] >( [] );
+	const [ connectedSitesTemplates, setConnectedSitesTemplates ] =
+		useState< ConnectedTemplatesMap >( {} );
+	const [ notice, setNotice ] = useState< NoticeState | null >( null );
 	const [ isReSyncing, setIsReSyncing ] = useState( false );
 
 	// common state for site info and health check results
@@ -53,7 +87,10 @@ const TemplateModal = () => {
 		isLoading: isSiteInfoLoading,
 	} = useSitesManagement( { NONCE, API_NAMESPACE: REST_NAMESPACE } );
 
-	const [ tabs, setTabs ] = useState( [
+	// The hook types siteInfo as a keyed record; consumers treat it as a list.
+	const siteList = Object.values( siteInfo ) as BrandSite[];
+
+	const [ tabs, setTabs ] = useState< Tab[] >( [
 		{
 			name: 'baseTemplate',
 			title: __( 'Current Site Templates', 'onedesign' ),
@@ -76,11 +113,14 @@ const TemplateModal = () => {
 					},
 				}
 			);
-			const data = await response.json();
+			const data = ( await response.json() ) as {
+				success?: boolean;
+				templates?: ConnectedTemplatesMap;
+			};
 			if ( data.success ) {
 				setConnectedSitesTemplates( data.templates || {} );
 			}
-		} catch ( error ) {}
+		} catch {}
 	}, [] );
 
 	const fetchTemplates = useCallback( async () => {
@@ -96,11 +136,14 @@ const TemplateModal = () => {
 					},
 				}
 			);
-			const data = await response.json();
+			const data = ( await response.json() ) as {
+				success?: boolean;
+				templates?: Template[];
+			};
 			if ( data.success ) {
 				setTemplates( data.templates || [] );
 			}
-		} catch ( error ) {
+		} catch {
 		} finally {
 			setIsLoading( false );
 		}
@@ -129,7 +172,7 @@ const TemplateModal = () => {
 					} ),
 				}
 			);
-			const data = await response.json();
+			const data = ( await response.json() ) as { success?: boolean };
 			if ( data.success ) {
 				fetchConnectedSitesTemplates();
 				setNotice( {
@@ -145,7 +188,7 @@ const TemplateModal = () => {
 					message: __( 'Failed to re-sync templates.', 'onedesign' ),
 				} );
 			}
-		} catch ( error ) {
+		} catch {
 		} finally {
 			setIsReSyncing( false );
 		}
@@ -168,7 +211,7 @@ const TemplateModal = () => {
 					} ),
 				}
 			);
-			const data = await response.json();
+			const data = ( await response.json() ) as { success?: boolean };
 			if ( data.success ) {
 				// Handle success (e.g., show a success message)
 				setSelectedTemplates( [] );
@@ -182,7 +225,7 @@ const TemplateModal = () => {
 							'Templates applied successfully to %s site.',
 							'onedesign'
 						),
-						Object.values( siteInfo )
+						siteList
 							.filter( ( site ) =>
 								selectedSites.includes( site.id )
 							)
@@ -200,7 +243,7 @@ const TemplateModal = () => {
 					message: __( 'Failed to apply templates.', 'onedesign' ),
 				} );
 			}
-		} catch ( error ) {
+		} catch {
 			setNotice( {
 				type: 'error',
 				message: __(
@@ -218,7 +261,7 @@ const TemplateModal = () => {
 		selectedTemplates,
 		selectedSites,
 		fetchConnectedSitesTemplates,
-		siteInfo,
+		siteList,
 	] );
 
 	// Fetch templates when the modal is opened
@@ -235,7 +278,7 @@ const TemplateModal = () => {
 
 	// create tabs based on siteInfo
 	useEffect( () => {
-		const newTabs = [
+		const newTabs: Tab[] = [
 			{
 				name: 'baseTemplate',
 				title: __( 'Current Site Templates', 'onedesign' ),
@@ -243,7 +286,7 @@ const TemplateModal = () => {
 				value: 'baseTemplate',
 			},
 		];
-		Object.values( siteInfo ).forEach( ( site ) => {
+		siteList.forEach( ( site ) => {
 			if ( site?.id && site?.name ) {
 				newTabs.push( {
 					name: site.name,
@@ -254,9 +297,13 @@ const TemplateModal = () => {
 			}
 		} );
 		setTabs( newTabs );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ siteInfo ] );
 
-	const handleTemplateSelection = ( tId ) => {
+	const handleTemplateSelection = ( tId?: TemplateId ) => {
+		if ( tId === undefined ) {
+			return;
+		}
 		setSelectedTemplates( ( prevSelected ) => {
 			const newSelected = prevSelected.includes( tId )
 				? prevSelected.filter( ( id ) => id !== tId )
@@ -272,7 +319,7 @@ const TemplateModal = () => {
 		}
 		return templates.filter(
 			( template ) =>
-				template.title
+				( template.title || '' )
 					.toLowerCase()
 					.includes( searchQuery.toLowerCase() ) ||
 				( template.description &&
@@ -339,7 +386,7 @@ const TemplateModal = () => {
 		);
 	};
 
-	const handleTabSelection = ( tab ) => {
+	const handleTabSelection = ( tab: string ) => {
 		setActiveTab(
 			tabs.find( ( t ) => t.name === tab )?.value || 'baseTemplate'
 		);
@@ -444,7 +491,8 @@ const TemplateModal = () => {
 								tabs={ tabs }
 							>
 								{ ( tab ) => {
-									if ( tab.name === 'baseTemplate' ) {
+									const currentTab = tab as Tab;
+									if ( currentTab.name === 'baseTemplate' ) {
 										return (
 											<>
 												<BaseSiteTemplates
@@ -468,11 +516,11 @@ const TemplateModal = () => {
 										<BrandSiteTemplates
 											filteredTemplates={ (
 												connectedSitesTemplates[
-													tab.value
+													currentTab.value ?? ''
 												] || []
 											).filter(
 												( template ) =>
-													template.title
+													( template.title || '' )
 														.toLowerCase()
 														.includes(
 															searchQuery.toLowerCase()
@@ -493,7 +541,9 @@ const TemplateModal = () => {
 												handleTemplateSelection
 											}
 											setCurrentPage={ setCurrentPage }
-											currentSiteId={ tab.value }
+											currentSiteId={
+												currentTab.value ?? ''
+											}
 											fetchConnectedSitesTemplates={
 												fetchConnectedSitesTemplates
 											}
@@ -516,7 +566,7 @@ const TemplateModal = () => {
 									isFullScreen
 								>
 									<SiteSelection
-										siteInfo={ siteInfo }
+										siteInfo={ siteList }
 										isApplying={ isApplying }
 										setIsApplying={ setIsApplying }
 										onApply={ () => {
@@ -533,7 +583,7 @@ const TemplateModal = () => {
 										}
 										selectedTemplates={ selectedTemplates }
 										sitesHealthCheckResult={
-											sitesHealthCheckResult
+											sitesHealthCheckResult ?? {}
 										}
 									/>
 								</Modal>

@@ -22,24 +22,59 @@ import AppliedPatternsTab from './AppliedPatternsTab';
 import Category from './Category';
 import { SETTINGS_LINK as SettingLink } from '../../../js/constants';
 
+type SiteId = number | string;
+
+interface Pattern {
+	name?: string;
+	title?: string;
+	categories?: string[];
+	providerSite?: string | false;
+	[ key: string ]: unknown;
+}
+
+type SitePatternsMap = Record< string, Pattern[] >;
+
+interface Site {
+	id: SiteId;
+	name?: string;
+	[ key: string ]: unknown;
+}
+
+interface Tab {
+	name: string;
+	title: string;
+	className: string;
+	value?: SiteId;
+}
+
+interface NoticeState {
+	type: 'error' | 'success';
+	message: string;
+}
+
+interface PushSiteResult {
+	success: boolean;
+	message?: string;
+}
+
 /**
  * Fetch all brand site patterns
  *
- * @return {Promise<Array>} A promise that resolves to an array of patterns.
+ * @return A promise that resolves to a map of patterns keyed by site.
  */
-function fetchAllBrandSitePatterns() {
-	return apiFetch( {
+function fetchAllBrandSitePatterns(): Promise< SitePatternsMap > {
+	return apiFetch< { success?: boolean; patterns?: SitePatternsMap } >( {
 		path: `/onedesign/v1/get-all-brand-site-patterns?timestamp=${ Date.now() }`,
 	} )
 		.then( ( data ) => {
 			if ( data.success ) {
-				return data.patterns || [];
+				return data.patterns || {};
 			}
 			throw new Error( 'Failed to fetch patterns' );
 		} )
 		.catch( ( error ) => {
 			console.error( 'Error fetching brand site patterns:', error ); // eslint-disable-line no-console
-			return [];
+			return {};
 		} );
 }
 
@@ -48,45 +83,59 @@ function fetchAllBrandSitePatterns() {
  * Displays the patterns library modal with tabs for base patterns and applied patterns.
  * Allows users to search, filter, and apply patterns across different brand sites.
  *
- * @return {JSX.Element} The rendered modal component.
+ * @return The rendered modal component.
  */
-const PatternModal = () => {
-	const [ basePatterns, setBasePatterns ] = useState( [] );
+const PatternModal = (): JSX.Element => {
+	const [ basePatterns, setBasePatterns ] = useState< Pattern[] >( [] );
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ activeCategory, setActiveCategory ] = useState( 'All' );
-	const [ allBrandSitePatterns, setAllBrandSitePatterns ] = useState( [] );
-	const [ activeTab, setActiveTab ] = useState( 'basePatterns' );
-	const [ notice, setNotice ] = useState( null );
+	const [ allBrandSitePatterns, setAllBrandSitePatterns ] =
+		useState< SitePatternsMap >( {} );
+	const [ activeTab, setActiveTab ] = useState< SiteId >( 'basePatterns' );
+	const [ notice, setNotice ] = useState< NoticeState | null >( null );
 
 	// Access the global pattern store
 	const { sitePatterns } = useSelect( ( select ) => {
-		return {
-			sitePatterns: select( 'onedesign/site-patterns' ).getSitePatterns(),
+		const store = select( 'onedesign/site-patterns' ) as {
+			getSitePatterns: () => SitePatternsMap;
 		};
-	} );
+		return {
+			sitePatterns: store.getSitePatterns(),
+		};
+	}, [] );
 
-	const patternStore = useDispatch( 'onedesign/site-patterns' );
-	const [ siteOptions, setSiteOptions ] = useState( [] );
+	const patternStore = useDispatch( 'onedesign/site-patterns' ) as {
+		fetchSitePatterns: () => void;
+		setSitePatterns: ( patterns: SitePatternsMap ) => void;
+	};
+	const [ siteOptions, setSiteOptions ] = useState< Site[] >( [] );
 	const [ isOpen, setIsOpen ] = useState( true );
 
 	// Pattern display settings
 	const PER_PAGE = 9;
 	const [ currentPage, setCurrentPage ] = useState( 1 );
 	const [ currentAppliedPage, setCurrentAppliedPage ] = useState( 1 );
-	const [ selectedPatterns, setSelectedPatterns ] = useState( [] );
-	const [ selectedAppliedPatterns, setSelectedAppliedPatterns ] = useState(
+	const [ selectedPatterns, setSelectedPatterns ] = useState< string[] >(
 		[]
 	);
+	const [ selectedAppliedPatterns, setSelectedAppliedPatterns ] = useState<
+		string[]
+	>( [] );
 
 	const BrandSites = useSelect( ( select ) => {
-		const meta = select( 'core/editor' ).getEditedPostAttribute( 'meta' );
+		const editor = select( 'core/editor' ) as {
+			getEditedPostAttribute: (
+				name: string
+			) => { brand_site?: SiteId[] } | undefined;
+		};
+		const meta = editor.getEditedPostAttribute( 'meta' );
 		return meta?.brand_site || [];
-	} );
+	}, [] );
 
 	const fetchSites = async () => {
 		try {
-			const response = await apiFetch( {
+			const response = await apiFetch< Site[] >( {
 				path: `/onedesign/v1/configured-sites`,
 			} );
 
@@ -127,15 +176,18 @@ const PatternModal = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ patternStore ] ); // Include patternStore in dependencies
 
-	const { editPost } = useDispatch( 'core/editor' );
+	const { editPost } = useDispatch( 'core/editor' ) as {
+		editPost: ( data: { meta: Record< string, unknown > } ) => void;
+	};
 
 	// Filter patterns based on search term
 	const filteredBasePatterns = useMemo( () => {
 		const categoryFiltered =
 			activeCategory === 'All'
 				? basePatterns
-				: basePatterns.filter( ( pattern ) =>
-						pattern.categories?.includes( activeCategory )
+				: basePatterns.filter(
+						( pattern ) =>
+							pattern.categories?.includes( activeCategory )
 				  );
 
 		if ( ! searchTerm.trim() ) {
@@ -150,7 +202,10 @@ const PatternModal = () => {
 	}, [ basePatterns, searchTerm, activeCategory ] );
 
 	// Use callbacks for event handlers to prevent recreating functions on each render
-	const handlePatternSelection = ( patternId ) => {
+	const handlePatternSelection = ( patternId?: string ) => {
+		if ( ! patternId ) {
+			return;
+		}
 		setSelectedPatterns( ( prevSelectedPatterns ) => {
 			if ( prevSelectedPatterns.includes( patternId ) ) {
 				return prevSelectedPatterns.filter(
@@ -162,7 +217,10 @@ const PatternModal = () => {
 		editPost( { meta: { selected_patterns: selectedPatterns } } );
 	};
 
-	const handleAppliedPatternSelection = ( patternName ) => {
+	const handleAppliedPatternSelection = ( patternName?: string ) => {
+		if ( ! patternName ) {
+			return;
+		}
 		setSelectedAppliedPatterns( ( prevSelected ) => {
 			if ( prevSelected.includes( patternName ) ) {
 				return prevSelected.filter( ( name ) => name !== patternName );
@@ -171,14 +229,14 @@ const PatternModal = () => {
 		} );
 	};
 
-	const handleSearchChange = useCallback( ( value ) => {
+	const handleSearchChange = useCallback( ( value: string ) => {
 		setSearchTerm( value );
 		// Reset pages when search term changes
 		setCurrentPage( 1 );
 		setCurrentAppliedPage( 1 );
 	}, [] );
 
-	const handleTabSelect = ( tab ) => {
+	const handleTabSelect = ( tab: string ) => {
 		setActiveTab(
 			tabs.find( ( t ) => t.name === tab )?.value || 'basePatterns'
 		);
@@ -195,7 +253,7 @@ const PatternModal = () => {
 		const fetchPatterns = async () => {
 			setIsLoading( true );
 			try {
-				const baseSiteFetch = await apiFetch( {
+				const baseSiteFetch = await apiFetch< Pattern[] >( {
 					path: `/onedesign/v1/local-patterns`,
 				} );
 				setBasePatterns( baseSiteFetch );
@@ -215,7 +273,7 @@ const PatternModal = () => {
 		setSearchTerm( '' );
 	}, [] );
 
-	const [ tabs, setTabs ] = useState( [
+	const [ tabs, setTabs ] = useState< Tab[] >( [
 		{
 			name: 'basePatterns',
 			title: __( 'Current Site Patterns', 'onedesign' ),
@@ -225,7 +283,7 @@ const PatternModal = () => {
 
 	useEffect( () => {
 		if ( siteOptions ) {
-			const newTabs = [
+			const newTabs: Tab[] = [
 				{
 					name: 'basePatterns',
 					title: __( 'Current Site Patterns', 'onedesign' ),
@@ -237,8 +295,8 @@ const PatternModal = () => {
 			// add all sites except base site
 			Object.values( siteOptions ).forEach( ( site ) => {
 				newTabs.push( {
-					name: site.name,
-					title: site.name,
+					name: String( site.name ),
+					title: String( site.name ),
 					className: 'onedesign-applied-patterns-tab',
 					value: site.id,
 				} );
@@ -254,8 +312,9 @@ const PatternModal = () => {
 		const categoryFiltered =
 			activeCategory === 'All'
 				? currentTabAppliedPatterns
-				: currentTabAppliedPatterns.filter( ( pattern ) =>
-						pattern.categories?.includes( activeCategory )
+				: currentTabAppliedPatterns.filter(
+						( pattern ) =>
+							pattern.categories?.includes( activeCategory )
 				  );
 
 		if ( ! searchTerm.trim() ) {
@@ -294,7 +353,9 @@ const PatternModal = () => {
 			};
 
 			try {
-				const request = await apiFetch( {
+				const request = await apiFetch<
+					Record< string, PushSiteResult >
+				>( {
 					path: `/onedesign/v1/push-patterns`,
 					method: 'POST',
 					headers: {
@@ -356,9 +417,12 @@ const PatternModal = () => {
 	};
 
 	const removeSelectedPatterns = useCallback(
-		async ( patternNames, siteId ) => {
+		async ( patternNames: string[], siteId?: SiteId ) => {
 			try {
-				const response = await apiFetch( {
+				const response = await apiFetch< {
+					success?: boolean;
+					message?: string;
+				} >( {
 					path: `/onedesign/v1/request-remove-brand-site-patterns`,
 					method: 'DELETE',
 					headers: {
@@ -366,7 +430,7 @@ const PatternModal = () => {
 					},
 					body: JSON.stringify( {
 						pattern_names: patternNames,
-						site_id: siteId.toString(),
+						site_id: siteId?.toString() ?? '',
 					} ),
 				} );
 
@@ -404,7 +468,6 @@ const PatternModal = () => {
 						// Take user back to previous page
 						window.history.back();
 					} }
-					isOpen={ isOpen }
 					isFullScreen
 					className="onedesign-modal-wrapper"
 					headerActions={
@@ -440,7 +503,7 @@ const PatternModal = () => {
 							basePatterns={
 								activeTab === 'basePatterns'
 									? basePatterns
-									: allBrandSitePatterns[ activeTab ]
+									: allBrandSitePatterns[ activeTab ] ?? []
 							}
 						/>
 
@@ -489,7 +552,6 @@ const PatternModal = () => {
 															( prev ) => prev + 1
 														)
 													}
-													searchTerm={ searchTerm }
 													setSelectedPatterns={
 														setSelectedPatterns
 													}

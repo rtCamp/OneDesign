@@ -20,15 +20,20 @@ import { __ } from '@wordpress/i18n';
  */
 import { API_NAMESPACE, NONCE, API_KEY } from '../js/constants';
 
+interface NoticeState {
+	type: 'error' | 'success' | 'warning';
+	message: string;
+}
+
 /**
  * SiteSettings component for managing API key and governing site connection.
  *
- * @return {JSX.Element} Rendered component.
+ * @return Rendered component.
  */
-const SiteSettings = () => {
+const SiteSettings = (): JSX.Element => {
 	const [ apiKey, setApiKey ] = useState( '' );
 	const [ isLoading, setIsLoading ] = useState( false );
-	const [ notice, setNotice ] = useState( null );
+	const [ notice, setNotice ] = useState< NoticeState | null >( null );
 	const [ governingSite, setGoverningSite ] = useState( '' );
 	const [ showDisconectionModal, setShowDisconectionModal ] =
 		useState( false );
@@ -47,9 +52,9 @@ const SiteSettings = () => {
 			if ( ! response.ok ) {
 				throw new Error( 'Network response was not ok' );
 			}
-			const data = await response.json();
+			const data = ( await response.json() ) as { secret_key?: string };
 			setApiKey( data?.secret_key || '' );
-		} catch ( error ) {
+		} catch {
 			setNotice( {
 				type: 'error',
 				message: __(
@@ -75,7 +80,7 @@ const SiteSettings = () => {
 			if ( ! response.ok ) {
 				throw new Error( 'Network response was not ok' );
 			}
-			const data = await response.json();
+			const data = ( await response.json() ) as { secret_key?: string };
 			if ( data?.secret_key ) {
 				setApiKey( data.secret_key );
 				setNotice( {
@@ -94,7 +99,7 @@ const SiteSettings = () => {
 					),
 				} );
 			}
-		} catch ( error ) {
+		} catch {
 			setNotice( {
 				type: 'error',
 				message: __(
@@ -122,9 +127,11 @@ const SiteSettings = () => {
 			if ( ! response.ok ) {
 				throw new Error( 'Network response was not ok' );
 			}
-			const data = await response.json();
+			const data = ( await response.json() ) as {
+				governing_site_url?: string;
+			};
 			setGoverningSite( data?.governing_site_url || '' );
-		} catch ( error ) {
+		} catch {
 			setNotice( {
 				type: 'error',
 				message: __(
@@ -158,7 +165,7 @@ const SiteSettings = () => {
 					'onedesign'
 				),
 			} );
-		} catch ( error ) {
+		} catch {
 			setNotice( {
 				type: 'error',
 				message: __(
@@ -209,7 +216,7 @@ const SiteSettings = () => {
 							onClick={ () => {
 								navigator?.clipboard
 									?.writeText( apiKey )
-									.then( () => {
+									?.then( () => {
 										setNotice( {
 											type: 'success',
 											message: __(
@@ -218,7 +225,7 @@ const SiteSettings = () => {
 											),
 										} );
 									} )
-									.catch( ( error ) => {
+									?.catch( ( error: unknown ) => {
 										setNotice( {
 											type: 'error',
 											message:
@@ -227,7 +234,7 @@ const SiteSettings = () => {
 													'onedesign'
 												) +
 												' ' +
-												error,
+												String( error ),
 										} );
 									} );
 							} }
@@ -249,6 +256,7 @@ const SiteSettings = () => {
 						<TextareaControl
 							value={ apiKey }
 							disabled
+							onChange={ () => {} }
 							help={ __(
 								'This key is used for secure communication with the Governing site.',
 								'onedesign'
@@ -280,6 +288,7 @@ const SiteSettings = () => {
 						label={ __( 'Governing Site URL', 'onedesign' ) }
 						value={ governingSite }
 						disabled
+						onChange={ () => {} }
 						help={ __(
 							'This is the URL of the Governing site this Brand site is connected to.',
 							'onedesign'

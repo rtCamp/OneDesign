@@ -11,24 +11,75 @@ import { Button, Modal, Spinner, Notice } from '@wordpress/components';
 import MemoizedPatternPreview from './MemoizedPatternPreview';
 import SiteSelection from './SiteSelection';
 
+type SiteId = number | string;
+
+interface Pattern {
+	name?: string;
+	providerSite?: string | false;
+	title?: string;
+	[ key: string ]: unknown;
+}
+
+interface SiteInfoEntry {
+	id: SiteId;
+	name?: string;
+	[ key: string ]: unknown;
+}
+
+interface SitePatternEntry {
+	name?: string;
+	[ key: string ]: unknown;
+}
+
+interface ApplyResult {
+	success?: boolean;
+	message?: string;
+}
+
+interface ApplicationStatus {
+	type: 'warning' | 'success' | 'error' | 'info';
+	message: string;
+	hasDetails?: boolean;
+}
+
+interface DetailedError {
+	site: string;
+	message: string;
+}
+
+interface BasePatternsTabProps {
+	isLoading: boolean;
+	basePatterns: Pattern[];
+	visibleCount: number;
+	selectedPatterns: string[];
+	handlePatternSelection: ( name?: string ) => void;
+	hasMorePatterns: boolean;
+	loadMorePatterns: () => void;
+	applySelectedPatterns: () => Promise< ApplyResult | null | undefined >;
+	setSelectedPatterns: ( patterns: string[] ) => void;
+	sitePatterns?: Record< string, SitePatternEntry[] >;
+	siteOptions?: SiteInfoEntry[] | Record< string, SiteInfoEntry >;
+	BrandSites?: SiteId[];
+}
+
 /**
  * BasePatternsTab component displays a list of base patterns with options to apply them to brand sites
  *
- * @param {Object}   props                        - Component properties.
- * @param {boolean}  props.isLoading              - Indicates if base patterns are loading.
- * @param {Array}    props.basePatterns           - List of base patterns.
- * @param {number}   props.visibleCount           - Number of base patterns currently visible.
- * @param {Array}    props.selectedPatterns       - List of selected patterns.
- * @param {Function} props.handlePatternSelection - Function to handle pattern selection.
- * @param {boolean}  props.hasMorePatterns        - Indicates if there are more base patterns to load.
- * @param {Function} props.loadMorePatterns       - Function to load more base patterns.
- * @param {Function} props.applySelectedPatterns  - Function to apply selected patterns.
- * @param {Function} props.setSelectedPatterns    - Function to set the selected patterns.
- * @param {Object}   props.sitePatterns           - Patterns from the brand site.
- * @param {Object}   props.siteOptions            - Information about the brand sites.
- * @param {Array}    props.BrandSites             - List of brand site IDs.
+ * @param props                        - Component properties.
+ * @param props.isLoading              - Indicates if base patterns are loading.
+ * @param props.basePatterns           - List of base patterns.
+ * @param props.visibleCount           - Number of base patterns currently visible.
+ * @param props.selectedPatterns       - List of selected patterns.
+ * @param props.handlePatternSelection - Function to handle pattern selection.
+ * @param props.hasMorePatterns        - Indicates if there are more base patterns to load.
+ * @param props.loadMorePatterns       - Function to load more base patterns.
+ * @param props.applySelectedPatterns  - Function to apply selected patterns.
+ * @param props.setSelectedPatterns    - Function to set the selected patterns.
+ * @param props.sitePatterns           - Patterns from the brand site.
+ * @param props.siteOptions            - Information about the brand sites.
+ * @param props.BrandSites             - List of brand site IDs.
  *
- * @return {JSX.Element} Rendered component.
+ * @return Rendered component.
  */
 const BasePatternsTab = memo(
 	( {
@@ -44,15 +95,18 @@ const BasePatternsTab = memo(
 		sitePatterns = {},
 		siteOptions: siteInfo = {},
 		BrandSites: selectedSites = [],
-	} ) => {
+	}: BasePatternsTabProps ): JSX.Element => {
 		const [ isModalOpen, setIsModalOpen ] = useState( false );
 		const [ isApplying, setIsApplying ] = useState( false );
-		const [ applicationStatus, setApplicationStatus ] = useState( null );
+		const [ applicationStatus, setApplicationStatus ] =
+			useState< ApplicationStatus | null >( null );
 		const [ isSiteSelected, setIsSiteSelected ] = useState( false );
 		const [ showCloseConfirmation, setShowCloseConfirmation ] =
 			useState( false );
 		const [ showDetailedErrors, setShowDetailedErrors ] = useState( false );
-		const [ detailedErrors, setDetailedErrors ] = useState( [] );
+		const [ detailedErrors, setDetailedErrors ] = useState<
+			DetailedError[]
+		>( [] );
 
 		useEffect( () => {
 			setSelectedPatterns( [] );
@@ -155,17 +209,17 @@ const BasePatternsTab = memo(
 
 				// Parse the error message to extract site-specific errors if possible
 				let errorMessage =
-					error.message ||
+					( error instanceof Error ? error.message : '' ) ||
 					__(
 						'Failed to apply patterns. Please try again.',
 						'onedesign'
 					);
-				let parsedErrors = [];
+				let parsedErrors: DetailedError[] = [];
 
 				// Check if this is a multi-site error (contains bullet points)
 				if ( errorMessage.includes( '•' ) ) {
 					// This is a multi-site error, extract the summary line
-					const summaryLine = errorMessage.split( '\n' )[ 0 ];
+					const summaryLine = errorMessage.split( '\n' )[ 0 ] ?? '';
 
 					// Extract individual site errors
 					parsedErrors = errorMessage
@@ -176,8 +230,8 @@ const BasePatternsTab = memo(
 							const match = line.match( /•\s+(.*?):\s+(.*)/ );
 							if ( match && match.length >= 3 ) {
 								return {
-									site: match[ 1 ].trim(),
-									message: match[ 2 ].trim(),
+									site: match[ 1 ]?.trim() ?? '',
+									message: match[ 2 ]?.trim() ?? '',
 								};
 							}
 							return { site: 'Unknown', message: line.trim() };
@@ -201,7 +255,7 @@ const BasePatternsTab = memo(
 			}
 		};
 
-		const BrandSiteSelection = () => {
+		const BrandSiteSelection = (): JSX.Element => {
 			return (
 				<div className="onedesign-brand-site-modal-content">
 					{ applicationStatus && (
@@ -304,7 +358,7 @@ const BasePatternsTab = memo(
 									key={ pattern?.name }
 									pattern={ pattern }
 									isSelected={ selectedPatterns.includes(
-										pattern?.name
+										pattern?.name ?? ''
 									) }
 									onSelect={ () =>
 										handlePatternSelection( pattern?.name )
