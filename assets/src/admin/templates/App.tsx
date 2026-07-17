@@ -35,5 +35,7 @@ registerPlugin( 'onedesign-template-library', {
 
 		// make document.title to Template Library.
 		document.title = __( 'Template Library', 'onedesign' );
+
+		return null;
 	},
 } );

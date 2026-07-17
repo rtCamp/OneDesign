@@ -21,11 +21,12 @@ import { IS_MULTISITE, IS_GOVERNING_SITE_SELECTED } from '../js/constants';
 type SiteId = number | string;
 
 interface Site {
-	id: SiteId;
+	id?: SiteId;
 	name?: string;
 	url?: string;
 	logo?: string;
 	api_key?: string;
+	logo_id?: number | null;
 	is_editable?: boolean;
 }
 

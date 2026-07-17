@@ -19,23 +19,45 @@ import {
 } from '@wordpress/components';
 
 /**
- * Global variable from PHP
- */
-/**
  * Internal dependencies
  */
 import { MULTISITES, API_NAMESPACE, NONCE } from '../../js/constants';
 
+type SiteId = number | string;
+
+interface NoticeState {
+	type: 'error' | 'success';
+	message: string;
+}
+
+interface SiteTypeSelectorProps {
+	value: string;
+	setGoverningSite: ( value: string ) => void;
+}
+
+const GOVERNING_SITE_OPTIONS: Array< { label: string; value: string } > = [
+	{ label: __( 'Select…', 'onedesign' ), value: '' },
+	...( MULTISITES as Array< { name?: string; id?: SiteId } > ).map(
+		( site ) => ( {
+			label: site.name ?? '',
+			value: String( site.id ?? '' ),
+		} )
+	),
+];
+
 /**
  * SiteTypeSelector component for selecting site type.
  *
- * @param {Object}   props                  - Component properties.
- * @param {string}   props.value            - Current selected value.
- * @param {Function} props.setGoverningSite - Function to set governing site.
+ * @param props                  - Component properties.
+ * @param props.value            - Current selected value.
+ * @param props.setGoverningSite - Function to set governing site.
  *
- * @return {JSX.Element} Rendered component.
+ * @return Rendered component.
  */
-const SiteTypeSelector = ( { value, setGoverningSite } ) => (
+const SiteTypeSelector = ( {
+	value,
+	setGoverningSite,
+}: SiteTypeSelectorProps ): JSX.Element => (
 	<SelectControl
 		label={ __( 'Select Governing Site', 'onedesign' ) }
 		value={ value }
@@ -46,25 +68,19 @@ const SiteTypeSelector = ( { value, setGoverningSite } ) => (
 		onChange={ ( v ) => {
 			setGoverningSite( v );
 		} }
-		options={ [
-			{ label: __( 'Select…', 'onedesign' ), value: '' },
-			...MULTISITES.map( ( site ) => ( {
-				label: site.name,
-				value: site.id,
-			} ) ),
-		] }
+		options={ GOVERNING_SITE_OPTIONS }
 	/>
 );
 
 /**
  * Site type selection component for OneDesign Multisite setup.
  *
- * @return {JSX.Element} Rendered component.
+ * @return Rendered component.
  */
-const OneDesignMultisiteGoverningSiteSelection = () => {
+const OneDesignMultisiteGoverningSiteSelection = (): JSX.Element => {
 	const [ governingSite, setGoverningSite ] = useState( '' );
 	const currentGoverningSiteID = useRef( '' );
-	const [ notice, setNotice ] = useState( null );
+	const [ notice, setNotice ] = useState< NoticeState | null >( null );
 	const [ isSaving, setIsSaving ] = useState( false );
 
 	const fetchCurrentGoverningSite = useCallback( async () => {
@@ -90,7 +106,9 @@ const OneDesignMultisiteGoverningSiteSelection = () => {
 				return;
 			}
 
-			const data = await response.json();
+			const data = ( await response.json() ) as {
+				governing_site?: string;
+			};
 			if ( data?.governing_site ) {
 				setGoverningSite( data.governing_site );
 				currentGoverningSiteID.current = data.governing_site;
@@ -110,7 +128,7 @@ const OneDesignMultisiteGoverningSiteSelection = () => {
 		fetchCurrentGoverningSite();
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
-	const handleGoverningSiteChange = useCallback( async ( value ) => {
+	const handleGoverningSiteChange = useCallback( async ( value: string ) => {
 		setGoverningSite( value );
 		currentGoverningSiteID.current = value;
 		setIsSaving( true );
@@ -163,7 +181,7 @@ const OneDesignMultisiteGoverningSiteSelection = () => {
 		<>
 			<Card>
 				<>
-					{ notice?.message?.length > 0 && (
+					{ ( notice?.message?.length ?? 0 ) > 0 && (
 						<Notice
 							status={ notice?.type ?? 'success' }
 							isDismissible

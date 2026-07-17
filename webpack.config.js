@@ -82,7 +82,7 @@ const scripts = {
 			'src',
 			'admin',
 			'templates',
-			'index.js'
+			'index.ts'
 		),
 		'patterns-library': path.resolve(
 			process.cwd(),
@@ -90,7 +90,7 @@ const scripts = {
 			'src',
 			'admin',
 			'patterns',
-			'index.js'
+			'index.ts'
 		),
 		settings: path.resolve(
 			process.cwd(),
@@ -98,7 +98,7 @@ const scripts = {
 			'src',
 			'admin',
 			'settings',
-			'index.js'
+			'index.tsx'
 		),
 		onboarding: path.resolve(
 			process.cwd(),
@@ -114,7 +114,7 @@ const scripts = {
 			'src',
 			'admin',
 			'multisite-plugin',
-			'index.js'
+			'index.tsx'
 		),
 	},
 	module: {

@@ -13,22 +13,39 @@ import SiteModal from '../../components/SiteModal';
 import SiteSettings from '../../components/SiteSettings';
 import { API_NAMESPACE, NONCE } from '../../js/constants';
 
+type SiteId = number | string;
+
+interface BrandSite {
+	id?: SiteId;
+	name?: string;
+	url?: string;
+	api_key?: string;
+	logo?: string;
+	logo_id?: number | null;
+	is_editable?: boolean;
+}
+
+interface NoticeState {
+	type: 'error' | 'success';
+	message: string;
+}
+
 /**
  * Settings page component for OneDesign plugin.
  *
- * @return {JSX.Element} Rendered component.
+ * @return Rendered component.
  */
-const OneDesignSettingsPage = () => {
+const OneDesignSettingsPage = (): JSX.Element => {
 	const [ siteType, setSiteType ] = useState( '' );
 	const [ showModal, setShowModal ] = useState( false );
-	const [ editingIndex, setEditingIndex ] = useState( null );
-	const [ sites, setSites ] = useState( [] );
-	const [ formData, setFormData ] = useState( {
+	const [ editingIndex, setEditingIndex ] = useState< number | null >( null );
+	const [ sites, setSites ] = useState< BrandSite[] >( [] );
+	const [ formData, setFormData ] = useState< BrandSite >( {
 		name: '',
 		url: '',
 		api_key: '',
 	} );
-	const [ notice, setNotice ] = useState( {
+	const [ notice, setNotice ] = useState< NoticeState | null >( {
 		type: 'success',
 		message: '',
 	} );
@@ -53,8 +70,12 @@ const OneDesignSettingsPage = () => {
 					} ),
 				] );
 
-				const siteTypeData = await siteTypeRes.json();
-				const sitesData = await sitesRes.json();
+				const siteTypeData = ( await siteTypeRes.json() ) as {
+					site_type?: string;
+				};
+				const sitesData = ( await sitesRes.json() ) as {
+					shared_sites?: BrandSite[];
+				};
 
 				if ( siteTypeData?.site_type ) {
 					setSiteType( siteTypeData?.site_type );
@@ -95,6 +116,7 @@ const OneDesignSettingsPage = () => {
 				body: JSON.stringify( { sites_data: updated } ),
 			} );
 			if ( ! response.ok ) {
+				// eslint-disable-next-line no-console
 				console.error(
 					'Error saving Brand site:',
 					response.statusText
@@ -124,9 +146,11 @@ const OneDesignSettingsPage = () => {
 		setFormData( { name: '', url: '', api_key: '' } );
 		setShowModal( false );
 		setEditingIndex( null );
+
+		return undefined;
 	};
 
-	const handleDelete = async ( index ) => {
+	const handleDelete = async ( index: number ) => {
 		const updated = sites.filter( ( _, i ) => i !== index );
 		const token = NONCE;
 
@@ -157,7 +181,7 @@ const OneDesignSettingsPage = () => {
 			if ( updated.length === 0 ) {
 				window.location.reload();
 			} else {
-				document.body.classList.remove(
+				document.body?.classList.remove(
 					'onedesign-missing-brand-sites'
 				);
 			}
@@ -175,10 +199,8 @@ const OneDesignSettingsPage = () => {
 	return (
 		<>
 			<>
-				{ notice?.message?.length > 0 && (
+				{ ( notice?.message?.length ?? 0 ) > 0 && (
 					<Snackbar
-						status={ notice?.type ?? 'success' }
-						isDismissible
 						onRemove={ () => setNotice( null ) }
 						className={
 							notice?.type === 'error'
@@ -216,7 +238,7 @@ const OneDesignSettingsPage = () => {
 						setFormData( { name: '', url: '', api_key: '' } );
 					} }
 					editing={ editingIndex !== null }
-					originalData={ sites[ editingIndex ] }
+					originalData={ sites[ editingIndex ?? -1 ] ?? {} }
 				/>
 			) }
 		</>

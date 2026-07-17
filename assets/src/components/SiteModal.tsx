@@ -23,9 +23,9 @@ import type { SyntheticEvent } from 'react';
 import { isValidUrl } from '../js/utils';
 
 interface SiteFormData {
-	name: string;
-	url: string;
-	api_key: string;
+	name?: string;
+	url?: string;
+	api_key?: string;
 	logo?: string;
 	logo_id?: number | null;
 }
@@ -127,7 +127,7 @@ const DeleteConfirmationModal = ( {
 interface SiteModalProps {
 	formData: SiteFormData;
 	setFormData: ( data: SiteFormData ) => void;
-	onSubmit: () => Promise< SubmitResponse >;
+	onSubmit: () => Promise< SubmitResponse | void >;
 	onClose: () => void;
 	editing: boolean;
 	originalData?: Partial< SiteFormData >;
@@ -166,7 +166,7 @@ const SiteModal = ( {
 	const handleSubmit = async () => {
 		// Validate inputs
 		let siteUrlError = '';
-		if ( ! formData.url.trim() ) {
+		if ( ! formData.url?.trim() ) {
 			siteUrlError = __( 'Site URL is required.', 'onedesign' );
 		} else if ( ! isValidUrl( formData.url ) ) {
 			siteUrlError = __(
@@ -176,18 +176,18 @@ const SiteModal = ( {
 		}
 
 		const newErrors: FormErrors = {
-			name: ! formData.name.trim()
+			name: ! formData.name?.trim()
 				? __( 'Site Name is required.', 'onedesign' )
 				: '',
 			url: siteUrlError,
-			api_key: ! formData.api_key.trim()
+			api_key: ! formData.api_key?.trim()
 				? __( 'API Key is required.', 'onedesign' )
 				: '',
 			message: '',
 		};
 
 		// Make sure site name is under 20 characters
-		if ( formData.name.length > 20 ) {
+		if ( ( formData.name?.length ?? 0 ) > 20 ) {
 			newErrors.name = __(
 				'Site Name must be under 20 characters.',
 				'onedesign'
@@ -216,7 +216,7 @@ const SiteModal = ( {
 					method: 'GET',
 					headers: {
 						'Content-Type': 'application/json',
-						'X-OneDesign-Token': formData.api_key,
+						'X-OneDesign-Token': formData.api_key ?? '',
 						'X-OneDesign-Source': 'Settings',
 					},
 				}
@@ -241,7 +241,7 @@ const SiteModal = ( {
 			setShowNotice( false );
 			const submitResponse = await onSubmit();
 
-			if ( ! submitResponse.ok ) {
+			if ( submitResponse && ! submitResponse.ok ) {
 				const errorData = await submitResponse.json();
 				setErrors( {
 					...newErrors,
@@ -415,7 +415,7 @@ const SiteModal = ( {
 
 					<TextControl
 						label={ __( 'Site Name*', 'onedesign' ) }
-						value={ formData.name }
+						value={ formData.name ?? '' }
 						onChange={ ( value ) =>
 							setFormData( { ...formData, name: value } )
 						}
@@ -428,7 +428,7 @@ const SiteModal = ( {
 					/>
 					<TextControl
 						label={ __( 'Site URL*', 'onedesign' ) }
-						value={ formData.url }
+						value={ formData.url ?? '' }
 						onChange={ ( value ) =>
 							setFormData( { ...formData, url: value } )
 						}
@@ -512,7 +512,7 @@ const SiteModal = ( {
 
 					<TextareaControl
 						label={ __( 'API Key*', 'onedesign' ) }
-						value={ formData.api_key }
+						value={ formData.api_key ?? '' }
 						onChange={ ( value ) =>
 							setFormData( { ...formData, api_key: value } )
 						}

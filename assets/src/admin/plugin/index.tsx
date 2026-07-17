@@ -22,15 +22,37 @@ import {
 	SETTINGS_LINK,
 } from '../../js/constants';
 
+interface NoticeState {
+	type: 'error' | 'success';
+	message: string;
+}
+
+interface SiteTypeSelectorProps {
+	value: string;
+	setSiteType: ( value: string ) => void;
+}
+
 /**
  * SiteTypeSelector component for selecting site type.
  *
- * @param {Object}   props             - Component properties.
- * @param {string}   props.value       - Current selected site type.
- * @param {Function} props.setSiteType - Function to update the selected site type.
- * @return {JSX.Element} Rendered component.
+ * @param props             - Component properties.
+ * @param props.value       - Current selected site type.
+ * @param props.setSiteType - Function to update the selected site type.
+ * @return Rendered component.
  */
-const SiteTypeSelector = ( { value, setSiteType } ) => (
+const SITE_TYPE_OPTIONS: Array< { label: string; value: string } > = [
+	{ label: __( 'Select…', 'onedesign' ), value: '' },
+	{ label: __( 'Brand Site', 'onedesign' ), value: 'brand-site' },
+	{
+		label: __( 'Governing Site', 'onedesign' ),
+		value: 'governing-site',
+	},
+];
+
+const SiteTypeSelector = ( {
+	value,
+	setSiteType,
+}: SiteTypeSelectorProps ): JSX.Element => (
 	<SelectControl
 		label={ __( 'Site Type', 'onedesign' ) }
 		value={ value }
@@ -41,25 +63,18 @@ const SiteTypeSelector = ( { value, setSiteType } ) => (
 		onChange={ ( v ) => {
 			setSiteType( v );
 		} }
-		options={ [
-			{ label: __( 'Select…', 'onedesign' ), value: '' },
-			{ label: __( 'Brand Site', 'onedesign' ), value: 'brand-site' },
-			{
-				label: __( 'Governing Site', 'onedesign' ),
-				value: 'governing-site',
-			},
-		] }
+		options={ SITE_TYPE_OPTIONS }
 	/>
 );
 
 /**
  * Site type selection component for OneDesign setup.
  *
- * @return {JSX.Element} Rendered component.
+ * @return Rendered component.
  */
-const OneDesignSiteTypeSelection = () => {
+const OneDesignSiteTypeSelection = (): JSX.Element => {
 	const [ siteType, setSiteType ] = useState( '' );
-	const [ notice, setNotice ] = useState( null );
+	const [ notice, setNotice ] = useState< NoticeState | null >( null );
 	const [ isSaving, setIsSaving ] = useState( false );
 
 	useEffect( () => {
@@ -77,7 +92,9 @@ const OneDesignSiteTypeSelection = () => {
 					} ),
 				] );
 
-				const siteTypeData = await siteTypeRes.json();
+				const siteTypeData = ( await siteTypeRes.json() ) as {
+					site_type?: string;
+				};
 
 				if ( siteTypeData?.site_type ) {
 					setSiteType( siteTypeData.site_type );
@@ -96,7 +113,7 @@ const OneDesignSiteTypeSelection = () => {
 		fetchData();
 	}, [] );
 
-	const handleSiteTypeChange = async ( value ) => {
+	const handleSiteTypeChange = async ( value: string ) => {
 		setSiteType( value );
 		const token = NONCE;
 		setIsSaving( true );
@@ -120,7 +137,7 @@ const OneDesignSiteTypeSelection = () => {
 				return;
 			}
 
-			const data = await response.json();
+			const data = ( await response.json() ) as { site_type?: string };
 			if ( data?.site_type ) {
 				setSiteType( data.site_type );
 
@@ -141,7 +158,7 @@ const OneDesignSiteTypeSelection = () => {
 		<>
 			<Card>
 				<>
-					{ notice?.message?.length > 0 && (
+					{ ( notice?.message?.length ?? 0 ) > 0 && (
 						<Notice
 							status={ notice?.type ?? 'success' }
 							isDismissible

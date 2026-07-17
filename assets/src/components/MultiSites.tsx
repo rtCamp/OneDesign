@@ -23,9 +23,16 @@ interface Notice {
 	message: string;
 }
 
+// Brand-site references may be unsaved rows (no id yet), so keep it loose.
+interface BrandSiteRef {
+	id?: SiteId;
+	name?: string;
+	url?: string;
+}
+
 interface MultiSitesProps {
-	setBrandSites: ( sites: Site[] ) => void;
-	brandSites: Site[];
+	setBrandSites: ( sites: BrandSiteRef[] ) => void;
+	brandSites: BrandSiteRef[];
 	setNotice: ( notice: Notice ) => void;
 }
 
