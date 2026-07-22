@@ -97,6 +97,9 @@
 		"eslint-plugin-import": {
 			"minimatch": "^3.1.2"
 		},
+		"test-exclude": {
+			"minimatch": "^3.0.4"
+		},
 		"@wp-playground/blueprints": {
 			"ajv": ">=8.18.0"
 		},
