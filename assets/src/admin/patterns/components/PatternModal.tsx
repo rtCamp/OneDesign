@@ -21,6 +21,7 @@ import BasePatternsTab from './BasePatternsTab';
 import AppliedPatternsTab from './AppliedPatternsTab';
 import Category from './Category';
 import { SETTINGS_LINK as SettingLink } from '../../../js/constants';
+import { store as sitePatternsStore } from '../../../store';
 
 type SiteId = number | string;
 
@@ -97,15 +98,15 @@ const PatternModal = (): JSX.Element => {
 
 	// Access the global pattern store
 	const { sitePatterns } = useSelect( ( select ) => {
-		const store = select( 'onedesign/site-patterns' ) as {
+		const patternsSelectors = select( sitePatternsStore ) as {
 			getSitePatterns: () => SitePatternsMap;
 		};
 		return {
-			sitePatterns: store.getSitePatterns(),
+			sitePatterns: patternsSelectors.getSitePatterns(),
 		};
 	}, [] );
 
-	const patternStore = useDispatch( 'onedesign/site-patterns' ) as {
+	const patternStore = useDispatch( sitePatternsStore ) as {
 		fetchSitePatterns: () => void;
 		setSitePatterns: ( patterns: SitePatternsMap ) => void;
 	};
@@ -124,6 +125,7 @@ const PatternModal = (): JSX.Element => {
 	>( [] );
 
 	const BrandSites = useSelect( ( select ) => {
+		// eslint-disable-next-line @wordpress/data-no-store-string-literals -- `@wordpress/editor` isn't a project dependency; `core/editor` is provided globally by WP core in the block editor.
 		const editor = select( 'core/editor' ) as {
 			getEditedPostAttribute: (
 				name: string
@@ -176,6 +178,7 @@ const PatternModal = (): JSX.Element => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ patternStore ] ); // Include patternStore in dependencies
 
+	// eslint-disable-next-line @wordpress/data-no-store-string-literals -- `@wordpress/editor` isn't a project dependency; `core/editor` is provided globally by WP core in the block editor.
 	const { editPost } = useDispatch( 'core/editor' ) as {
 		editPost: ( data: { meta: Record< string, unknown > } ) => void;
 	};

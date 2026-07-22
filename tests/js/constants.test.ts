@@ -65,7 +65,9 @@ describe( 'constants', () => {
 		);
 		expect( constants.NONCE ).toBe( 'abc123' );
 		expect( constants.API_KEY ).toBe( 'key-1' );
-		expect( constants.SETTINGS_LINK ).toBe( 'https://example.com/settings' );
+		expect( constants.SETTINGS_LINK ).toBe(
+			'https://example.com/settings'
+		);
 		expect( constants.MULTISITES ).toEqual( [ { id: 2 } ] );
 		expect( constants.IS_MULTISITE ).toBe( true );
 		expect( constants.IS_GOVERNING_SITE_SELECTED ).toBe( true );

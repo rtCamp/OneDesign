@@ -35,7 +35,7 @@ const SiteSettings = (): JSX.Element => {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ notice, setNotice ] = useState< NoticeState | null >( null );
 	const [ governingSite, setGoverningSite ] = useState( '' );
-	const [ showDisconectionModal, setShowDisconectionModal ] =
+	const [ showDisconnectionModal, setShowDisconnectionModal ] =
 		useState( false );
 
 	const fetchApiKey = useCallback( async () => {
@@ -174,12 +174,12 @@ const SiteSettings = (): JSX.Element => {
 				),
 			} );
 		} finally {
-			setShowDisconectionModal( false );
+			setShowDisconnectionModal( false );
 		}
 	}, [ apiKey ] );
 
 	const handleDisconnectGoverningSite = useCallback( async () => {
-		setShowDisconectionModal( true );
+		setShowDisconnectionModal( true );
 	}, [] );
 
 	useEffect( () => {
@@ -299,10 +299,10 @@ const SiteSettings = (): JSX.Element => {
 				</CardBody>
 			</Card>
 
-			{ showDisconectionModal && (
+			{ showDisconnectionModal && (
 				<Modal
 					title={ __( 'Disconnect Governing Site', 'onedesign' ) }
-					onRequestClose={ () => setShowDisconectionModal( false ) }
+					onRequestClose={ () => setShowDisconnectionModal( false ) }
 					shouldCloseOnClickOutside
 				>
 					<p>
@@ -321,7 +321,7 @@ const SiteSettings = (): JSX.Element => {
 					>
 						<Button
 							variant="secondary"
-							onClick={ () => setShowDisconectionModal( false ) }
+							onClick={ () => setShowDisconnectionModal( false ) }
 						>
 							{ __( 'Cancel', 'onedesign' ) }
 						</Button>

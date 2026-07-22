@@ -211,12 +211,12 @@ const MultiSites = ( {
 				setIsApplying( false );
 			}
 		},
-		[ setNotice ] // eslint-disable-line react-hooks/exhaustive-deps
+		[ setNotice, fetchSelectedBrandSites ]
 	);
 
 	useEffect( () => {
 		fetchBrandSites();
-	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [ fetchBrandSites ] );
 
 	const availableSites =
 		sites?.filter(

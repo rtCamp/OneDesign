@@ -55,7 +55,14 @@ const useSitesManagement = ( {
 				const site = siteInfo[ siteId ];
 				const siteUrl = site?.url;
 				const siteApiKey = site?.api_key;
-				const resultKey = String( site?.id );
+
+				// site.id (not the siteInfo object key) is the identifier
+				// consumers key their own lookups by; skip if it's missing
+				// rather than collapsing multiple sites into an "undefined" entry.
+				if ( site?.id === undefined ) {
+					continue;
+				}
+				const resultKey = String( site.id );
 
 				if ( siteUrl ) {
 					try {

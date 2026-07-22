@@ -77,6 +77,7 @@ const SiteSelection = ( {
 	 * Get the current value of the brand_site meta field.
 	 */
 	const { BrandSite } = useSelect( ( select ) => {
+		// eslint-disable-next-line @wordpress/data-no-store-string-literals -- `@wordpress/editor` isn't a project dependency; `core/editor` is provided globally by WP core in the block editor.
 		const editor = select( 'core/editor' ) as {
 			getEditedPostAttribute: (
 				name: string
@@ -91,6 +92,7 @@ const SiteSelection = ( {
 	/**
 	 * Dispatch the action to update the brand_site meta field.
 	 */
+	// eslint-disable-next-line @wordpress/data-no-store-string-literals -- `@wordpress/editor` isn't a project dependency; `core/editor` is provided globally by WP core in the block editor.
 	const { editPost } = useDispatch( 'core/editor' ) as {
 		editPost: ( data: { meta: { brand_site: SiteId[] } } ) => void;
 	};

@@ -22,6 +22,10 @@ jest.mock( '@/admin/patterns/components/Category', () => ( {
 	__esModule: true,
 	default: () => <div>category</div>,
 } ) );
+jest.mock( '@/store', () => ( {
+	__esModule: true,
+	store: {},
+} ) );
 jest.mock( '@wordpress/icons', () => ( { cog: 'cog' } ) );
 jest.mock( '@wordpress/api-fetch', () => ( {
 	__esModule: true,

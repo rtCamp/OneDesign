@@ -29,11 +29,7 @@ const baseProps = {
 describe( 'BasePatternsTab', () => {
 	it( 'shows the loading state', () => {
 		render(
-			<BasePatternsTab
-				{ ...baseProps }
-				isLoading={ true }
-				basePatterns={ [] }
-			/>
+			<BasePatternsTab { ...baseProps } isLoading basePatterns={ [] } />
 		);
 		expect( screen.getByText( /loading patterns/i ) ).toBeInTheDocument();
 	} );

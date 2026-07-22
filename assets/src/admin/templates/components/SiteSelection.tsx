@@ -291,6 +291,10 @@ const SiteSelection = ( {
 												( e.key === 'Enter' ||
 													e.key === ' ' )
 											) {
+												// Prevent Space from scrolling the page when activating this custom control.
+												if ( e.key === ' ' ) {
+													e.preventDefault();
+												}
 												handleSiteSelection( id );
 											}
 										} }

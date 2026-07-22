@@ -55,12 +55,15 @@ const SiteTypeSelector = ( {
 );
 
 const OnboardingScreen = () => {
-	// WordPress provides snake_case keys here. Using them intentionally.
-	// eslint-disable-next-line camelcase
-	const { nonce, setup_url, site_type } = window.OneDesignSettings;
+	// WordPress provides snake_case keys here; alias them to camelCase locals.
+	const {
+		nonce,
+		setup_url: setupUrl,
+		site_type: initialSiteType,
+	} = window.OneDesignSettings;
 
 	const [ siteType, setSiteType ] = useState< SiteType | '' >(
-		site_type || ''
+		initialSiteType || ''
 	);
 	const [ notice, setNotice ] = useState< NoticeState | null >( null );
 	const [ isSaving, setIsSaving ] = useState< boolean >( false );
@@ -103,8 +106,8 @@ const OnboardingScreen = () => {
 				setSiteType( settings.onedesign_site_type );
 
 				// Redirect user to setup page.
-				if ( setup_url ) {
-					window.location.href = setup_url;
+				if ( setupUrl ) {
+					window.location.href = setupUrl;
 				}
 			} );
 		} catch {

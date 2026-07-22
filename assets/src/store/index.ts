@@ -131,7 +131,7 @@ const store = createReduxStore( 'onedesign/site-patterns', {
 register( store );
 
 // Named exports of the store internals for unit testing.
-export { DEFAULT_STATE, actions, reducer, selectors };
+export { DEFAULT_STATE, actions, reducer, selectors, store };
 export type { State, PatternAction, FetchPatternsResponse };
 
 export default store;

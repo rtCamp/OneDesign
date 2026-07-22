@@ -17,7 +17,7 @@ Object.defineProperty( global, 'fetch', {
 	writable: true,
 } );
 
-// The settings object OneDesign exposes on `window` (see assets/src/js/constants.js).
+// The settings object OneDesign exposes on `window` (see assets/src/js/constants.ts).
 Object.defineProperty( window, 'OneDesignSettings', {
 	value: {
 		restUrl: 'https://example.com/wp-json',

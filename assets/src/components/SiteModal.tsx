@@ -11,6 +11,7 @@ import {
 	BaseControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useInstanceId } from '@wordpress/compose';
 
 /**
  * External dependencies
@@ -162,6 +163,7 @@ const SiteModal = ( {
 	const [ showNotice, setShowNotice ] = useState( false );
 	const [ isProcessing, setIsProcessing ] = useState( false );
 	const [ showDeleteConfirm, setShowDeleteConfirm ] = useState( false );
+	const logoControlId = useInstanceId( SiteModal, 'onedesign-site-logo' );
 
 	const handleSubmit = async () => {
 		// Validate inputs
@@ -442,7 +444,7 @@ const SiteModal = ( {
 
 					{ /* Logo Media Selection */ }
 					<BaseControl
-						id="site-logo"
+						id={ logoControlId }
 						label={ __( 'Site Logo', 'onedesign' ) }
 						help={ __(
 							'Select a logo for this brand site.',

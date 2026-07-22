@@ -13,6 +13,8 @@ export default [
 			'vendor-prefixed/**',
 			// Standalone Node tooling scripts (not project source)
 			'bin/**',
+			// Claude skill scaffold templates for other plugins (not project source)
+			'.claude/**',
 			// Config files (not subject to project lint rules)
 			'eslint.config.mjs',
 			'.lintstagedrc.mjs',
