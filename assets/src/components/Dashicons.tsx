@@ -18,8 +18,9 @@ const renderIcon = ( {
 	sitesHealthCheckResult,
 	id,
 }: RenderIconProps ): JSX.Element => {
-	return sitesHealthCheckResult?.[ id ] &&
-		! sitesHealthCheckResult?.[ id ]?.success ? (
+	const siteId = String( id );
+	return sitesHealthCheckResult?.[ siteId ] &&
+		! sitesHealthCheckResult?.[ siteId ]?.success ? (
 		<span className="dashicons dashicons-warning"></span>
 	) : (
 		<span className="dashicons dashicons-yes-alt"></span>

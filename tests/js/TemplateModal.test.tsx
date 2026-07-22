@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { render, screen } from '@testing-library/react';
+import type { ReactNode } from 'react';
 
 /**
  * Internal dependencies
@@ -33,13 +34,7 @@ jest.mock( '@/hooks/useSitesManagement', () => {
 } );
 jest.mock( '@wordpress/icons', () => ( { cog: 'cog' } ) );
 jest.mock( '@wordpress/components', () => ( {
-	Modal: ( {
-		title,
-		children,
-	}: {
-		title?: string;
-		children: React.ReactNode;
-	} ) => (
+	Modal: ( { title, children }: { title?: string; children: ReactNode } ) => (
 		<div>
 			{ title ? <h1>{ title }</h1> : null }
 			{ children }
@@ -51,10 +46,10 @@ jest.mock( '@wordpress/components', () => ( {
 		children,
 	}: {
 		tabs: Array< { name: string } >;
-		children: ( tab: { name: string } ) => React.ReactNode;
+		children: ( tab: { name: string } ) => ReactNode;
 	} ) => <div>{ tabs[ 0 ] ? children( tabs[ 0 ] ) : null }</div>,
 	Spinner: () => <div>spinner</div>,
-	Button: ( { children }: { children?: React.ReactNode } ) => (
+	Button: ( { children }: { children?: ReactNode } ) => (
 		<button>{ children }</button>
 	),
 } ) );

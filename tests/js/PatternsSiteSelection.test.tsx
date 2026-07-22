@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { render, screen } from '@testing-library/react';
+import type { ReactNode } from 'react';
 
 /**
  * WordPress dependencies
@@ -21,7 +22,7 @@ jest.mock( '@wordpress/components', () => ( {
 		onClick,
 		disabled,
 	}: {
-		children: React.ReactNode;
+		children: ReactNode;
 		onClick?: () => void;
 		disabled?: boolean;
 	} ) => (
@@ -29,7 +30,7 @@ jest.mock( '@wordpress/components', () => ( {
 			{ children }
 		</button>
 	),
-	Notice: ( { children }: { children: React.ReactNode } ) => (
+	Notice: ( { children }: { children: ReactNode } ) => (
 		<div>{ children }</div>
 	),
 	Spinner: () => <div role="status">loading</div>,
