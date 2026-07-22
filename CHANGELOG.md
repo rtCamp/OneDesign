@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.3
+
+- Fix: Update NPM dependencies to resolve vulnerabilities
+
+## 1.1.2
+
+- Security: Resolve vulnerabilities in transitive NPM dependencies
+
 ## 1.1.1
 
 - Feat: update Composer and NPM dependencies
