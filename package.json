@@ -35,6 +35,7 @@
 	},
 	"devDependencies": {
 		"@babel/core": "^7.29.0",
+		"@playwright/test": "^1.61.0",
 		"@testing-library/jest-dom": "^6.9.1",
 		"@testing-library/react": "^16.3.2",
 		"@types/jest": "^29.5.14",
@@ -44,7 +45,8 @@
 		"@typescript-eslint/parser": "^8.61.1",
 		"@wordpress/babel-preset-default": "^8.48.1",
 		"@wordpress/browserslist-config": "^6.40.0",
-		"@wordpress/env": "^10.39.0",
+		"@wordpress/e2e-test-utils-playwright": "1.46.0",
+		"@wordpress/env": "^11.8.0",
 		"@wordpress/eslint-plugin": "^25.4.1",
 		"@wordpress/prettier-config": "^4.48.0",
 		"@wordpress/scripts": "^32.4.1",
@@ -80,11 +82,13 @@
 		"plugin-zip": "wp-scripts plugin-zip",
 		"start:js": "wp-scripts start --config ./webpack.config.js",
 		"start": "npm-run-all --parallel start:*",
+		"test:e2e": "wp-scripts test-playwright",
 		"test:js": "wp-scripts test-unit-js",
 		"test:js:coverage": "wp-scripts test-unit-js --coverage",
 		"test:js:watch": "wp-scripts test-unit-js --watch",
 		"test:php": "wp-env run tests-cli --env-cwd=wp-content/plugins/$(basename \"$(pwd)\")/ composer run-script test",
-		"wp-env": "wp-env"
+		"wp-env": "wp-env",
+		"wp-env:test": "wp-env --config=.wp-env.test.json"
 	},
 	"overrides": {
 		"@babel/runtime": "^7.27.6",
@@ -94,6 +98,10 @@
 		"minimatch": ">=10.2.1",
 		"serialize-javascript": ">=7.0.3",
 		"prettier": "npm:wp-prettier@^3",
+		"@wordpress/e2e-test-utils-playwright": "1.46.0",
+		"@wordpress/scripts": {
+			"@wordpress/e2e-test-utils-playwright": "1.46.0"
+		},
 		"eslint-plugin-import": {
 			"minimatch": "^3.1.2"
 		},
