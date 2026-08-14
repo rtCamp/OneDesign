@@ -59,7 +59,7 @@
 		"build:js": "wp-scripts build --config ./webpack.config.js",
 		"build:prod": "npm run clean && cross-env NODE_ENV=production npm-run-all 'build:!(dev|prod)' && composer install --no-dev --optimize-autoloader",
 		"clean": "rimraf build",
-		"i18n:make-pot": "wp-env run cli wp i18n make-pot . ./languages/onedesign.pot --exclude=node_modules,vendor,tests --ignore-domain=default",
+		"i18n:make-pot": "wp-env run cli wp i18n make-pot . ./languages/onedesign.pot --exclude=node_modules,vendor,tests,build --ignore-domain=default",
 		"i18n:make-json": "wp-env run cli wp i18n make-json languages/ --no-purge",
 		"lint:css": "wp-scripts lint-style",
 		"lint:css:fix": "npm run lint:css -- --fix",
