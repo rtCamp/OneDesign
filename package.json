@@ -74,7 +74,6 @@
 		"start:js": "wp-scripts start --config ./webpack.config.js",
 		"start": "npm-run-all --parallel start:*",
 		"test:php": "wp-env run tests-cli --env-cwd=wp-content/plugins/$(basename \"$(pwd)\")/ composer run-script test",
-		"validate:scaffold": "node bin/validate-scaffold.mjs",
 		"wp-env": "wp-env",
 		"wp-env:child": "wp-env --config=.wp-env.child.json"
 	},
