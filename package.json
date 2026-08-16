@@ -83,7 +83,6 @@
 		"test:js:coverage": "wp-scripts test-unit-js --coverage",
 		"test:js:watch": "wp-scripts test-unit-js --watch",
 		"test:php": "wp-env run tests-cli --env-cwd=wp-content/plugins/$(basename \"$(pwd)\")/ composer run-script test",
-		"validate:scaffold": "node bin/validate-scaffold.mjs",
 		"wp-env": "wp-env"
 	},
 	"prettier": "@wordpress/prettier-config",
