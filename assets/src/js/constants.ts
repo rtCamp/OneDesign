@@ -51,16 +51,19 @@ const PER_PAGE = 9;
 const MULTISITES = settings.multisites || [];
 const IS_MULTISITE = settings.isMultisite || false;
 const IS_GOVERNING_SITE_SELECTED = settings.isGoverningSiteSelected || false;
-const CURRENT_SITE_ID = String( settings.currentSiteId ) || '';
+const CURRENT_SITE_ID =
+	settings.currentSiteId !== undefined && settings.currentSiteId !== null
+		? String(settings.currentSiteId)
+		: '';
 
 export {
-	API_NAMESPACE,
-	NONCE,
 	API_KEY,
-	SETTINGS_LINK,
-	PER_PAGE,
-	MULTISITES,
-	IS_MULTISITE,
-	IS_GOVERNING_SITE_SELECTED,
+	API_NAMESPACE,
 	CURRENT_SITE_ID,
+	IS_GOVERNING_SITE_SELECTED,
+	IS_MULTISITE,
+	MULTISITES,
+	NONCE,
+	PER_PAGE,
+	SETTINGS_LINK,
 };

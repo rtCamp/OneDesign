@@ -1,8 +1,8 @@
 /**
  * WordPress dependencies
  */
-import { createReduxStore, register } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
+import { createReduxStore, register } from '@wordpress/data';
 
 interface State {
 	sitePatterns: Record< string, unknown >;
@@ -77,7 +77,10 @@ const actions = {
 			console.error( 'Error fetching site patterns:', error );
 			yield {
 				type: 'SET_ERROR',
-				error: error as Error,
+				error:
+					error instanceof Error
+						? error
+						: new Error( String( error ) ),
 			};
 		} finally {
 			yield { type: 'SET_IS_LOADING_SITE_PATTERNS', isLoading: false };
@@ -131,7 +134,7 @@ const store = createReduxStore( 'onedesign/site-patterns', {
 register( store );
 
 // Named exports of the store internals for unit testing.
-export { DEFAULT_STATE, actions, reducer, selectors, store };
-export type { State, PatternAction, FetchPatternsResponse };
+export { actions, DEFAULT_STATE, reducer, selectors, store };
+export type { FetchPatternsResponse, PatternAction, State };
 
 export default store;

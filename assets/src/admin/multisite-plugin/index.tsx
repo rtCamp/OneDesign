@@ -2,26 +2,26 @@
  * WordPress dependencies
  */
 import {
-	useState,
-	useEffect,
-	createRoot,
-	useCallback,
-	useRef,
-} from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
-import {
-	Card,
-	CardHeader,
-	CardBody,
-	Notice,
 	Button,
+	Card,
+	CardBody,
+	CardHeader,
+	Notice,
 	SelectControl,
 } from '@wordpress/components';
+import {
+	createRoot,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+} from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
-import { MULTISITES, API_NAMESPACE, NONCE } from '../../js/constants';
+import { API_NAMESPACE, MULTISITES, NONCE } from '../../js/constants';
 
 type SiteId = number | string;
 
@@ -106,12 +106,14 @@ const OneDesignMultisiteGoverningSiteSelection = (): JSX.Element => {
 				return;
 			}
 
-			const data = ( await response.json() ) as {
-				governing_site?: string;
+			// The REST controller returns `governing_site` as an integer.
+			const data = (await response.json()) as {
+				governing_site?: SiteId;
 			};
 			if ( data?.governing_site ) {
-				setGoverningSite( data.governing_site );
-				currentGoverningSiteID.current = data.governing_site;
+				const siteId = String(data.governing_site);
+				setGoverningSite(siteId);
+				currentGoverningSiteID.current = siteId;
 			}
 		} catch {
 			setNotice( {
@@ -129,8 +131,7 @@ const OneDesignMultisiteGoverningSiteSelection = (): JSX.Element => {
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const handleGoverningSiteChange = useCallback( async ( value: string ) => {
-		setGoverningSite( value );
-		currentGoverningSiteID.current = value;
+		setGoverningSite(value);
 		setIsSaving( true );
 
 		try {
@@ -154,6 +155,8 @@ const OneDesignMultisiteGoverningSiteSelection = (): JSX.Element => {
 				setIsSaving( false );
 				return;
 			}
+
+			currentGoverningSiteID.current = value;
 
 			setNotice( {
 				type: 'success',

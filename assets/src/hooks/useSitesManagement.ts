@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { useState, useCallback, useEffect } from '@wordpress/element';
+import { useCallback, useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 interface SiteInfo {
@@ -151,9 +151,15 @@ const useSitesManagement = ( {
 				string,
 				SiteInfo
 			>;
-			setSiteInfo( data || {} );
+			const sites = data || {};
+			setSiteInfo(sites);
+
+			if (Object.keys(sites).length === 0) {
+				setIsLoading(false);
+			}
 		} catch ( err ) {
 			setError( err instanceof Error ? err.message : String( err ) );
+			setIsLoading(false);
 		}
 	}, [ API_NAMESPACE, NONCE ] );
 

@@ -14,8 +14,6 @@ import apiFetch from '@wordpress/api-fetch';
  */
 import SiteSelection from '@/admin/patterns/components/SiteSelection';
 
-// Stub the component primitives so the real @wordpress/components (and its
-// rich-text/data import chain) doesn't load — which lets us mock @wordpress/data.
 jest.mock( '@wordpress/components', () => ( {
 	Button: ( {
 		children,

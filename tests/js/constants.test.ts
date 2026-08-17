@@ -99,5 +99,14 @@ describe( 'constants', () => {
 		expect( constants.MULTISITES ).toEqual( [] );
 		expect( constants.IS_MULTISITE ).toBe( false );
 		expect( constants.IS_GOVERNING_SITE_SELECTED ).toBe( false );
+		expect( constants.CURRENT_SITE_ID ).toBe( '' );
+	} );
+
+	it( 'keeps a "0" current site id rather than falling back to empty', () => {
+		const constants = loadConstants( {
+			OneDesignSettings: { currentSiteId: 0 },
+		} );
+
+		expect( constants.CURRENT_SITE_ID ).toBe( '0' );
 	} );
 } );
