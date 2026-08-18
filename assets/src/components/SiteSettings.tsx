@@ -67,7 +67,6 @@ const SiteSettings = (): JSX.Element => {
 		}
 	}, [] );
 
-	// regenerate api key using REST endpoint.
 	const regenerateApiKey = useCallback( async () => {
 		try {
 			const response = await fetch( API_NAMESPACE + '/secret-key', {

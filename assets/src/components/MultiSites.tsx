@@ -83,7 +83,7 @@ const MultiSites = ( {
 				};
 				setBrandSites( data.shared_sites || [] );
 
-				// if shared_sites length is 1 meaning
+				// First time brand sites arrive, reload so the rest of the admin screen picks them up.
 				if (
 					( data?.shared_sites?.length ?? 0 ) > 0 &&
 					brandSites?.length === 0

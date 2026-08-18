@@ -96,7 +96,6 @@ const PatternModal = (): JSX.Element => {
 	const [ activeTab, setActiveTab ] = useState< SiteId >( 'basePatterns' );
 	const [ notice, setNotice ] = useState< NoticeState | null >( null );
 
-	// Access the global pattern store
 	const { sitePatterns } = useSelect( ( select ) => {
 		const patternsSelectors = select( sitePatternsStore ) as {
 			getSitePatterns: () => SitePatternsMap;
@@ -113,7 +112,6 @@ const PatternModal = (): JSX.Element => {
 	const [ siteOptions, setSiteOptions ] = useState< Site[] >( [] );
 	const [ isOpen, setIsOpen ] = useState( true );
 
-	// Pattern display settings
 	const PER_PAGE = 9;
 	const [ currentPage, setCurrentPage ] = useState( 1 );
 	const [ currentAppliedPage, setCurrentAppliedPage ] = useState( 1 );
@@ -154,18 +152,15 @@ const PatternModal = (): JSX.Element => {
 	useEffect( () => {
 		fetchSites();
 
-		// Fetch site patterns using the global store action
 		patternStore.fetchSitePatterns();
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	useEffect( () => {
 		const fetchPatterns = async () => {
 			try {
-				// If we already have site patterns in the global store, use those
 				if ( Object.keys( sitePatterns ).length > 0 ) {
 					setAllBrandSitePatterns( sitePatterns );
 				} else {
-					// Otherwise fetch them directly and update both states
 					const patterns = await fetchAllBrandSitePatterns();
 					setAllBrandSitePatterns( patterns );
 					patternStore.setSitePatterns( patterns );
@@ -176,14 +171,13 @@ const PatternModal = (): JSX.Element => {
 		};
 		fetchPatterns();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ patternStore ] ); // Include patternStore in dependencies
+	}, [ patternStore ] );
 
 	// eslint-disable-next-line @wordpress/data-no-store-string-literals -- `@wordpress/editor` isn't a project dependency; `core/editor` is provided globally by WP core in the block editor.
 	const { editPost } = useDispatch( 'core/editor' ) as {
 		editPost: ( data: { meta: Record< string, unknown > } ) => void;
 	};
 
-	// Filter patterns based on search term
 	const filteredBasePatterns = useMemo( () => {
 		const categoryFiltered =
 			activeCategory === 'All'
@@ -204,7 +198,6 @@ const PatternModal = (): JSX.Element => {
 		} );
 	}, [ basePatterns, searchTerm, activeCategory ] );
 
-	// Use callbacks for event handlers to prevent recreating functions on each render
 	const handlePatternSelection = ( patternId?: string ) => {
 		if ( ! patternId ) {
 			return;
@@ -234,7 +227,6 @@ const PatternModal = (): JSX.Element => {
 
 	const handleSearchChange = useCallback( ( value: string ) => {
 		setSearchTerm( value );
-		// Reset pages when search term changes
 		setCurrentPage( 1 );
 		setCurrentAppliedPage( 1 );
 	}, [] );
@@ -251,7 +243,6 @@ const PatternModal = (): JSX.Element => {
 		setNotice( null );
 	};
 
-	// Fetch base site patterns only when needed
 	useEffect( () => {
 		const fetchPatterns = async () => {
 			setIsLoading( true );
@@ -270,7 +261,6 @@ const PatternModal = (): JSX.Element => {
 		fetchPatterns();
 	}, [] );
 
-	// Reset when modal closes
 	useEffect( () => {
 		setCurrentPage( 1 );
 		setSearchTerm( '' );
@@ -295,7 +285,6 @@ const PatternModal = (): JSX.Element => {
 				},
 			];
 
-			// add all sites except base site
 			Object.values( siteOptions ).forEach( ( site ) => {
 				newTabs.push( {
 					name: String( site.name ),
@@ -331,7 +320,6 @@ const PatternModal = (): JSX.Element => {
 		} );
 	}, [ allBrandSitePatterns, searchTerm, activeCategory, activeTab ] );
 
-	// Search results indicator
 	const renderSearchResults = () => {
 		if ( ! searchTerm.trim() ) {
 			return null;
@@ -367,25 +355,20 @@ const PatternModal = (): JSX.Element => {
 					body: JSON.stringify( data ),
 				} );
 
-				// Check if all site operations were successful
 				const hasFailures = Object.values( request ).some(
 					( site ) => ! site.success
 				);
 
 				if ( ! hasFailures ) {
-					// Fetch patterns again to update the state
 					const patterns = await fetchAllBrandSitePatterns();
 					setAllBrandSitePatterns( patterns );
 
-					// Return success for the BasePatternsTab to use
 					return { success: true };
 				}
 
-				// Build error message showing which sites failed
 				const failedSites = Object.entries( request )
 					.filter( ( [ , result ] ) => ! result.success )
 					.map( ( [ id, result ] ) => {
-						// Find the site name in siteOptions
 						const site = siteOptions.find( ( s ) => s.id === id );
 						return {
 							name: site ? site.name : id,
@@ -412,7 +395,6 @@ const PatternModal = (): JSX.Element => {
 			}
 		}
 
-		// Return failure if no patterns or brand sites selected
 		return {
 			success: false,
 			message: __( 'No patterns or sites selected', 'onedesign' ),
@@ -438,7 +420,6 @@ const PatternModal = (): JSX.Element => {
 				} );
 
 				if ( response.success ) {
-					// Fetch patterns again to update the state
 					const patterns = await fetchAllBrandSitePatterns();
 					setAllBrandSitePatterns( patterns );
 
@@ -468,7 +449,6 @@ const PatternModal = (): JSX.Element => {
 					title={ __( 'Patterns Library', 'onedesign' ) }
 					onRequestClose={ () => {
 						setIsOpen( false );
-						// Take user back to previous page
 						window.history.back();
 					} }
 					isFullScreen
@@ -572,7 +552,6 @@ const PatternModal = (): JSX.Element => {
 												/>
 											);
 										}
-										// based on tab name show applied patterns
 										return (
 											<AppliedPatternsTab
 												appliedPatterns={

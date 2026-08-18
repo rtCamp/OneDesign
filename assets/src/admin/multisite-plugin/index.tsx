@@ -223,7 +223,6 @@ const OneDesignMultisiteGoverningSiteSelection = (): JSX.Element => {
 	);
 };
 
-// Render to Gutenberg admin page with ID: onedesign-multisite-selection-modal
 const target = document.getElementById( 'onedesign-multisite-selection-modal' );
 if ( target ) {
 	const root = createRoot( target );

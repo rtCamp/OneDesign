@@ -245,7 +245,6 @@ const OneDesignSettingsPage = (): JSX.Element => {
 	);
 };
 
-// Render to Gutenberg admin page with ID: onedesign-settings-page
 const target = document.getElementById( 'onedesign-settings-page' );
 if ( target ) {
 	const root = createRoot( target );

@@ -21,8 +21,7 @@ describe( 'MultiSites', () => {
 			json: async () => ( { sites: [] } ),
 		} );
 
-		// The mount effect fires an async fetch; wrap in act so the resulting
-		// state update is flushed before assertions.
+		// The mount effect fires an async fetch; wrap in act so the state update is flushed before assertions.
 		await act( async () => {
 			render(
 				<MultiSites

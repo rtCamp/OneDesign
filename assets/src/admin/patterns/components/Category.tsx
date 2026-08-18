@@ -63,7 +63,6 @@ const Category = ( {
 				)
 			);
 
-			// Filter categories that are actually used in `basePatterns`.
 			const categoriesWithPatterns =
 				baseSitePatternCategories.categories.filter( ( category ) =>
 					patternCategoriesSet.has( category.name )

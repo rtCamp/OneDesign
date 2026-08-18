@@ -80,7 +80,6 @@ const TemplateModal = (): JSX.Element => {
 	const [ notice, setNotice ] = useState< NoticeState | null >( null );
 	const [ isReSyncing, setIsReSyncing ] = useState( false );
 
-	// common state for site info and health check results
 	const {
 		siteInfo,
 		sitesHealthCheckResult,
@@ -213,7 +212,6 @@ const TemplateModal = (): JSX.Element => {
 			);
 			const data = ( await response.json() ) as { success?: boolean };
 			if ( data.success ) {
-				// Handle success (e.g., show a success message)
 				setSelectedTemplates( [] );
 				setSelectedSites( [] );
 				fetchConnectedSitesTemplates();
@@ -264,19 +262,16 @@ const TemplateModal = (): JSX.Element => {
 		siteList,
 	] );
 
-	// Fetch templates when the modal is opened
 	useEffect( () => {
 		fetchTemplates();
 		fetchConnectedSitesTemplates();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
-	// clear notice on tab change
 	useEffect( () => {
 		setNotice( null );
 	}, [ activeTab ] );
 
-	// create tabs based on siteInfo
 	useEffect( () => {
 		const newTabs: Tab[] = [
 			{
@@ -312,7 +307,6 @@ const TemplateModal = (): JSX.Element => {
 		} );
 	};
 
-	// filter templates based on search query
 	const filteredTemplates = useMemo( () => {
 		if ( searchQuery.trim() === '' ) {
 			return templates;
@@ -406,7 +400,6 @@ const TemplateModal = (): JSX.Element => {
 					title={ __( 'Template Library', 'onedesign' ) }
 					onRequestClose={ () => {
 						setIsOpen( false );
-						// take user to previous page
 						window.history.back();
 					} }
 					className="onedesign-template-modal"

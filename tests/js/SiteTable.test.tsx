@@ -73,7 +73,7 @@ describe( 'SiteTable', () => {
 		];
 		render( <SiteTable sites={ sites } { ...baseProps } /> );
 		fireEvent.click( screen.getByRole( 'button', { name: /^delete$/i } ) );
-		// Modal is open; confirm the deletion.
+		// The modal adds a second "Delete" button; the last one is the confirm.
 		const confirm = screen
 			.getAllByRole( 'button', { name: /^delete$/i } )
 			.at( -1 );

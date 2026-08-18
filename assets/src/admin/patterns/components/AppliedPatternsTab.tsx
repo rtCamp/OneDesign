@@ -77,7 +77,6 @@ const AppliedPatternsTab = ( {
 	const [ isProcessing, setIsProcessing ] = useState( false );
 	const [ isRemoveModalOpen, setIsRemoveModalOpen ] = useState( false );
 
-	// Get unique patterns
 	const uniquePatterns = new Map< string | undefined, Pattern >();
 	appliedPatterns?.forEach( ( pattern ) => {
 		uniquePatterns.set( pattern.name, pattern );

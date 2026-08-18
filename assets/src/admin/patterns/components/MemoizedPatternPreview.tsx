@@ -127,13 +127,11 @@ const MemoizedPatternPreview = memo(
 		isCheckBoxRequired = true,
 		providerSite = false,
 	}: MemoizedPatternPreviewProps ) => {
-		// Parse blocks only once when the component mounts
 		const parsedBlocks = useMemo(
 			() => parse( pattern?.content ?? '' ),
 			[ pattern?.content ]
 		);
 
-		// Get pattern title
 		const patternTitle = pattern?.title ?? pattern?.name;
 
 		return (
@@ -174,7 +172,6 @@ const MemoizedPatternPreview = memo(
 		);
 	},
 	( prevProps, nextProps ) => {
-		// Only re-render if these specific properties change
 		return (
 			prevProps.pattern.name === nextProps.pattern.name &&
 			prevProps.pattern.content === nextProps.pattern.content &&

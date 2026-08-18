@@ -23,8 +23,7 @@ jest.mock( '@/admin/templates/components/SiteSelection', () => ( {
 	default: () => <div>site-selection</div>,
 } ) );
 jest.mock( '@/hooks/useSitesManagement', () => {
-	// Return a STABLE reference; a fresh object each render churns the
-	// `[siteInfo]` effect identity and loops forever.
+	// Return a STABLE reference; a fresh object each render churns the `[siteInfo]` effect and loops forever.
 	const value = {
 		siteInfo: {},
 		sitesHealthCheckResult: {},

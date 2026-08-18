@@ -8,17 +8,11 @@ module.exports = function ( api ) {
 
 	return {
 		...config,
-		plugins: [
-			...config.plugins,
-			// Add your own plugins here
-		],
+		plugins: [ ...config.plugins ],
 		sourceMaps: true,
 		env: {
 			production: {
-				plugins: [
-					...config.plugins,
-					// Add your own plugins here
-				],
+				plugins: [ ...config.plugins ],
 			},
 		},
 	};

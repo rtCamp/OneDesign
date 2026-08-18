@@ -46,7 +46,6 @@ const useSitesManagement = ( {
 	const [ error, setError ] = useState< string | null >( null );
 	const [ isInitialized, setIsInitialized ] = useState( false );
 
-	// Perform health check on all configured sites
 	const performHealthCheckOnSites = useCallback( async () => {
 		setError( null );
 
@@ -56,9 +55,11 @@ const useSitesManagement = ( {
 				const siteUrl = site?.url;
 				const siteApiKey = site?.api_key;
 
-				// site.id (not the siteInfo object key) is the identifier
-				// consumers key their own lookups by; skip if it's missing
-				// rather than collapsing multiple sites into an "undefined" entry.
+				/**
+				 * `site.id` (not the `siteInfo` object key) is the identifier consumers key their
+				 * own lookups by, so skip a site without one rather than collapsing several into a
+				 * single "undefined" entry.
+				 */
 				if ( site?.id === undefined ) {
 					continue;
 				}
@@ -132,7 +133,6 @@ const useSitesManagement = ( {
 		}
 	}, [ siteInfo ] );
 
-	// Fetch brand sites information from the REST API
 	const fetchBrandSitesInfo = useCallback( async () => {
 		setError( null );
 
@@ -163,12 +163,10 @@ const useSitesManagement = ( {
 		}
 	}, [ API_NAMESPACE, NONCE ] );
 
-	// On component mount, fetch the sites info
 	useEffect( () => {
 		fetchBrandSitesInfo();
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
-	// Perform health check when sites are loaded only once
 	useEffect( () => {
 		if ( ! isInitialized && Object.keys( siteInfo ).length > 0 ) {
 			performHealthCheckOnSites();
@@ -185,17 +183,14 @@ const useSitesManagement = ( {
 	}, [] );
 
 	return {
-		// State values
 		siteInfo,
 		sitesHealthCheckResult,
 		isLoading,
 		error,
 
-		// Setters to update state
 		setSiteInfo,
 		setSitesHealthCheckResult,
 
-		// Methods to perform actions
 		performHealthCheckOnSites,
 		fetchBrandSitesInfo,
 		reset,

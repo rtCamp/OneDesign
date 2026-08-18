@@ -33,7 +33,6 @@ registerPlugin( 'onedesign-template-library', {
 		document.body?.appendChild( modal );
 		createRoot( modal ).render( <TemplateModal /> );
 
-		// make document.title to Template Library.
 		document.title = __( 'Template Library', 'onedesign' );
 
 		return null;

@@ -77,8 +77,7 @@ interface WpMediaFactory {
 }
 
 interface DeleteConfirmationModalProps {
-	// Used as both Button onClick and Modal onRequestClose, so the event is a
-	// broad, optional SyntheticEvent.
+	// Used as both Button onClick and Modal onRequestClose, so the event is a broad, optional SyntheticEvent.
 	onConfirm: ( event?: SyntheticEvent ) => void;
 	onCancel: ( event?: SyntheticEvent ) => void;
 }
@@ -166,7 +165,6 @@ const SiteModal = ( {
 	const logoControlId = useInstanceId( SiteModal, 'onedesign-site-logo' );
 
 	const handleSubmit = async () => {
-		// Validate inputs
 		let siteUrlError = '';
 		if ( ! formData.url?.trim() ) {
 			siteUrlError = __( 'Site URL is required.', 'onedesign' );
@@ -188,7 +186,6 @@ const SiteModal = ( {
 			message: '',
 		};
 
-		// Make sure site name is under 20 characters
 		if ( ( formData.name?.length ?? 0 ) > 20 ) {
 			newErrors.name = __(
 				'Site Name must be under 20 characters.',
@@ -204,12 +201,10 @@ const SiteModal = ( {
 			return;
 		}
 
-		// Start processing
 		setIsProcessing( true );
 		setShowNotice( false );
 
 		try {
-			// Perform health-check
 			const healthCheck = await fetch(
 				`${
 					formData.url
@@ -289,19 +284,17 @@ const SiteModal = ( {
 			window as unknown as { wp: { media: WpMediaFactory } }
 		 ).wp.media;
 
-		// Create a media frame for single image selection
 		const mediaFrame = wpMedia( {
 			title: __( 'Select Site Logo', 'onedesign' ),
 			button: {
 				text: __( 'Select Image', 'onedesign' ),
 			},
-			multiple: false, // Restrict to single image selection
+			multiple: false,
 			library: {
-				type: [ 'image' ], // Only allow images
+				type: [ 'image' ],
 			},
 		} );
 
-		// When an image is selected, update the formData with the image data
 		mediaFrame.on( 'select', () => {
 			const attachment = mediaFrame
 				.state()
@@ -311,11 +304,10 @@ const SiteModal = ( {
 			setFormData( {
 				...formData,
 				logo: attachment.url,
-				logo_id: attachment.id, // Store the attachment ID for future reference
+				logo_id: attachment.id,
 			} );
 		} );
 
-		// If logo_id is already set, pre-select that image in the media library
 		if ( formData.logo_id ) {
 			mediaFrame.on( 'open', () => {
 				const selection = mediaFrame.state().get( 'selection' );
@@ -323,17 +315,14 @@ const SiteModal = ( {
 					formData.logo_id as number
 				);
 
-				// Fetch attachment details
 				attachment.fetch();
 
-				// Add to selection
 				if ( selection && attachment ) {
 					selection.add( [ attachment ] );
 				}
 			} );
 		}
 
-		// Open the media modal
 		mediaFrame.open();
 	};
 
@@ -367,9 +356,10 @@ const SiteModal = ( {
 	};
 
 	const hasChanges = useMemo( () => {
+		// New sites have nothing to diff against, so never block submission.
 		if ( ! editing ) {
 			return true;
-		} // Always allow submission for new sites
+		}
 
 		return (
 			formData?.name !== originalData?.name ||
@@ -379,10 +369,6 @@ const SiteModal = ( {
 		);
 	}, [ editing, formData, originalData ] );
 
-	// Button should be disabled if:
-	// 1. Currently processing, OR
-	// 2. Required fields are empty, OR
-	// 3. In editing mode and no changes have been made
 	const isButtonDisabled =
 		isProcessing ||
 		! formData.name ||

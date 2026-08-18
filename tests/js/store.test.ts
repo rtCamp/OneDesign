@@ -4,8 +4,7 @@
 import { DEFAULT_STATE, actions, reducer, selectors } from '@/store';
 import type { PatternAction } from '@/store';
 
-// The store's async resolver calls apiFetch; mock it so the generator can be
-// driven manually without hitting the network.
+// The store's async resolver calls apiFetch; mock it so the generator can be driven without the network.
 jest.mock( '@wordpress/api-fetch', () => ( {
 	__esModule: true,
 	default: jest.fn(),
@@ -110,7 +109,7 @@ describe( 'fetchSitePatterns generator', () => {
 		} );
 
 		// The apiFetch call is yielded; the resolved response is injected back.
-		gen.next(); // yields the apiFetch control value
+		gen.next();
 		const step = gen.next( { success: true, patterns: { 1: [ 'a' ] } } );
 		expect( step.value ).toEqual( {
 			type: 'SET_SITE_PATTERNS',

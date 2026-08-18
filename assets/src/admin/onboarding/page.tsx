@@ -105,7 +105,6 @@ const OnboardingScreen = () => {
 
 				setSiteType( settings.onedesign_site_type );
 
-				// Redirect user to setup page.
 				if ( setupUrl ) {
 					window.location.href = setupUrl;
 				}

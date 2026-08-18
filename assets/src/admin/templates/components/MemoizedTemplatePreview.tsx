@@ -127,13 +127,11 @@ const MemoizedTemplatePreview = memo(
 		isCheckBoxRequired = true,
 		providerSite = false,
 	}: MemoizedTemplatePreviewProps ) => {
-		// Parse blocks only once when the component mounts
 		const parsedBlocks = useMemo(
 			() => parse( template?.content ?? '' ),
 			[ template?.content ]
 		);
 
-		// Get template title
 		const templateTitle = template?.title ?? template?.name;
 
 		return (
@@ -178,7 +176,6 @@ const MemoizedTemplatePreview = memo(
 		);
 	},
 	( prevProps, nextProps ) => {
-		// Only re-render if these specific properties change
 		return (
 			prevProps.template.name === nextProps.template.name &&
 			prevProps.template.content === nextProps.template.content &&

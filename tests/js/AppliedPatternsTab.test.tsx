@@ -8,8 +8,7 @@ import { render, screen } from '@testing-library/react';
  */
 import AppliedPatternsTab from '@/admin/patterns/components/AppliedPatternsTab';
 
-// MemoizedPatternPreview (a child) pulls in the block editor, whose transitive
-// ESM deps Jest can't transform — stub them out.
+// MemoizedPatternPreview pulls in the block editor, whose transitive ESM deps Jest can't transform.
 jest.mock( '@wordpress/block-editor', () => ( {
 	BlockPreview: () => null,
 } ) );

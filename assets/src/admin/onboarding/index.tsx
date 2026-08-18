@@ -19,7 +19,6 @@ declare global {
 	}
 }
 
-// Render to the target element.
 const target = document.getElementById( 'onedesign-site-selection-modal' );
 if ( target ) {
 	const root = createRoot( target );

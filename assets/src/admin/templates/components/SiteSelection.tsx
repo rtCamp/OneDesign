@@ -84,7 +84,6 @@ const SiteSelection = ( {
 	selectedTemplates,
 	sitesHealthCheckResult,
 }: SiteSelectionProps ): JSX.Element => {
-	// Helper function to check if all templates are already present
 	const areAllTemplatesPresent = ( siteId: SiteId ) => {
 		const siteTemplates = brandSiteTemplates[ siteId ];
 		if ( selectedTemplates.length === 0 || siteTemplates === undefined ) {
@@ -100,7 +99,6 @@ const SiteSelection = ( {
 		);
 	};
 
-	// Helper function to check if a site is unreachable
 	const isSiteUnreachable = ( siteId: SiteId ): boolean => {
 		return Boolean(
 			sitesHealthCheckResult?.[ siteId ] &&
@@ -108,13 +106,11 @@ const SiteSelection = ( {
 		);
 	};
 
-	// Helper function to check if a site should be disabled
 	const isSiteDisabled = ( siteId: SiteId ) => {
 		return areAllTemplatesPresent( siteId ) || isSiteUnreachable( siteId );
 	};
 
 	const handleSiteSelection = ( siteId: SiteId ) => {
-		// Prevent selection/deselection of disabled sites
 		if ( isSiteDisabled( siteId ) ) {
 			return;
 		}
@@ -128,7 +124,6 @@ const SiteSelection = ( {
 	};
 
 	const selectAllSites = () => {
-		// Get IDs of sites that are selectable (not disabled)
 		const selectableSiteIds = siteInfo
 			.filter( ( site ) => ! isSiteDisabled( site.id ) )
 			.map( ( site ) => site.id );
@@ -142,13 +137,11 @@ const SiteSelection = ( {
 
 	const totalCount = siteInfo.length;
 
-	// Calculate the number of selectable sites
 	const selectableSites = siteInfo.filter(
 		( site ) => ! isSiteDisabled( site.id )
 	);
 	const selectableSiteCount = selectableSites.length;
 
-	// Count only selected sites that are still selectable
 	const selectedSelectableSiteCount = selectedSites.filter( ( siteId ) =>
 		selectableSites.some( ( site ) => site.id === siteId )
 	).length;

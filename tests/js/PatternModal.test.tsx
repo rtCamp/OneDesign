@@ -9,8 +9,7 @@ import type { ReactNode } from 'react';
  */
 import PatternModal from '@/admin/patterns/components/PatternModal';
 
-// Child components + WP data/components are heavy; stub them so this stays a
-// focused smoke test of PatternModal's own composition.
+// Child components and WP data are heavy; stub them for a focused smoke test of PatternModal's composition.
 jest.mock( '@/admin/patterns/components/BasePatternsTab', () => ( {
 	__esModule: true,
 	default: () => <div>base-tab</div>,

@@ -69,7 +69,6 @@ const SiteSelection = ( {
 	basePatterns = [],
 	sitePatterns = {},
 }: SiteSelectionProps ): JSX.Element => {
-	// common state for site info and health check results
 	const { sitesHealthCheckResult, isLoading: isSitesLoading } =
 		useSitesManagement( { NONCE, API_NAMESPACE } );
 
@@ -109,21 +108,17 @@ const SiteSelection = ( {
 		editPost( { meta: { brand_site: newBrandSite } } );
 	};
 
-	// helper function to check if site is reachable.
 	const isSiteReachable = ( siteId: SiteId ): boolean => {
 		return Boolean( sitesHealthCheckResult?.[ siteId ]?.success );
 	};
 
 	const selectAllSites = () => {
-		// Get IDs of sites that don't already have all patterns (not disabled)
 		const selectableSiteIds = siteOptions
 			.filter( ( site ) => {
-				// skip if site is not reachable
 				if ( ! isSiteReachable( site.id ) ) {
 					return false;
 				}
 
-				// Skip if site has all patterns already
 				if ( selectedPatterns.length > 0 && sitePatterns[ site.id ] ) {
 					const sitePatternsArray = sitePatterns[ site.id ] || [];
 					const presentPatterns = selectedPatterns.filter(
@@ -135,7 +130,6 @@ const SiteSelection = ( {
 							)
 					);
 
-					// If all patterns are present, exclude this site
 					return ! (
 						presentPatterns.length === selectedPatterns.length &&
 						selectedPatterns.length > 0
@@ -186,19 +180,14 @@ const SiteSelection = ( {
 
 	useEffect( () => {
 		fetchSites();
-		// Reset error state
 		setError( null );
-		// Reset loading state
 		setIsLoading( true );
-		// Clear brand site selection on mount
 		editPost( { meta: { brand_site: [] } } );
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const totalCount = siteOptions.length;
 
-	// Calculate the number of sites that don't have all patterns already
 	const selectableSites = siteOptions.filter( ( site ) => {
-		// skip if site is not reachable
 		if ( ! isSiteReachable( site.id ) ) {
 			return false;
 		}
@@ -212,7 +201,6 @@ const SiteSelection = ( {
 				)
 			);
 
-			// If all patterns are present, site is not selectable
 			return ! (
 				presentPatterns.length === selectedPatterns.length &&
 				selectedPatterns.length > 0
@@ -359,7 +347,6 @@ const SiteSelection = ( {
 				{ siteOptions.map( ( { id, name, url, logo } ) => {
 					const isSelected = BrandSite?.includes( id );
 
-					// Check if all selected patterns are already present on this site
 					let hasAllPatterns = false;
 					let isDisabled = false;
 
@@ -374,7 +361,6 @@ const SiteSelection = ( {
 								)
 						);
 
-						// If all selected patterns are already present, disable the site
 						hasAllPatterns =
 							presentPatterns.length ===
 								selectedPatterns.length &&
@@ -458,7 +444,6 @@ const SiteSelection = ( {
 											{ ( () => {
 												const sitePatternsArray =
 													sitePatterns[ id ] || [];
-												// Remove forward slash from selected patterns names before comparison
 												const presentPatterns =
 													selectedPatterns.filter(
 														( patternName ) =>
@@ -524,7 +509,6 @@ const SiteSelection = ( {
 														)?.title
 												);
 
-												// Limit toSyncPatternsTitles to 5 items for display
 												if (
 													toSyncPatternsTitles.length >
 													5

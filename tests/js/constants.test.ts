@@ -15,10 +15,11 @@ const WINDOW_KEYS = [
 	'OneDesignMultiSiteSettings',
 ] as const;
 
+/**
+ * Assign `undefined` rather than `delete` — setup.ts installs `OneDesignSettings` as a defined
+ * property, and the module under test guards on `typeof window.X !== 'undefined'`.
+ */
 function clearWindowSettings(): void {
-	// Assign `undefined` rather than `delete` — the module guards on
-	// `typeof window.X !== 'undefined'`, and setup.ts installs
-	// `OneDesignSettings` as a defined property.
 	WINDOW_KEYS.forEach( ( key ) => {
 		( window as unknown as Record< string, unknown > )[ key ] = undefined;
 	} );
@@ -33,8 +34,7 @@ function loadConstants(
 	} );
 
 	let constants!: typeof import('@/js/constants');
-	// isolateModules gives the re-require a fresh CommonJS registry so the
-	// module's import-time `window.*` resolution runs again for each case.
+	// isolateModules gives the re-require a fresh registry so the module's import-time `window.*` read reruns.
 	jest.isolateModules( () => {
 		constants = require( '@/js/constants' );
 	} );

@@ -10,18 +10,15 @@ import DOMPurify from 'dompurify';
  * @return The extracted initials (up to 2 characters).
  */
 const getInitials = ( name: string ): string => {
-	// Handle empty or invalid names
 	if ( ! name || typeof name !== 'string' ) {
 		return '?';
 	}
 
-	// Trim the name and convert to proper case
 	const trimmedName = name.trim();
 	if ( ! trimmedName ) {
 		return '?';
 	}
 
-	// Split the name by spaces and other separators
 	const parts = trimmedName
 		.split( /[\s-_,.]+/ )
 		.filter( ( part ) => part.length > 0 );
@@ -31,17 +28,13 @@ const getInitials = ( name: string ): string => {
 		return '?';
 	}
 
-	// For single word names
 	if ( parts.length === 1 ) {
-		// If name is a single character, return that character
 		if ( first.length === 1 ) {
 			return first.toUpperCase();
 		}
-		// Otherwise return first two characters
 		return first.substring( 0, 2 ).toUpperCase();
 	}
 
-	// For multi-word names, take first letter of first two parts
 	return (
 		first.charAt( 0 ) + ( second ? second.charAt( 0 ) : '' )
 	).toUpperCase();

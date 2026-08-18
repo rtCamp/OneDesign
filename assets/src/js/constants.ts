@@ -15,10 +15,11 @@ interface OneDesignSettingsData {
 	currentSiteId?: number | string;
 }
 
-// The settings payload is injected onto `window` via `wp_localize_script`
-// under one of several keys depending on the screen. Read it through a local
-// view of `window` so this module owns its own typing (the `OneDesignSettings`
-// key is also declared, differently, by the onboarding entry).
+/**
+ * The settings payload is injected onto `window` via `wp_localize_script` under one of several
+ * keys depending on the screen. Read it through a local view of `window` so this module owns its
+ * own typing — the `OneDesignSettings` key is also declared, differently, by the onboarding entry.
+ */
 const globalSettings = window as unknown as {
 	OneDesignSettings?: OneDesignSettingsData;
 	patternSyncData?: OneDesignSettingsData;

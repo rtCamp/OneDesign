@@ -141,7 +141,6 @@ const OneDesignSiteTypeSelection = (): JSX.Element => {
 			if ( data?.site_type ) {
 				setSiteType( data.site_type );
 
-				// redirect user to setup page.
 				window.location.href = SETTINGS_LINK;
 			}
 		} catch {
@@ -191,7 +190,6 @@ const OneDesignSiteTypeSelection = (): JSX.Element => {
 	);
 };
 
-// Render to Gutenberg admin page with ID: onedesign-site-selection-modal
 const target = document.getElementById( 'onedesign-site-selection-modal' );
 if ( target ) {
 	const root = createRoot( target );

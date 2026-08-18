@@ -112,7 +112,6 @@ const BasePatternsTab = memo(
 			setSelectedPatterns( [] );
 		}, [ setSelectedPatterns ] );
 
-		// Loading state for patterns
 		if ( isLoading ) {
 			return (
 				<div className="onedesign-pattern-loading">
@@ -143,7 +142,6 @@ const BasePatternsTab = memo(
 		};
 
 		const CloseBrandSiteModal = () => {
-			// If we're in the middle of applying patterns, show confirmation first
 			if ( isApplying && ! showCloseConfirmation ) {
 				setShowCloseConfirmation( true );
 				setApplicationStatus( {
@@ -169,7 +167,6 @@ const BasePatternsTab = memo(
 				const result = await applySelectedPatterns();
 
 				if ( result && result.success ) {
-					// Show success message but don't close immediately
 					setApplicationStatus( {
 						type: 'success',
 						message: sprintf(
@@ -207,7 +204,6 @@ const BasePatternsTab = memo(
 				// eslint-disable-next-line no-console
 				console.error( 'Error applying patterns:', error );
 
-				// Parse the error message to extract site-specific errors if possible
 				let errorMessage =
 					( error instanceof Error ? error.message : '' ) ||
 					__(
@@ -216,12 +212,9 @@ const BasePatternsTab = memo(
 					);
 				let parsedErrors: DetailedError[] = [];
 
-				// Check if this is a multi-site error (contains bullet points)
 				if ( errorMessage.includes( '•' ) ) {
-					// This is a multi-site error, extract the summary line
 					const summaryLine = errorMessage.split( '\n' )[ 0 ] ?? '';
 
-					// Extract individual site errors
 					parsedErrors = errorMessage
 						.split( '\n' )
 						.filter( ( line ) => line.includes( '•' ) )
@@ -237,7 +230,6 @@ const BasePatternsTab = memo(
 							return { site: 'Unknown', message: line.trim() };
 						} );
 
-					// Set a summary message for the notice
 					errorMessage = `${ summaryLine } (${
 						parsedErrors.length
 					} ${ parsedErrors.length === 1 ? 'site' : 'sites' })`;

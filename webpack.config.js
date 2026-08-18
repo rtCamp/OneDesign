@@ -11,7 +11,6 @@ const RemoveEmptyScriptsPlugin = require( 'webpack-remove-empty-scripts' );
  */
 const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 
-// Extend the default config.
 const sharedConfig = {
 	...defaultConfig,
 	output: {
@@ -31,8 +30,7 @@ const sharedConfig = {
 	},
 };
 
-// Generate a webpack config which includes setup for CSS extraction.
-// Look for css/scss files and extract them into a build/css directory.
+// Extract css/scss out of the bundle into a build/css directory.
 const styles = {
 	...sharedConfig,
 	output: {
@@ -120,7 +118,6 @@ const scripts = {
 	module: {
 		rules:
 			sharedConfig?.module?.rules?.filter( ( rule ) => {
-				// Only keep JS/TS/JSX/TSX rules for scripts config, exclude CSS/SCSS
 				return (
 					! rule.test ||
 					( ! rule.test.toString().includes( 'scss' ) &&
