@@ -48,7 +48,7 @@ jobs:
               - 'composer.*'
             phpcs:
               - '.github/workflows/reusable-phpcs.yml'
-              - '.phpcs.xml.dist'
+              - 'phpcs.xml.dist'
             phpstan:
               - '.github/workflows/reusable-phpstan.yml'
               - 'phpstan.neon.dist'
@@ -56,6 +56,7 @@ jobs:
               - 'tests/**/*.php'
               - '.github/workflows/reusable-phpunit.yml'
               - 'phpunit.xml.dist'
+              - '.wp-env*.json'
               - 'package*.json'
             js:
               - .github/workflows/reusable-lint-css-js.yml
@@ -79,6 +80,9 @@ jobs:
             e2e:
               - '.github/workflows/reusable-e2e.yml'
               - 'tests/e2e/**/*'
+              - 'playwright.config.ts'
+              - '.wp-env*.json'
+              - 'package*.json'
             jest:
               - '.github/workflows/reusable-jest.yml'
               - 'assets/src/**/__tests__/**/*'
