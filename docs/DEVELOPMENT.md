@@ -233,9 +233,11 @@ The WordPress development site will be available at <http://localhost:8888> and 
 
 #### Accessing the Local Environment
 
-- `npm run wp-env start`: Start the local development environment.
+- `npm run wp-env start`: Start the governing site environment (port 8888).
+- `npm run wp-env:child start`: Start the brand/child site environment (port 8890).
+- `npm run wp-env:test start`: Start the isolated test environment (port 8889).
 - `npm run wp-env stop`: Stop the local development environment.
-- `npm run wp-env run tests-cli YOUR_CMD_HERE`: Run WP-CLI commands in the local environment.
+- `npm run wp-env run cli -- --env-cwd=wp-content/plugins/onedesign YOUR_CMD_HERE`: Run WP-CLI or PHP tooling in the local environment.
 
 For more information on using `wp-env`, see the [wp-env documentation](https://developer.wordpress.org/block-editor/packages/packages-env/).
 
@@ -278,7 +280,7 @@ npm run test:php
 To generate a code coverage report, make sure to start the testing environment with coverage mode enabled:
 
 ```bash
-npm run wp-env start -- --xdebug=coverage
+npm run wp-env:test start -- --xdebug=coverage
 
 npm run test:php
 ```
